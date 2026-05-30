@@ -31,6 +31,8 @@
             font-optical-sizing: auto;
             font-weight: 400;
             font-style: normal;
+            --primary-colour: #143C4A;
+            --secondary-colour: #6B1F2A;
         }
 
         p {
@@ -38,19 +40,19 @@
         }
 
         .primary-colour {
-            color: #143C4A;
+            color: var(--primary-color);
         }
         .secondary-colour {
-            color: #6B1F2A;
+            color: var(--secondary-color);
         }
 
 
         /* Container for the text */
-        h1.holding-message {
+        .holding-message {
             text-align: center;
             padding: 20px;
         }
-        .holding-message h1 {
+        h1.holding-message {
             font-family: "Cal Sans", sans-serif;
             font-style: normal;
             font-size: clamp(2rem, 5vw, 4rem);
@@ -77,6 +79,5 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span class="primary-colour">Tool</span><span class="secondary-colour">proof</span>
     </h1>
     <p>Make your marketing accountable. Coming soon.</p>
-
 </body>
 </html>
