@@ -1,0 +1,19 @@
+{
+  "name": "toolproof.com.au",
+  "version": "1.0.0",
+  "main": "build.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "tinacms": "^3.9.1"
+  },
+  "devDependencies": {
+    "@tinacms/cli": "^2.4.4",
+    "@types/node": "^25.9.3"
+  }
+}
