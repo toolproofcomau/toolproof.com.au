@@ -35,6 +35,7 @@ jobs:
         env:
           TINA_PUBLIC_CLIENT_ID: ${{ secrets.TINA_PUBLIC_CLIENT_ID }}
           TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
+          GITHUB_BRANCH: ${{ github.ref_name }}
           HEAD: ${{ github.ref_name }}   # <— ensures Tina sees "main"
         run: npx tinacms build
 
