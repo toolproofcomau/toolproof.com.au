@@ -1,0 +1,263 @@
+{
+  "nav": {
+    "cta_label": "Book an Initial Inspection"
+  },
+  "hero": {
+    "location_label": "Karratha. Pilbara. WA.",
+    "heading": "Find the time and money your marketing isn't earning back.",
+    "subheading": "Measure what matters. Make more of what you have.",
+    "subheading_emphasis": "Make your marketing accountable.",
+    "cta_primary_label": "Book a free Initial Inspection",
+    "cta_secondary_label": "Try the 5-minute Pre-Inspection",
+    "location_note": "Based in Karratha. Working across the Pilbara and WA."
+  },
+  "social_proof": {
+    "label": "Trusted by businesses across the Pilbara and WA",
+    "clients": [
+      { "name": "Karratha Civil Group" },
+      { "name": "Saltwater & Co." },
+      { "name": "Pilbara Trades Alliance" },
+      { "name": "Red Dust Hospitality" }
+    ]
+  },
+  "problems": {
+    "section_label": "The problems",
+    "heading": "Most marketing has two problems with the same root cause: the proof isn't built in.",
+    "problem_1": {
+      "heading": "You're paying for software you barely scratch the surface with.",
+      "body": "Most West Australian businesses have already invested in capable marketing software: a CRM, an email platform, analytics, maybe a social or ads tool. The trouble is that almost no one is using more than a fraction of what those subscriptions can actually do. The features that would save you time and reveal what's working are sitting one level deeper than anyone has had time to explore. So month after month, you keep paying the full price for a portion of the value.",
+      "checklist_label": "Sound familiar?",
+      "checklist": [
+        "You picked tools because they \"did everything\", and now you can't remember why you chose them over the cheaper option.",
+        "You know there are reports, automations or integrations you've never set up, but you don't know where to start.",
+        "You're quietly paying for things you suspect you've stopped using."
+      ]
+    },
+    "problem_2": {
+      "heading": "You're spending time and effort on marketing without knowing what's truly working.",
+      "body": "Marketing is the only line on your P&L where most business owners can't tell you, with confidence, what each dollar bought. Campaigns get launched, content gets posted, ads get run, and the answer to \"is it working?\" comes back as a shrug, a screenshot of likes, or a number from a dashboard that nobody acts on. That's not a measurement problem on its own. It's an accountability problem: the people doing your marketing don't carry the P&L, and the person carrying the P&L doesn't know what to ask for.",
+      "checklist_label": "Sound familiar?",
+      "checklist": [
+        "You can tell me what you spent on marketing last quarter, but not what it produced.",
+        "You're measuring clicks, likes or leads, but you couldn't honestly say which of them turned into revenue.",
+        "You haven't asked your agency, freelancer or in-house person a hard question about results in a while, partly because you're not sure how to phrase it."
+      ]
+    }
+  },
+  "how_it_works": {
+    "section_label": "The fix",
+    "heading": "One loop that builds the proof in.",
+    "intro": "Both problems share the same root cause: nothing closes the gap between what you spend and what it earns. So we built a loop that does, and we keep running it until your numbers speak for themselves.",
+    "phase_1": {
+      "label": "First, we make your numbers trustworthy",
+      "intro": "You can't act on figures you don't trust, so we sort that out before anything else.",
+      "steps": [
+        { "title": "Pre-Inspection", "body": "A free, five-minute diagnostic to see if we are a fit." },
+        { "title": "Initial Inspection", "body": "A free call and a one-page read on where you stand." },
+        { "title": "Foundations", "body": "We form your measurement from scratch, or fix what is already there, so every decision that follows rests on real numbers." },
+        { "title": "Start, or Restart", "body": "Once the foundations hold, we are cleared to begin." }
+      ]
+    },
+    "phase_2": {
+      "label": "Then we run the Proof Loop",
+      "intro": "A simple cycle that repeats for as long as we work together. Every turn, your marketing has to earn its place.",
+      "steps": [
+        { "title": "Decide", "body": "We pick the one change most likely to pay off, and we say up front what we expect it to return and by when. No vague promises." },
+        { "title": "Act", "body": "We do it, help you do it, or hand it over for you to run. Your call on how hands-on we are." },
+        { "title": "Measure", "body": "We capture what actually happened, in the numbers that matter, not likes and clicks." },
+        { "title": "Prove", "body": "We hold the result against what we predicted, in money, then use what we learned to decide the next move." }
+      ]
+    },
+    "outcomes_label": "What that means for you",
+    "outcomes": [
+      "The software you already pay for finally earns its keep.",
+      "You can say, with confidence, what every marketing dollar bought.",
+      "You get sharper with every loop, not more dependent on us."
+    ]
+  },
+  "differentiators": {
+    "section_label": "Why Toolproof",
+    "heading": "Three things we do differently.",
+    "items": [
+      {
+        "heading": "Numbers that end in a decision.",
+        "body": "The deliverable is not a dashboard, it is a decision. We read your data, tell you the story it is trying to tell, and leave with one decision made and a clear next move."
+      },
+      {
+        "heading": "An honest broker for your marketing money.",
+        "body": "Your existing creators and agencies stay. We are a neutral, technical second pair of eyes on whether your investment is returning what it should. We say so plainly when it is not."
+      },
+      {
+        "heading": "You become smarter, not stuck.",
+        "body": "We build independence, not dependency. With every engagement you become more capable of reading your own numbers and challenging your own spend."
+      }
+    ]
+  },
+  "offers": {
+    "section_label": "What we offer",
+    "heading": "Fixed scope. Fixed fees. No surprises.",
+    "intro": "Start free with an Initial Inspection. Move to one of three core products when the numbers say so.",
+    "free_offer": {
+      "label": "Free entry point",
+      "heading": "Initial Inspection",
+      "body": "A 30-minute human call plus a one-page written report. At least one actionable decision, guaranteed. Start with the 5-minute self-serve Pre-Inspection if you want a head start.",
+      "cta_label": "Book now (it is free)"
+    },
+    "core_offers": [
+      {
+        "type_label": "One-off, fixed fee",
+        "heading": "Foundations Fix",
+        "price": "From $1,500 plus GST — three tiers by complexity",
+        "features": [
+          "Measurement plumbing fixed or installed correctly",
+          "Tracking and attribution aligned across tools",
+          "Delivered in two weeks",
+          "Done-for-you; no technical knowledge required",
+          "Handoff includes a plain-English summary of what changed and why"
+        ],
+        "cta_label": "Talk to us",
+        "featured": false
+      },
+      {
+        "type_label": "One-off, fixed fee",
+        "heading": "Tool Up",
+        "price": "$2,000 to $5,000 plus GST per pack",
+        "price_note": "Also available as a workshop: $1,200 to $2,500 in-house; $50 to $200 per attendee public",
+        "features": [
+          "One pack, one tool: HubSpot, Klaviyo, Meta Ads, Google Business Profile and others",
+          "Focused on tools you already pay for but under-use",
+          "Done-for-you configuration, not a manual you read yourself",
+          "Leaves you able to run the tool properly going forward"
+        ],
+        "cta_label": "Talk to us",
+        "featured": true
+      },
+      {
+        "type_label": "Monthly retainer",
+        "heading": "Impact Partner",
+        "price": "$1,500 to $3,000 per month plus GST",
+        "price_note": "Roster capped at 8 to 12 clients",
+        "features": [
+          "Ongoing accountability and monitoring across your marketing spend",
+          "Regular optimisation recommendations in plain English",
+          "One simple product; no tier confusion",
+          "Access to quarterly strategy days and custom reporting",
+          "Entry via Proof Loop only; not sold cold"
+        ],
+        "cta_label": "Talk to us",
+        "featured": false
+      }
+    ],
+    "addons": "Custom Looker Studio dashboard build. Quarterly strategy day (Impact Partner clients). Public workshop tickets."
+  },
+  "who_its_for": {
+    "section_label": "Is this you?",
+    "heading": "We work with three types of business.",
+    "segments": [
+      {
+        "heading": "The time-poor Pilbara owner-operator.",
+        "body_1": "You run a Karratha or Pilbara SME in retail, hospitality, trades, professional services or tourism. Turnover between $500k and $5m. You spend between $500 and $5,000 a month on paid promotion and you have no real confidence it is working.",
+        "body_2": "There is no in-house marketer. You do not want another subscription or another opinion. You want a straight answer."
+      },
+      {
+        "heading": "The SME under-using its tools.",
+        "body_1": "You are paying for HubSpot, Mailchimp, Klaviyo, an ad manager, or a Google Business Profile. You are using roughly 30 percent of what you pay for.",
+        "body_2": "You know there is more in there. You need someone to show you which levers to pull and what they actually do."
+      },
+      {
+        "heading": "Local creators and small agencies.",
+        "body_1": "You are one to five people, founder-led, strong on creative and light on measurement. Your clients ask hard questions about what their spend is doing and you need numbers you can stand behind.",
+        "body_2": "We are a measurement partner who will never pitch your client. We make your work provably worth what it costs."
+      }
+    ],
+    "testimonials": [
+      { "text": "", "author": "", "business": "" },
+      { "text": "", "author": "", "business": "" }
+    ]
+  },
+  "guarantee": {
+    "section_label": "The guarantee",
+    "heading": "We only get paid if it is worth your time.",
+    "body": "If, by the end of your Initial Inspection, we have not identified at least one decision you can act on to either cut wasted marketing spend or grow profitable revenue, the diagnostic was a waste of your time, and you owe us nothing more than a 10-minute call telling us why.",
+    "footnote": "That is not a disclaimer. It is the whole point.",
+    "cta_label": "Book a free Initial Inspection"
+  },
+  "about": {
+    "section_label": "About",
+    "heading": "Rob Jefferson, Karratha.",
+    "bio_1": "Rob Jefferson is the founder of Toolproof. He is based in Karratha and works with businesses across the Pilbara and wider WA.",
+    "bio_2": "He has spent years watching good businesses waste good money on marketing they cannot measure. Toolproof is the answer to that problem, built from the Pilbara outward.",
+    "bio_3": "Toolproof operates on two beliefs: that honest measurement is a professional obligation, not an upsell, and that every client should leave better equipped than when they arrived. We do not produce creative content; we make the content you already pay for provably worth its cost.",
+    "footnote": "We use modern tools in the back office to move faster. A human reads the numbers and makes every call you see.",
+    "how_we_work_heading": "How we work",
+    "how_we_work": [
+      "Specialists only; no generalist guesswork",
+      "Prepared, on time, ready to work",
+      "We treat your business like it is ours",
+      "Work that earns its keep, not its billing code"
+    ]
+  },
+  "faq": {
+    "section_label": "FAQ",
+    "heading": "Common questions.",
+    "items": [
+      {
+        "question": "How does pricing work? Are there hidden extras?",
+        "answer": "All engagements are fixed-fee and scoped before we start. You receive a written scope and a fixed price; we do not invoice you for time that runs over. GST applies to all fees. There are no hidden extras. If scope changes significantly, we renegotiate before proceeding."
+      },
+      {
+        "question": "How does an engagement start?",
+        "answer": "Everything starts with the Initial Inspection, which is free. You can run a self-serve Pre-Inspection first if you want a head start (5 minutes, online). After the Initial Inspection call, you receive a one-page written report with at least one decision you can act on. You then decide whether to continue or not. No pressure. Most clients do continue; the Initial Inspection is designed to make that decision obvious."
+      },
+      {
+        "question": "What happens to my existing agencies and freelancers?",
+        "answer": "They stay. We are not a creative or media agency and we will not pitch your clients or your suppliers. We are a neutral measurement partner. If your existing agencies are performing, we will tell you. If they are not, we will tell you that too, with the numbers to back it up. We often work alongside agencies to give them better data to improve their work."
+      },
+      {
+        "question": "Do you work outside Karratha and the Pilbara?",
+        "answer": "Yes. Our primary focus is Karratha and the wider Pilbara, but most of our work is delivered remotely and we serve clients across WA. We do travel to clients where an in-person workshop makes a meaningful difference, particularly for Tool Up workshops. Talk to us about your location."
+      },
+      {
+        "question": "How do you handle our data?",
+        "answer": "We request read or limited access to your marketing tools, not admin access. We do not store your customer data. We work inside your platforms, not our own copies of them. Full details are in our Privacy and AI Use note, linked in the footer."
+      },
+      {
+        "question": "What do you not do?",
+        "answer": "We do not write copy, design creative, manage social accounts, run ads on your behalf, or produce content of any kind. We measure and advise. We may recommend you invest more in those areas; we will not try to become the one you hire for them."
+      },
+      {
+        "question": "Is this only for businesses spending big on marketing?",
+        "answer": "No. The Initial Inspection is useful for any business spending at least $500 a month on marketing tools or paid promotion. The most common result is that we find money that can be redirected, not additional money that needs to be spent."
+      },
+      {
+        "question": "How long does an engagement take?",
+        "answer": "The Initial Inspection is a 30-minute call plus the written report, typically returned within two business days. Foundations Fix is delivered within two weeks. Tool Up packs are delivered within two to four weeks depending on scope. Impact Partner is ongoing monthly. We will not start work we cannot complete on time."
+      }
+    ]
+  },
+  "contact": {
+    "section_label": "Get in touch",
+    "heading": "Start with a question.",
+    "intro": "Fill in the form and Rob will come back to you within one business day. Or book directly using the calendar link below.",
+    "calendar_label": "Book via calendar",
+    "calendar_url": "#",
+    "calendar_note": "[Calendar link placeholder]",
+    "email_label": "Send an email",
+    "email_address": "hello@toolproof.com.au",
+    "form_name_label": "Name",
+    "form_business_label": "Business name",
+    "form_email_label": "Email",
+    "form_phone_label": "Phone",
+    "form_message_label": "What is bugging you about your marketing right now?",
+    "form_message_placeholder": "Be as blunt as you like. We can handle it.",
+    "form_submit_label": "Send message",
+    "form_thanks_heading": "Message received.",
+    "form_thanks_body": "Rob will come back to you within one business day."
+  },
+  "footer": {
+    "abn": "XX XXX XXX XXX",
+    "location": "Karratha, Western Australia",
+    "tagline": "Based in Karratha. Working across the Pilbara and WA.",
+    "copyright_year": "2025"
+  }
+}

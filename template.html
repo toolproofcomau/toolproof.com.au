@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Toolproof | Marketing Measurement Consultancy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cal+Sans&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ironstone: '#0D1F25',
+          teal: '#143C4A',
+          'teal-mid': '#1E5568',
+          'teal-light': '#D4E8EE',
+          'teal-xlight': '#EBF4F6',
+          oxblood: '#6B1F2A',
+          'oxblood-mid': '#8C2937',
+          'oxblood-light': '#F4E0E3',
+          limestone: '#EFEFE9',
+          saltflat: '#E3E0DA',
+          charcoal: '#2C3A3E',
+          'charcoal-light': '#5A7278',
+        },
+        fontFamily: {
+          heading: ['"Cal Sans"', 'sans-serif'],
+          body: ['"Manrope"', 'sans-serif'],
+        },
+      }
+    }
+  }
+</script>
+<style>
+  :root {
+    --ironstone: #0D1F25;
+    --teal: #143C4A;
+    --teal-mid: #1E5568;
+    --teal-light: #D4E8EE;
+    --teal-xlight: #EBF4F6;
+    --oxblood: #6B1F2A;
+    --oxblood-mid: #8C2937;
+    --oxblood-light: #F4E0E3;
+    --limestone: #EFEFE9;
+    --saltflat: #E3E0DA;
+    --charcoal: #2C3A3E;
+    --charcoal-light: #5A7278;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--limestone);
+    color: var(--charcoal);
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: 'Cal Sans', sans-serif;
+    color: var(--ironstone);
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: var(--oxblood);
+    width: 0%;
+    z-index: 9999;
+    transition: width 0.1s linear;
+  }
+
+  #main-nav {
+    position: sticky;
+    top: 0; z-index: 100;
+    background: rgba(239,239,233,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--saltflat);
+  }
+
+  .nav-link {
+    color: var(--charcoal);
+    font-family: 'Cal Sans', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 0.15s;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .nav-link:hover { color: var(--teal); }
+
+  .btn-primary {
+    text-transform: uppercase;
+    background: var(--teal);
+    color: #fff;
+    font-family: 'Cal Sans', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 11px 22px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { background: var(--teal-mid); transform: translateY(-1px); }
+
+  .btn-secondary {
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--ironstone);
+    font-family: 'Cal Sans', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 10px 22px;
+    border-radius: 4px;
+    border: 2px solid var(--ironstone);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.15s, color 0.15s;
+  }
+  .btn-secondary:hover { background: var(--ironstone); color: #fff; }
+
+  .btn-outline-ochre {
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--teal);
+    font-family: 'Cal Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 9px 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--teal);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.15s, color 0.15s;
+  }
+  .btn-outline-ochre:hover { background: var(--teal); color: #fff; }
+
+  .section-label {
+    font-family: 'Cal Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid var(--saltflat);
+    border-radius: 8px;
+    padding: 32px;
+  }
+
+  .faq-item { border-bottom: 1px solid var(--saltflat); }
+  .faq-question {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 20px 0;
+    font-family: 'Cal Sans', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--ironstone);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .faq-answer {
+    display: none;
+    padding-bottom: 20px;
+    color: var(--charcoal);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  .faq-answer.open { display: block; }
+
+  .form-field {
+    width: 100%;
+    background: #fff;
+    border: 1.5px solid var(--saltflat);
+    border-radius: 4px;
+    padding: 12px 14px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    color: var(--ironstone);
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  .form-field:focus { border-color: var(--teal); }
+  .form-field::placeholder { color: var(--charcoal-light); }
+
+  label {
+    font-family: 'Cal Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ironstone);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .guarantee-box {
+    background: var(--oxblood-light);
+    border-left: 4px solid var(--oxblood);
+    border-radius: 6px;
+    padding: 40px 48px;
+  }
+
+  #mobile-menu { display: none; }
+  #mobile-menu.open { display: flex; }
+
+  @media (max-width: 768px) {
+    .guarantee-box { padding: 28px 24px; }
+  }
+
+  .tex-light, .tex-dark { position: relative; }
+  .tex-light::before, .tex-dark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      radial-gradient(circle, rgba(20,60,74,0.025) 1px, transparent 1px),
+      radial-gradient(circle, rgba(20,60,74,0.018) 1px, transparent 1px),
+      radial-gradient(circle, rgba(20,60,74,0.020) 1px, transparent 1px),
+      radial-gradient(circle, rgba(20,60,74,0.015) 1px, transparent 1px);
+    background-size: 4px 4px, 7px 7px, 11px 11px, 17px 17px;
+    background-position: 0 0, 3px 2px, 5px 8px, 12px 4px;
+  }
+  .tex-dark::before {
+    background-image:
+      radial-gradient(circle, rgba(20,60,74,0.035) 1px, transparent 1px),
+      radial-gradient(circle, rgba(20,60,74,0.025) 1px, transparent 1px),
+      radial-gradient(circle, rgba(20,60,74,0.028) 1px, transparent 1px),
+      radial-gradient(circle, rgba(20,60,74,0.018) 1px, transparent 1px);
+    background-size: 4px 4px, 7px 7px, 11px 11px, 17px 17px;
+    background-position: 0 0, 3px 2px, 5px 8px, 12px 4px;
+  }
+  .tex-light > *, .tex-dark > * { position: relative; z-index: 1; }
+
+  .rule { border: none; border-top: 1px solid var(--saltflat); }
+
+  .photo-placeholder {
+    background: var(--saltflat);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--charcoal-light);
+    font-family: 'Cal Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .testimonial-slot {
+    border: 1.5px dashed var(--saltflat);
+    border-radius: 6px;
+    padding: 24px;
+    color: var(--charcoal-light);
+    font-style: italic;
+    font-size: 15px;
+    text-align: center;
+  }
+</style>
+</head>
+<body class="bg-limestone">
+
+<div id="progress-bar"></div>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <div class="max-w-6xl mx-auto px-5 flex items-center justify-between h-16 gap-6">
+    <a href="#" class="flex-shrink-0" aria-label="Toolproof home">
+      <span style="font-family:'Cal Sans',sans-serif;font-weight:700;font-size:30px;color:var(--ironstone);letter-spacing:-0.03em;">
+        Tool<span style="color:var(--oxblood);">proof</span><sup style="font-size:0.45em;vertical-align:super;letter-spacing:0;font-family:'Manrope',sans-serif;">&reg;</sup>
+      </span>
+    </a>
+    <div class="hidden md:flex items-center gap-6 flex-1 justify-center">
+      <a href="#how-it-works" class="nav-link">How it works</a>
+      <a href="#offers" class="nav-link">Offers</a>
+      <a href="#who-its-for" class="nav-link">Who it is for</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#faq" class="nav-link">FAQ</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </div>
+    <a href="#contact" class="btn-primary hidden md:inline-block flex-shrink-0">{{ nav_cta_label }}</a>
+    <button id="hamburger" class="md:hidden p-2 rounded" aria-label="Open menu">
+      <svg width="22" height="16" viewBox="0 0 22 16" fill="none">
+        <rect y="0" width="22" height="2" rx="1" fill="var(--ironstone)"/>
+        <rect y="7" width="22" height="2" rx="1" fill="var(--ironstone)"/>
+        <rect y="14" width="22" height="2" rx="1" fill="var(--ironstone)"/>
+      </svg>
+    </button>
+  </div>
+  <div id="mobile-menu" class="md:hidden flex-col px-5 pb-4 gap-3 border-t" style="border-color:var(--saltflat);">
+    <a href="#how-it-works" class="nav-link py-2 block">How it works</a>
+    <a href="#offers" class="nav-link py-2 block">Offers</a>
+    <a href="#who-its-for" class="nav-link py-2 block">Who it is for</a>
+    <a href="#about" class="nav-link py-2 block">About</a>
+    <a href="#faq" class="nav-link py-2 block">FAQ</a>
+    <a href="#contact" class="nav-link py-2 block">Contact</a>
+    <a href="#contact" class="btn-primary mt-2 w-full text-center">{{ nav_cta_label }}</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="py-20 md:py-32 tex-light">
+  <div class="max-w-4xl mx-auto px-5 text-center">
+    <span class="section-label">{{ hero_location_label }}</span>
+    <h1 class="text-4xl md:text-6xl mb-6" style="letter-spacing:-0.03em;line-height:1.1;">
+      {{ hero_heading }}
+    </h1>
+    <p class="text-xl md:text-2xl mb-10 mx-auto max-w-2xl" style="color:var(--charcoal-light);font-family:'Manrope',sans-serif;font-weight:400;line-height:1.6;">
+      {{ hero_subheading }}<br /><strong style="color:var(--oxblood);font-weight:700;">{{ hero_subheading_emphasis }}</strong>
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center mb-10">
+      <a href="#contact" class="btn-primary text-center" style="font-size:16px;padding:14px 28px;">{{ hero_cta_primary_label }}</a>
+      <a href="#contact" class="btn-secondary text-center" style="font-size:16px;padding:13px 28px;">{{ hero_cta_secondary_label }}</a>
+    </div>
+    <p style="color:var(--charcoal-light);font-family:'Cal Sans',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.02em;">
+      {{ hero_location_note }}
+    </p>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF STRIP -->
+<section style="background:var(--saltflat);border-top:1px solid var(--saltflat);border-bottom:1px solid #d4d0c8;" class="py-12 tex-dark">
+  <div class="max-w-6xl mx-auto px-5">
+    <p style="text-align:center;font-family:'Cal Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--charcoal-light);margin-bottom:32px;">{{ social_proof_label }}</p>
+    <div class="flex flex-wrap items-center justify-center gap-10 md:gap-16">
+      {{ social_proof_clients }}
+    </div>
+  </div>
+</section>
+
+<!-- THE PROBLEM -->
+<section style="background:var(--saltflat);" class="py-16 md:py-24 tex-dark">
+  <div class="max-w-6xl mx-auto px-5">
+    <div class="mb-12">
+      <span class="section-label">{{ problems_section_label }}</span>
+      <h2 class="text-3xl md:text-4xl max-w-3xl">{{ problems_heading }}</h2>
+    </div>
+    <div class="grid md:grid-cols-2 gap-8">
+
+      <!-- Problem 1 -->
+      <div class="card flex flex-col gap-5">
+        <div>
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="var(--teal-light)"/><rect x="9" y="12" width="22" height="16" rx="2" stroke="var(--teal)" stroke-width="1.5"/><path d="M14 20H18" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round"/><path d="M14 24H20" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round"/><circle cx="27" cy="13" r="5" fill="var(--oxblood)"/><path d="M25 13H29M27 11V15" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="flex flex-col flex-1">
+          <h3 class="text-xl mb-3">{{ problems_p1_heading }}</h3>
+          <p style="color:var(--charcoal);font-size:16px;line-height:1.75;margin-bottom:16px;flex:1;">{{ problems_p1_body }}</p>
+          <div style="border-top:1px solid var(--saltflat);padding-top:16px;margin-top:4px;">
+            <p style="font-family:'Cal Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:var(--oxblood);text-transform:uppercase;margin-bottom:12px;">{{ problems_p1_checklist_label }}</p>
+            <ul class="space-y-3" style="font-size:15px;color:var(--charcoal);">
+              {{ problems_p1_checklist }}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem 2 -->
+      <div class="card flex flex-col gap-5">
+        <div>
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="var(--teal-light)"/><rect x="9" y="10" width="14" height="18" rx="2" stroke="var(--teal)" stroke-width="1.5"/><path d="M12 15H20" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round"/><path d="M12 19H18" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round"/><path d="M12 23H16" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round"/><circle cx="28" cy="27" r="6" fill="var(--oxblood)"/><path d="M26 27L27.5 28.5L30.5 25.5" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="flex flex-col flex-1">
+          <h3 class="text-xl mb-3">{{ problems_p2_heading }}</h3>
+          <p style="color:var(--charcoal);font-size:16px;line-height:1.75;margin-bottom:16px;flex:1;">{{ problems_p2_body }}</p>
+          <div style="border-top:1px solid var(--saltflat);padding-top:16px;margin-top:4px;">
+            <p style="font-family:'Cal Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:var(--oxblood);text-transform:uppercase;margin-bottom:12px;">{{ problems_p2_checklist_label }}</p>
+            <ul class="space-y-3" style="font-size:15px;color:var(--charcoal);">
+              {{ problems_p2_checklist }}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS / PROOF LOOP -->
+<section id="how-it-works" class="py-16 md:py-28 tex-light">
+  <div class="max-w-6xl mx-auto px-5">
+    <div class="mb-10">
+      <span class="section-label">{{ hiw_section_label }}</span>
+      <h2 class="text-3xl md:text-4xl mb-5 max-w-2xl">{{ hiw_heading }}</h2>
+      <p class="text-lg max-w-3xl" style="color:var(--charcoal-light);">{{ hiw_intro }}</p>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-12 items-start">
+
+      <!-- LEFT: Narrative -->
+      <div>
+        <div class="mb-8">
+          <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;">
+            <div style="width:28px;height:2px;background:var(--teal);border-radius:2px;"></div>
+            <span style="font-family:'Cal Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);">{{ hiw_phase1_label }}</span>
+          </div>
+          <p style="font-size:15px;color:var(--charcoal-light);margin-bottom:16px;">{{ hiw_phase1_intro }}</p>
+          <div class="space-y-4">
+            {{ hiw_phase1_steps }}
+          </div>
+        </div>
+        <div class="mb-8">
+          <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;">
+            <div style="width:28px;height:2px;background:var(--oxblood);border-radius:2px;"></div>
+            <span style="font-family:'Cal Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--oxblood);">{{ hiw_phase2_label }}</span>
+          </div>
+          <p style="font-size:15px;color:var(--charcoal-light);margin-bottom:16px;">{{ hiw_phase2_intro }}</p>
+          <div class="space-y-4">
+            {{ hiw_phase2_steps }}
+          </div>
+        </div>
+        <div style="background:var(--teal-light);border-left:3px solid var(--teal);border-radius:4px;padding:20px 24px;">
+          <p style="font-family:'Cal Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:12px;">{{ hiw_outcomes_label }}</p>
+          <ul class="space-y-2" style="font-size:15px;color:var(--charcoal);">
+            {{ hiw_outcomes }}
+          </ul>
+        </div>
+      </div>
+
+      <!-- RIGHT: Diagram (static — edit via code) -->
+      <div class="hidden lg:block">
+        <div style="position:sticky;top:88px;">
+          <div class="card" style="padding:32px 28px;">
+            <div style="margin-bottom:24px;">
+              <p style="font-family:'Cal Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--charcoal-light);margin-bottom:14px;">Entry</p>
+              <div style="display:flex;align-items:center;gap:0;">
+                <div style="text-align:center;"><div style="background:var(--teal-light);border:1.5px solid var(--teal);border-radius:6px;padding:8px 12px;font-size:12px;font-family:'Cal Sans',sans-serif;color:var(--teal);font-weight:700;white-space:nowrap;">Pre-Inspection</div><div style="font-size:11px;color:var(--charcoal-light);margin-top:4px;">5 min, free</div></div>
+                <div style="flex:1;height:1.5px;background:var(--charcoal-light);position:relative;min-width:16px;"><div style="position:absolute;right:-1px;top:-4px;width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-left:6px solid var(--charcoal-light);"></div></div>
+                <div style="text-align:center;"><div style="background:var(--teal);border-radius:6px;padding:8px 12px;font-size:12px;font-family:'Cal Sans',sans-serif;color:#fff;font-weight:700;white-space:nowrap;">Initial Inspection</div><div style="font-size:11px;color:var(--charcoal-light);margin-top:4px;">Call + report, free</div></div>
+              </div>
+            </div>
+            <div style="margin-bottom:24px;">
+              <p style="font-family:'Cal Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--charcoal-light);margin-bottom:14px;">Foundations</p>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><div style="width:3px;height:36px;background:var(--teal);border-radius:2px;flex-shrink:0;"></div><div style="flex:1;"><div style="background:var(--teal-light);border:1.5px solid var(--teal);border-radius:6px;padding:7px 12px;font-size:12px;font-family:'Cal Sans',sans-serif;color:var(--teal);font-weight:700;">Form Foundations</div></div><div style="font-size:11px;color:var(--charcoal-light);font-style:italic;white-space:nowrap;">Starting fresh</div></div>
+              <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:36px;background:var(--ironstone);border-radius:2px;flex-shrink:0;"></div><div style="flex:1;"><div style="background:var(--saltflat);border:1.5px solid var(--ironstone);border-radius:6px;padding:7px 12px;font-size:12px;font-family:'Cal Sans',sans-serif;color:var(--ironstone);font-weight:700;">Fix Foundations</div></div><div style="font-size:11px;color:var(--charcoal-light);font-style:italic;white-space:nowrap;">Established business</div></div>
+              <div style="display:flex;align-items:center;gap:0;margin-top:10px;padding-left:11px;"><div style="height:1.5px;flex:1;background:var(--charcoal-light);position:relative;"><div style="position:absolute;right:-1px;top:-4px;width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-left:6px solid var(--charcoal-light);"></div></div><div style="background:var(--ironstone);border-radius:6px;padding:7px 14px;font-size:12px;font-family:'Cal Sans',sans-serif;color:#fff;font-weight:700;margin-left:8px;">Start / Restart</div></div>
+            </div>
+            <div>
+              <p style="font-family:'Cal Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--oxblood);margin-bottom:16px;">The Proof Loop</p>
+              <div style="position:relative;display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--oxblood-light);border:1.5px solid var(--oxblood);border-radius:10px;padding:20px 16px 16px;">
+                <div style="text-align:center;padding:8px 4px;"><div style="display:inline-block;background:var(--oxblood);color:#fff;font-family:'Cal Sans',sans-serif;font-size:13px;font-weight:700;border-radius:6px;padding:8px 16px;margin-bottom:4px;">Decide</div><div style="font-size:11px;color:var(--oxblood);font-style:italic;">What will pay off?</div></div>
+                <div style="text-align:center;padding:8px 4px;"><div style="display:inline-block;background:var(--oxblood);color:#fff;font-family:'Cal Sans',sans-serif;font-size:13px;font-weight:700;border-radius:6px;padding:8px 16px;margin-bottom:4px;">Act</div><div style="font-size:11px;color:var(--oxblood);font-style:italic;">Do the thing.</div></div>
+                <div style="grid-column:1/-1;display:flex;justify-content:center;align-items:center;padding:4px 0;">
+                  <svg width="180" height="28" viewBox="0 0 180 28" fill="none"><path d="M30 14 Q30 4 90 4 Q150 4 150 14" stroke="var(--oxblood)" stroke-width="1.5" stroke-dasharray="4 3" fill="none" stroke-linecap="round"/><path d="M27 11L30 14L33 11" stroke="var(--oxblood)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M150 14 Q150 24 90 24 Q30 24 30 14" stroke="var(--oxblood)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div style="text-align:center;padding:8px 4px;"><div style="display:inline-block;background:var(--oxblood);color:#fff;font-family:'Cal Sans',sans-serif;font-size:13px;font-weight:700;border-radius:6px;padding:8px 16px;margin-bottom:4px;">Prove</div><div style="font-size:11px;color:var(--oxblood);font-style:italic;">Did it earn its keep?</div></div>
+                <div style="text-align:center;padding:8px 4px;"><div style="display:inline-block;background:var(--oxblood);color:#fff;font-family:'Cal Sans',sans-serif;font-size:13px;font-weight:700;border-radius:6px;padding:8px 16px;margin-bottom:4px;">Measure</div><div style="font-size:11px;color:var(--oxblood);font-style:italic;">In money, not likes.</div></div>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;">
+                  <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="var(--oxblood)" stroke-width="1" stroke-dasharray="3 3"/><path d="M12 20C12 20 14 14 18 14C22 14 24 20 24 20" stroke="var(--oxblood)" stroke-width="1.2" stroke-linecap="round" fill="none"/><path d="M22 18L24 20L26 18" stroke="var(--oxblood)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="rule mt-16 mb-16" />
+
+    <div class="text-center mb-10">
+      <span class="section-label">{{ diff_section_label }}</span>
+      <h2 class="text-3xl md:text-4xl">{{ diff_heading }}</h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      {{ diff_items }}
+    </div>
+  </div>
+</section>
+
+<!-- OFFERS -->
+<section id="offers" style="background:var(--saltflat);" class="py-16 md:py-28 tex-dark">
+  <div class="max-w-6xl mx-auto px-5">
+    <div class="text-center mb-4">
+      <span class="section-label">{{ offers_section_label }}</span>
+      <h2 class="text-3xl md:text-4xl mb-4">{{ offers_heading }}</h2>
+      <p class="text-lg max-w-2xl mx-auto" style="color:var(--charcoal-light);">{{ offers_intro }}</p>
+    </div>
+    <div class="card mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4" style="background:var(--ironstone);border-color:var(--ironstone);">
+      <div>
+        <div style="font-family:'Cal Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);margin-bottom:6px;">{{ offers_free_label }}</div>
+        <h3 style="color:#fff;font-size:20px;margin-bottom:4px;">{{ offers_free_heading }}</h3>
+        <p style="color:rgba(255,255,255,0.65);font-size:15px;">{{ offers_free_body }}</p>
+      </div>
+      <a href="#contact" class="btn-primary flex-shrink-0" style="white-space:nowrap;">{{ offers_free_cta }}</a>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6 mb-6">
+      {{ offers_core }}
+    </div>
+    <div class="card" style="padding:20px 28px;">
+      <span style="font-family:'Cal Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--charcoal-light);margin-right:16px;">Add-ons available:</span>
+      <span style="font-size:15px;color:var(--charcoal);">{{ offers_addons }}</span>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section id="who-its-for" class="py-16 md:py-28 tex-light">
+  <div class="max-w-6xl mx-auto px-5">
+    <div class="text-center mb-12">
+      <span class="section-label">{{ wit_section_label }}</span>
+      <h2 class="text-3xl md:text-4xl">{{ wit_heading }}</h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      {{ wit_segments }}
+    </div>
+    <div class="grid md:grid-cols-2 gap-6 mt-10">
+      {{ wit_testimonials }}
+    </div>
+  </div>
+</section>
+
+<!-- GUARANTEE -->
+<section id="guarantee" style="background:var(--saltflat);" class="py-16 md:py-24 tex-dark">
+  <div class="max-w-4xl mx-auto px-5">
+    <div class="text-center mb-10">
+      <span class="section-label">{{ guarantee_section_label }}</span>
+      <h2 class="text-3xl md:text-4xl">{{ guarantee_heading }}</h2>
+    </div>
+    <div class="guarantee-box">
+      <svg width="32" height="24" viewBox="0 0 32 24" fill="none" class="mb-6"><path d="M0 24C0 24 4 12 12 8C8 8 6 4 6 0C10 0 14 4 14 8C14 4 18 0 24 0C24 4 20 8 16 8C22 8 26 16 26 24" fill="none" stroke="var(--oxblood)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <p style="font-family:'Cal Sans',sans-serif;font-size:20px;font-weight:500;color:var(--ironstone);line-height:1.5;margin-bottom:0;">{{ guarantee_body }}</p>
+    </div>
+    <p style="text-align:center;font-size:16px;color:var(--charcoal-light);margin-top:20px;">{{ guarantee_footnote }}</p>
+    <div class="flex justify-center mt-8">
+      <a href="#contact" class="btn-primary" style="font-size:16px;padding:14px 32px;background:var(--oxblood);">{{ guarantee_cta_label }}</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="py-16 md:py-28 tex-light">
+  <div class="max-w-6xl mx-auto px-5">
+    <div class="grid md:grid-cols-2 gap-12 items-start">
+      <div>
+        <span class="section-label">{{ about_section_label }}</span>
+        <h2 class="text-3xl md:text-4xl mb-6">{{ about_heading }}</h2>
+        <p style="font-size:17px;margin-bottom:16px;color:var(--charcoal);">{{ about_bio_1 }}</p>
+        <p style="font-size:17px;margin-bottom:16px;color:var(--charcoal);">{{ about_bio_2 }}</p>
+        <p style="font-size:17px;margin-bottom:24px;color:var(--charcoal);">{{ about_bio_3 }}</p>
+        <div style="border-top:1px solid var(--saltflat);padding-top:20px;margin-top:4px;">
+          <p style="font-size:15px;color:var(--charcoal-light);">{{ about_footnote }}</p>
+        </div>
+      </div>
+      <div>
+        <div class="photo-placeholder mb-8" style="height:280px;">[PHOTO: Rob Jefferson]</div>
+        <div class="card">
+          <h4 style="font-size:16px;margin-bottom:14px;">{{ about_how_we_work_heading }}</h4>
+          <ul class="space-y-3" style="font-size:15px;">
+            {{ about_how_we_work }}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background:var(--saltflat);" class="py-16 md:py-28 tex-dark">
+  <div class="max-w-3xl mx-auto px-5">
+    <div class="text-center mb-12">
+      <span class="section-label">{{ faq_section_label }}</span>
+      <h2 class="text-3xl md:text-4xl">{{ faq_heading }}</h2>
+    </div>
+    <div id="faq-list">
+      {{ faq_items }}
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="py-16 md:py-28 tex-light">
+  <div class="max-w-3xl mx-auto px-5">
+    <div class="text-center mb-12">
+      <span class="section-label">{{ contact_section_label }}</span>
+      <h2 class="text-3xl md:text-4xl mb-4">{{ contact_heading }}</h2>
+      <p style="font-size:17px;color:var(--charcoal-light);">{{ contact_intro }}</p>
+    </div>
+    <div class="grid sm:grid-cols-2 gap-4 mb-10">
+      <a href="{{ contact_calendar_url }}" class="card flex items-center gap-4 no-underline" style="text-decoration:none;">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="flex-shrink:0;"><rect x="4" y="6" width="24" height="22" rx="3" stroke="var(--teal)" stroke-width="1.5"/><path d="M4 12H28" stroke="var(--teal)" stroke-width="1.5"/><path d="M10 4V8M22 4V8" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round"/><rect x="9" y="16" width="4" height="4" rx="1" fill="var(--teal)" opacity="0.5"/><rect x="15" y="16" width="4" height="4" rx="1" fill="var(--teal)" opacity="0.5"/></svg>
+        <div>
+          <div style="font-family:'Cal Sans',sans-serif;font-weight:700;font-size:14px;color:var(--ironstone);">{{ contact_calendar_label }}</div>
+          <div style="font-size:13px;color:var(--charcoal-light);">{{ contact_calendar_note }}</div>
+        </div>
+      </a>
+      <a href="mailto:{{ contact_email_address }}" class="card flex items-center gap-4 no-underline" style="text-decoration:none;">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="flex-shrink:0;"><rect x="4" y="8" width="24" height="16" rx="3" stroke="var(--teal)" stroke-width="1.5"/><path d="M4 11L16 19L28 11" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div>
+          <div style="font-family:'Cal Sans',sans-serif;font-weight:700;font-size:14px;color:var(--ironstone);">{{ contact_email_label }}</div>
+          <div style="font-size:13px;color:var(--charcoal-light);">{{ contact_email_address }}</div>
+        </div>
+      </a>
+    </div>
+    <div id="contact-form-wrap">
+      <div class="card" style="padding:36px;">
+        <div class="grid sm:grid-cols-2 gap-5 mb-5">
+          <div>
+            <label for="f-name">{{ contact_form_name_label }}</label>
+            <input id="f-name" type="text" class="form-field" placeholder="Your name" autocomplete="name" />
+          </div>
+          <div>
+            <label for="f-business">{{ contact_form_business_label }}</label>
+            <input id="f-business" type="text" class="form-field" placeholder="Your business" autocomplete="organization" />
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-5 mb-5">
+          <div>
+            <label for="f-email">{{ contact_form_email_label }}</label>
+            <input id="f-email" type="email" class="form-field" placeholder="you@example.com" autocomplete="email" />
+          </div>
+          <div>
+            <label for="f-phone">{{ contact_form_phone_label }} <span style="font-weight:400;color:var(--charcoal-light);">(optional)</span></label>
+            <input id="f-phone" type="tel" class="form-field" placeholder="08 XXXX XXXX" autocomplete="tel" />
+          </div>
+        </div>
+        <div class="mb-6">
+          <label for="f-problem">{{ contact_form_message_label }}</label>
+          <textarea id="f-problem" class="form-field" rows="4" placeholder="{{ contact_form_message_placeholder }}"></textarea>
+        </div>
+        <button id="form-submit" class="btn-primary w-full text-center" style="font-size:16px;padding:14px;">{{ contact_form_submit_label }}</button>
+      </div>
+    </div>
+    <div id="form-thanks" class="card text-center" style="padding:48px 36px;display:none;">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" class="mx-auto mb-4"><circle cx="24" cy="24" r="22" stroke="var(--teal)" stroke-width="1.5"/><path d="M15 24L21 30L33 18" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h3 style="font-size:24px;margin-bottom:8px;">{{ contact_form_thanks_heading }}</h3>
+      <p style="color:var(--charcoal-light);font-size:16px;">{{ contact_form_thanks_body }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background:var(--ironstone);color:rgba(255,255,255,0.6);" class="py-10">
+  <div class="max-w-6xl mx-auto px-5">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-6">
+      <span style="font-family:'Cal Sans',sans-serif;font-weight:700;font-size:20px;color:#fff;letter-spacing:-0.03em;">Tool<span style="color:var(--oxblood);">proof</span><sup style="font-size:0.45em;vertical-align:super;letter-spacing:0;font-family:'Manrope',sans-serif;">&reg;</sup></span>
+      <div class="flex flex-wrap gap-6">
+        <a href="#how-it-works" style="color:rgba(255,255,255,0.5);text-decoration:none;">How it works</a>
+        <a href="#offers" style="color:rgba(255,255,255,0.5);text-decoration:none;">Offers</a>
+        <a href="#about" style="color:rgba(255,255,255,0.5);text-decoration:none;">About</a>
+        <a href="#contact" style="color:rgba(255,255,255,0.5);text-decoration:none;">Contact</a>
+      </div>
+    </div>
+    <hr style="border:none;border-top:1px solid rgba(255,255,255,0.1);margin-bottom:20px;" />
+    <div class="flex flex-col sm:flex-row sm:justify-between gap-4" style="font-size:13px;">
+      <div>
+        <p style="margin-bottom:2px;">&copy; {{ footer_copyright_year }} Toolproof. ABN {{ footer_abn }}. {{ footer_location }}.</p>
+        <p>{{ footer_tagline }}</p>
+      </div>
+      <div class="flex gap-5 items-start">
+        <a href="#" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy note</a>
+        <a href="#" style="color:rgba(255,255,255,0.5);text-decoration:none;">AI use and data handling</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('scroll', function() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.body.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    document.getElementById('progress-bar').style.width = progress + '%';
+  });
+
+  document.getElementById('hamburger').addEventListener('click', function() {
+    document.getElementById('mobile-menu').classList.toggle('open');
+  });
+
+  document.querySelectorAll('#mobile-menu a').forEach(function(link) {
+    link.addEventListener('click', function() {
+      document.getElementById('mobile-menu').classList.remove('open');
+    });
+  });
+
+  document.querySelectorAll('.faq-question').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const answer = btn.nextElementSibling;
+      const isOpen = answer.classList.contains('open');
+      document.querySelectorAll('.faq-answer').forEach(function(a) { a.classList.remove('open'); });
+      document.querySelectorAll('.faq-question').forEach(function(b) {
+        b.setAttribute('aria-expanded', 'false');
+        b.querySelector('.faq-icon').style.transform = 'rotate(0deg)';
+      });
+      if (!isOpen) {
+        answer.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.querySelector('.faq-icon').style.transform = 'rotate(180deg)';
+      }
+    });
+  });
+
+  document.getElementById('form-submit').addEventListener('click', function() {
+    const name = document.getElementById('f-name').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    if (!name || !email) {
+      alert('Please enter your name and email address to continue.');
+      return;
+    }
+    document.getElementById('contact-form-wrap').style.display = 'none';
+    document.getElementById('form-thanks').style.display = 'block';
+  });
+</script>
+</body>
+</html>
