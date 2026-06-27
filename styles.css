@@ -590,6 +590,158 @@ body {
     line-height: var(--leading-snug);
 }
 
+.tp-footer__acknowledgement {
+    font-size: var(--text-xs);
+    color: var(--text-on-dark-muted);
+    line-height: var(--leading-body);
+    max-width: 36rem;
+    text-align: center;
+    border-top: var(--border-width) solid rgba(255, 255, 255, 0.1);
+    padding-top: var(--space-6);
+    margin-top: var(--space-2);
+}
+
+/* ============================================================
+   Why Toolproof section
+============================================================ */
+.tp-why {
+    background-color: var(--surface-page);
+    --grain-color: 20, 60, 74;
+    padding: var(--space-28) var(--space-6);
+}
+.tp-why__container {
+    max-width: var(--container-max);
+    width: 100%;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+}
+.tp-why__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    align-items: center;
+    text-align: center;
+}
+.tp-why__headline {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    color: var(--text-strong);
+    font-size: clamp(var(--text-2xl), 4vw, var(--text-3xl));
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-heading);
+}
+.tp-why__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+}
+.tp-why-card {
+    background-color: var(--surface-card);
+    border: var(--border-width) solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-10);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    box-shadow: var(--shadow-card);
+}
+.tp-why-card__icon-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: var(--tp-teal-xlight);
+    color: var(--tp-teal);
+    font-size: 24px;
+    flex-shrink: 0;
+}
+.tp-why-card__headline {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    color: var(--text-strong);
+    font-size: var(--text-lg);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
+}
+.tp-why-card__body {
+    color: var(--text-muted);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+}
+
+/* ============================================================
+   About / founder section
+============================================================ */
+.tp-about {
+    background-color: var(--surface-page);
+    padding: var(--space-28) var(--space-6);
+}
+.tp-about__container {
+    max-width: var(--container-max);
+    width: 100%;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+.tp-about__eyebrow { color: var(--text-accent); }
+.tp-about__body {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    grid-template-areas: "text image";
+    gap: var(--space-16);
+    align-items: start;
+}
+.tp-about__image-wrap {
+    grid-area: image;
+    align-self: start;
+}
+.tp-about__image {
+    display: block;
+    width: 340px;
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    border: 3px solid var(--tp-teal);
+    box-shadow: 8px 8px 0 var(--tp-oxblood);
+}
+.tp-about__text {
+    grid-area: text;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+.tp-about__headline {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    color: var(--text-strong);
+    font-size: clamp(var(--text-xl), 3vw, var(--text-2xl));
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
+}
+.tp-about__text p {
+    color: var(--text-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+}
+
+@media (max-width: 768px) {
+    .tp-about__body {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "image"
+            "text";
+    }
+    .tp-about__image {
+        width: 260px;
+        margin: 0 auto;
+    }
+}
+
 /* ============================================================
    Closing CTA section
    Dark/grain bookend to the hero.
@@ -654,15 +806,19 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: flex-end;
+    align-items: center;
     gap: var(--space-4);
     padding-top: var(--space-4);
 }
-.tp-closing__action-wrap {
+.tp-btn-badge-wrap {
+    position: relative;
     display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
+}
+.tp-badge--overlay {
+    position: absolute;
+    top: -11px;
+    left: 10px;
+    z-index: 1;
 }
 .tp-closing__note {
     color: var(--text-on-dark-muted);
@@ -688,7 +844,8 @@ html { scroll-behavior: smooth; }
 /* === Responsive === */
 @media (max-width: 768px) {
     .tp-problems__grid,
-    .tp-fix__phases {
+    .tp-fix__phases,
+    .tp-why__grid {
         grid-template-columns: 1fr;
     }
 
@@ -753,12 +910,17 @@ html { scroll-behavior: smooth; }
     .tp-hero,
     .tp-problems,
     .tp-fix,
+    .tp-why,
+    .tp-about,
     .tp-closing,
     .tp-site-nav {
         padding-inline: var(--space-5);
     }
     .tp-hero__actions {
         flex-direction: column;
+    }
+    .tp-hero__actions .tp-btn-badge-wrap {
+        width: 100%;
     }
     .tp-btn {
         width: 100%;
