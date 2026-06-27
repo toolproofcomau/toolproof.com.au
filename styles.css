@@ -1,0 +1,506 @@
+/* === Design system: colour tokens === */
+:root {
+    --tp-ironstone:       #0D1F25;
+    --tp-teal:            #143C4A;
+    --tp-teal-mid:        #1E5568;
+    --tp-teal-light:      #D4E8EE;
+    --tp-teal-xlight:     #EBF4F6;
+    --tp-oxblood:         #6B1F2A;
+    --tp-oxblood-mid:     #8C2937;
+    --tp-oxblood-light:   #F4E0E3;
+    --tp-limestone:       #EFEFE9;
+    --tp-saltflat:        #E3E0DA;
+    --tp-saltflat-deep:   #D4D0C8;
+    --tp-charcoal:        #2C3A3E;
+    --tp-charcoal-light:  #5A7278;
+    --tp-white:           #FFFFFF;
+
+    --surface-page:            var(--tp-limestone);
+    --surface-band:            var(--tp-saltflat);
+    --surface-card:            var(--tp-white);
+    --surface-dark:            var(--tp-ironstone);
+    --text-strong:             var(--tp-ironstone);
+    --text-body:               var(--tp-charcoal);
+    --text-muted:              var(--tp-charcoal-light);
+    --text-on-dark:            var(--tp-white);
+    --text-on-dark-muted:      rgba(255, 255, 255, 0.65);
+    --text-accent:             var(--tp-teal);
+    --text-emphasis:           var(--tp-oxblood);
+    --border-subtle:           var(--tp-saltflat);
+    --border-strong:           var(--tp-ironstone);
+    --border-accent:           var(--tp-teal);
+    --action-emphasis:         var(--tp-oxblood);
+    --action-emphasis-hover:   var(--tp-oxblood-mid);
+    --action-emphasis-text:    var(--tp-white);
+    --focus-ring:              var(--tp-teal);
+}
+
+/* === Design system: typography tokens === */
+:root {
+    --font-display:     "Cal Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-body:        "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+    --weight-regular:   400;
+    --weight-medium:    500;
+    --weight-semibold:  600;
+    --weight-bold:      700;
+
+    --tracking-logo:    -0.03em;
+    --tracking-heading: -0.01em;
+    --tracking-button:   0.04em;
+    --eyebrow-tracking:  0.14em;
+
+    --leading-tight:    1.1;
+    --leading-heading:  1.2;
+    --leading-snug:     1.35;
+    --leading-body:     1.6;
+
+    --text-xs:   0.75rem;
+    --text-sm:   0.875rem;
+    --text-base: 1rem;
+    --text-md:   1.0625rem;
+    --text-lg:   1.25rem;
+    --text-xl:   1.5rem;
+    --text-2xl:  1.875rem;
+    --text-3xl:  2.25rem;
+    --text-5xl:  3.75rem;
+
+    --eyebrow-size:   var(--text-xs);
+    --eyebrow-weight: var(--weight-bold);
+}
+
+/* === Design system: spacing & shape tokens === */
+:root {
+    --space-1:  0.25rem;
+    --space-2:  0.5rem;
+    --space-3:  0.75rem;
+    --space-4:  1rem;
+    --space-5:  1.25rem;
+    --space-6:  1.5rem;
+    --space-8:  2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+    --space-28: 7rem;
+
+    --radius-sm:   4px;
+    --radius-md:   6px;
+    --radius-lg:   8px;
+
+    --border-width:        1px;
+    --border-width-strong: 1.5px;
+
+    --shadow-card: 0 1px 3px rgba(13, 31, 37, 0.05), 0 1px 2px rgba(13, 31, 37, 0.04);
+
+    --container-max:    72rem;
+    --nav-height:       64px;
+
+    --ease-standard:    cubic-bezier(0.2, 0, 0.2, 1);
+    --duration-fast:    0.12s;
+    --duration-base:    0.15s;
+}
+
+/* === Reset === */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--surface-page);
+    color: var(--text-body);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+::selection {
+    background: var(--tp-oxblood);
+    color: #fff;
+}
+
+/* === Grain texture === */
+.tp-grain {
+    position: relative;
+    --grain-color: 20, 60, 74;
+}
+.tp-grain > * { position: relative; z-index: 1; }
+.tp-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+        radial-gradient(circle, rgba(var(--grain-color), 0.07) 1px, transparent 1px),
+        radial-gradient(circle, rgba(var(--grain-color), 0.05) 1px, transparent 1px),
+        radial-gradient(circle, rgba(var(--grain-color), 0.06) 1px, transparent 1px),
+        radial-gradient(circle, rgba(var(--grain-color), 0.04) 1px, transparent 1px);
+    background-size: 4px 4px, 7px 7px, 11px 11px, 17px 17px;
+    background-position: 0 0, 3px 2px, 5px 8px, 12px 4px;
+}
+
+/* === Wordmark === */
+.tp-wordmark {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    font-size: 36px;
+    letter-spacing: var(--tracking-logo);
+    line-height: 1;
+    color: var(--text-strong);
+    white-space: nowrap;
+}
+.tp-wordmark--light { color: var(--text-on-dark); }
+.tp-wordmark--light .tp-wordmark__reg { color: var(--text-on-dark); }
+.tp-wordmark__tool { color: var(--text-emphasis); }
+.tp-wordmark__proof { color: var(--text-emphasis); }
+.tp-wordmark__reg {
+    color: var(--text-strong);
+    font-size: 0.42em;
+    vertical-align: super;
+    letter-spacing: 0;
+    font-family: var(--font-body);
+    font-weight: var(--weight-semibold);
+}
+
+/* === Eyebrow label === */
+.tp-eyebrow {
+    font-family: var(--font-display);
+    font-size: var(--eyebrow-size);
+    font-weight: var(--eyebrow-weight);
+    letter-spacing: var(--eyebrow-tracking);
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+/* === Buttons === */
+.tp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: var(--weight-semibold);
+    font-size: 15px;
+    letter-spacing: var(--tracking-button);
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    padding: 11px 22px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition:
+        background var(--duration-base) var(--ease-standard),
+        border-color var(--duration-base) var(--ease-standard),
+        color var(--duration-base) var(--ease-standard),
+        transform var(--duration-fast) var(--ease-standard);
+}
+.tp-btn:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
+}
+.tp-btn--emphasis {
+    background: var(--action-emphasis);
+    color: var(--action-emphasis-text);
+    border-color: var(--action-emphasis);
+}
+.tp-btn--emphasis:hover {
+    background: var(--action-emphasis-hover);
+    border-color: var(--action-emphasis-hover);
+    transform: translateY(-1px);
+}
+.tp-btn--ghost {
+    background: transparent;
+    color: var(--text-on-dark);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+.tp-btn--ghost:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================================
+   Site nav
+   Sticky limestone header; sits above and is excluded from
+   the hero's min-height so nav + hero = 100svh on load.
+============================================================ */
+.tp-site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: var(--nav-height);
+    background-color: var(--surface-page);
+    border-bottom: var(--border-width) solid var(--border-subtle);
+    box-shadow: 0 1px 8px rgba(13, 31, 37, 0.5);
+    display: flex;
+    align-items: center;
+    padding-inline: var(--space-6);
+}
+.tp-site-nav__container {
+    max-width: var(--container-max);
+    width: 100%;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+}
+
+/* ============================================================
+   Hero
+============================================================ */
+.tp-hero {
+    background-color: var(--surface-dark);
+    --grain-color: 255, 255, 255;
+    min-height: calc(75svh - var(--nav-height));
+    display: flex;
+    align-items: center;
+    padding: var(--space-20) var(--space-6);
+}
+.tp-hero__container {
+    max-width: var(--container-max);
+    width: 100%;
+    margin-inline: auto;
+}
+.tp-hero__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    max-width: 52rem;
+}
+.tp-hero__eyebrow { color: var(--text-on-dark); }
+.tp-hero__headline {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    color: var(--text-on-dark);
+    font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-heading);
+}
+.tp-hero__lead {
+    font-size: var(--text-xl);
+    color: var(--text-on-dark-muted);
+    line-height: var(--leading-snug);
+    max-width: 46ch;
+}
+.tp-hero__lead strong {
+    color: var(--text-on-dark);
+    font-weight: var(--weight-bold);
+}
+.tp-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+}
+
+/* ============================================================
+   The Problem section
+   Alternates from the ironstone hero with limestone ground.
+============================================================ */
+.tp-problems {
+    background-color: var(--surface-page);
+    padding: var(--space-28) var(--space-6);
+}
+.tp-problems__container {
+    max-width: var(--container-max);
+    width: 100%;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+}
+.tp-problems__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    max-width: 44rem;
+}
+.tp-problems__headline {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    color: var(--text-strong);
+    font-size: clamp(var(--text-xl), 3vw, var(--text-3xl));
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
+}
+
+.tp-problems__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+}
+
+.tp-problem-card {
+    background-color: var(--surface-card);
+    border: var(--border-width) solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-10);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    box-shadow: var(--shadow-card);
+}
+.tp-problem-card__illustration {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    display: block;
+}
+.tp-problem-card__label--tools { color: var(--text-emphasis); }
+.tp-problem-card__label--proof { color: var(--text-emphasis); }
+.tp-problem-card__headline {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    color: var(--text-strong);
+    font-size: var(--text-xl);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
+}
+.tp-problem-card__body {
+    color: var(--text-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+}
+.tp-problem-card__familiar {
+    font-weight: var(--weight-bold);
+    color: var(--text-strong);
+    font-size: var(--text-base);
+}
+.tp-problem-card__list {
+    list-style: disc;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+.tp-problem-card__list li {
+    color: var(--text-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-snug);
+}
+
+/* ============================================================
+   The Fix section
+   Saltflat band alternates from the limestone problems section.
+============================================================ */
+.tp-fix {
+    background-color: var(--surface-band);
+    padding: var(--space-28) var(--space-6);
+}
+.tp-fix__container {
+    max-width: var(--container-max);
+    width: 100%;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+}
+.tp-fix__phases {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-12);
+    align-items: start;
+}
+.tp-fix__phase {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+.tp-fix__phase-title {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    color: var(--text-strong);
+    font-size: var(--text-xl);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
+}
+.tp-fix__phase-intro {
+    color: var(--text-muted);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+}
+.tp-fix__steps,
+.tp-fix__loop {
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+.tp-fix__steps { list-style: disc; }
+.tp-fix__loop  { list-style: decimal; }
+.tp-fix__steps li,
+.tp-fix__loop li {
+    color: var(--text-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-snug);
+    padding-left: var(--space-1);
+}
+.tp-fix__callout {
+    background-color: var(--tp-teal-xlight);
+    border: var(--border-width) solid var(--tp-teal-light);
+    border-left: 3px solid var(--border-accent);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+.tp-fix__callout-title {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    color: var(--text-strong);
+    font-size: var(--text-base);
+}
+.tp-fix__callout-list {
+    list-style: disc;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+.tp-fix__callout-list li {
+    color: var(--text-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-snug);
+}
+
+/* === Footer === */
+.tp-footer {
+    background-color: var(--surface-dark);
+    padding: var(--space-12) var(--space-6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--text-on-dark-muted);
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .tp-problems__grid,
+    .tp-fix__phases {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 600px) {
+    .tp-hero,
+    .tp-problems,
+    .tp-fix,
+    .tp-site-nav {
+        padding-inline: var(--space-5);
+    }
+    .tp-hero__actions {
+        flex-direction: column;
+    }
+    .tp-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 13px 22px;
+    }
+    .tp-problem-card {
+        padding: var(--space-8);
+    }
+}
