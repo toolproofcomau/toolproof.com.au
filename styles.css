@@ -167,6 +167,25 @@ body {
     font-weight: var(--weight-semibold);
 }
 
+/* === Badge === */
+.tp-badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    line-height: 1.4;
+    vertical-align: middle;
+}
+.tp-badge--coming-soon {
+    background: var(--tp-oxblood-light);
+    color: var(--tp-oxblood);
+}
+
 /* === Eyebrow label === */
 .tp-eyebrow {
     font-family: var(--font-display);
@@ -221,6 +240,11 @@ body {
     background: rgba(255, 255, 255, 0.07);
     border-color: rgba(255, 255, 255, 0.5);
 }
+.tp-btn--inactive {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
 
 /* ============================================================
    Site nav
@@ -238,6 +262,15 @@ body {
     display: flex;
     align-items: center;
     padding-inline: var(--space-6);
+}
+.tp-nav-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: var(--action-emphasis);
+    z-index: 1;
 }
 .tp-site-nav__container {
     max-width: var(--container-max);
@@ -557,6 +590,86 @@ body {
     line-height: var(--leading-snug);
 }
 
+/* ============================================================
+   Closing CTA section
+   Dark/grain bookend to the hero.
+============================================================ */
+.tp-closing {
+    background-color: var(--surface-dark);
+    --grain-color: 255, 255, 255;
+    padding: var(--space-28) var(--space-6);
+}
+.tp-closing__container {
+    max-width: var(--container-max);
+    width: 100%;
+    margin-inline: auto;
+    display: flex;
+    justify-content: center;
+}
+.tp-closing__content {
+    max-width: 44rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    text-align: center;
+}
+.tp-closing__headline {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    color: var(--text-on-dark);
+    font-size: clamp(var(--text-2xl), 4vw, var(--text-3xl));
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
+}
+.tp-closing__body {
+    color: var(--text-on-dark-muted);
+    font-size: var(--text-lg);
+    line-height: var(--leading-snug);
+}
+.tp-closing__options {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+.tp-closing__options-intro {
+    color: var(--text-on-dark);
+    font-weight: var(--weight-semibold);
+    font-size: var(--text-base);
+}
+.tp-closing__options-list {
+    list-style: disc;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+.tp-closing__options-list li {
+    color: var(--text-on-dark-muted);
+    font-size: var(--text-base);
+    line-height: var(--leading-snug);
+}
+.tp-closing__options-list strong { color: var(--text-on-dark); }
+.tp-closing__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-end;
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+}
+.tp-closing__action-wrap {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+}
+.tp-closing__note {
+    color: var(--text-on-dark-muted);
+    font-size: var(--text-sm);
+    line-height: var(--leading-body);
+}
+
 /* === Footer === */
 .tp-footer {
     background-color: var(--surface-dark);
@@ -640,6 +753,7 @@ html { scroll-behavior: smooth; }
     .tp-hero,
     .tp-problems,
     .tp-fix,
+    .tp-closing,
     .tp-site-nav {
         padding-inline: var(--space-5);
     }

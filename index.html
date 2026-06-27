@@ -24,6 +24,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
     <header class="tp-site-nav">
+        <div class="tp-nav-progress" aria-hidden="true"></div>
         <div class="tp-site-nav__container">
             <span class="tp-wordmark">
                 Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup>
@@ -50,6 +51,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <h1 class="tp-hero__headline">Find the time and money your marketing isn't earning back.</h1>
                 <p class="tp-hero__lead">Measure what matters. Make more of what you have. <br />Make your marketing <strong>accountable</strong>.</p>
                 <div class="tp-hero__actions">
+                    <a class="tp-btn tp-btn--ghost tp-btn--inactive" href="#" aria-disabled="true">Score your marketing in 5 minutes</a> 
                     <a class="tp-btn tp-btn--emphasis" href="tel:+61439612398">Book an Inspection</a>
                 </div>
             </div>
@@ -113,7 +115,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <p class="tp-fix__phase-intro">You can't act on figures you don't trust, so we sort that out before anything else.</p>
                     <img class="tp-fix__illustration" src="assets/measurement.webp" alt="" role="presentation" width="1408" height="768">
                     <ul class="tp-fix__steps">
-                        <li><strong>Pre-Inspection.</strong> A free, five-minute scoring exercise so you know where you stand before we speak.</li>
+                        <li><strong>Pre-Inspection.</strong> <span class="tp-badge tp-badge--coming-soon">Coming soon</span> A free, five-minute scoring exercise so you know where you stand before we speak.</li>
                         <li><strong>Initial Inspection.</strong> A more detailed look under the hood and a detailed read on where you stand.</li>
                         <li><strong>Foundations.</strong> We form your measurement from scratch, or fix what is already there, so every decision that follows rests on real numbers.</li>
                         <li><strong>Start, or Restart.</strong> Once the foundations hold, we are cleared to begin.</li>
@@ -146,6 +148,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </section>
 
+    <section class="tp-closing tp-grain" id="get-started">
+        <div class="tp-closing__container">
+            <div class="tp-closing__content">
+                <h2 class="tp-closing__headline">Ready to find what your marketing isn't earning back?</h2>
+                <p class="tp-closing__body">Every quarter you wait is another quarter you can't say what your marketing actually earned. We fix that, starting with numbers you can trust.</p>
+                <div class="tp-closing__options">
+                    <p class="tp-closing__options-intro">Two ways to begin, depending on how ready you are:</p>
+                    <ul class="tp-closing__options-list">
+                        <li><strong>Score your marketing in 5 minutes.</strong>  A free Pre-Inspection that shows where you stand. No cost, no obligation, and no sales call unless you ask for one. <span class="tp-badge tp-badge--coming-soon">Coming soon</span></li>
+                        <li><strong>Book an Inspection.</strong> A detailed read on your tools and your results, with a clear plan for what to fix first.</li>
+                    </ul>
+                </div>
+                <div class="tp-closing__actions">
+                    <div class="tp-closing__action-wrap">
+                        <span class="tp-badge tp-badge--coming-soon">Coming soon</span>
+                        <a class="tp-btn tp-btn--ghost tp-btn--inactive" href="#" aria-disabled="true">Score your marketing in 5 minutes</a>
+                    </div>
+                    <a class="tp-btn tp-btn--emphasis" href="tel:+61439612398">Book an Inspection</a>
+                </div>
+                <p class="tp-closing__note">We're based in Western Australia and work with local owners who want straight answers. You'll talk to a person, not a form.</p>
+            </div>
+        </div>
+    </section>
+
     <footer class="tp-footer">
         <span class="tp-wordmark tp-wordmark--light">
             Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup>
@@ -171,6 +197,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     btn.setAttribute('aria-label', 'Open menu');
                 });
             });
+
+            var progressBar = document.querySelector('.tp-nav-progress');
+            if (progressBar) {
+                window.addEventListener('scroll', function () {
+                    var scrolled = window.scrollY || document.documentElement.scrollTop;
+                    var total = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    progressBar.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
+                }, { passive: true });
+            }
 
             var stickyCta = document.querySelector('.tp-sticky-cta');
             var hero = document.querySelector('.tp-hero');
