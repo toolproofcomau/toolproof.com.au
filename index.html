@@ -28,6 +28,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <span class="tp-wordmark">
                 Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup>
             </span>
+            <nav class="tp-nav" id="tp-nav" aria-label="Site navigation">
+                <ul class="tp-nav__list">
+                    <li><a class="tp-nav__link" href="#the-problem">The problem</a></li>
+                    <li><a class="tp-nav__link" href="#the-fix">The fix</a></li>
+                </ul>
+                <a class="tp-btn tp-btn--emphasis tp-nav__cta" href="tel:+61439612398">Book an Inspection</a>
+            </nav>
+            <button class="tp-nav__hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="tp-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </header>
 
@@ -59,6 +71,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <img class="tp-problem-card__illustration" src="assets/tools-illustration.webp" alt="" role="presentation" width="1408" height="768">
                     <h3 class="tp-problem-card__headline">You're paying for software you barely scratch the surface with.</h3>
                     <p class="tp-problem-card__body">Most West Australian businesses have already invested in capable marketing software — a CRM, an email platform, analytics, maybe a social or ads tool. The trouble is that many use more than a fraction of what those subscriptions can actually do. The features that would save you time and reveal what's working are sitting one level deeper than anyone has had time to explore. So month after month, you keep paying the full price for a portion of the value.</p>
+                    <hr class="tp-problem-card__rule">
                     <p class="tp-problem-card__familiar">Sound familiar?</p>
                     <ul class="tp-problem-card__list">
                         <li>You picked tools because they "did everything" but you're actually doing very little with them.</li>
@@ -72,6 +85,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <img class="tp-problem-card__illustration" src="assets/proof-illusration.webp" alt="" role="presentation" width="1408" height="768">
                     <h3 class="tp-problem-card__headline">You're spending time and effort on marketing without knowing what's truly working.</h3>
                     <p class="tp-problem-card__body">Marketing is the only line in your accounts where most business owners can't tell you, with confidence, what each dollar earned. Campaigns get launched, content gets posted, ads get run — and the answer to "is it working?" comes back as a shrug, a screenshot of likes, or a number from a dashboard that nobody acts on. That's not just a measurement problem. It's an accountability problem: if you pay someone for your marketing, they don't carry the cost when it misses.</p>
+                    <hr class="tp-problem-card__rule">
                     <p class="tp-problem-card__familiar">Sound familiar?</p>
                     <ul class="tp-problem-card__list">
                         <li>You can tell me how much time or money was spent on marketing last quarter, but not what it produced.</li>
@@ -139,5 +153,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <small>&copy; 2026 Toolproof. ABN: 18 878 662 154</small>
     </footer>
 
+    <a class="tp-sticky-cta" href="tel:+61439612398" aria-hidden="true" tabindex="-1">Book an Inspection</a>
+
+    <script>
+        (function () {
+            var header = document.querySelector('.tp-site-nav');
+            var btn = document.querySelector('.tp-nav__hamburger');
+            btn.addEventListener('click', function () {
+                var open = header.classList.toggle('tp-site-nav--open');
+                btn.setAttribute('aria-expanded', open);
+                btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+            });
+            document.querySelectorAll('.tp-nav__link').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    header.classList.remove('tp-site-nav--open');
+                    btn.setAttribute('aria-expanded', 'false');
+                    btn.setAttribute('aria-label', 'Open menu');
+                });
+            });
+
+            var stickyCta = document.querySelector('.tp-sticky-cta');
+            var hero = document.querySelector('.tp-hero');
+            if (stickyCta && hero) {
+                new IntersectionObserver(function (entries) {
+                    var past = !entries[0].isIntersecting;
+                    stickyCta.classList.toggle('tp-sticky-cta--visible', past);
+                    stickyCta.setAttribute('aria-hidden', String(!past));
+                    stickyCta.setAttribute('tabindex', past ? '0' : '-1');
+                }).observe(hero);
+            }
+        })();
+    </script>
 </body>
 </html>
