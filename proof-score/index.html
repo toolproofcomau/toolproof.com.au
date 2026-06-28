@@ -15,6 +15,35 @@
     <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
     <link rel="stylesheet" href="../styles.css">
 
+    <!-- Consent Mode v2: default deny, then immediately update if previously granted -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('consent', 'default', {
+            analytics_storage: 'denied',
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            wait_for_update: 500
+        });
+        if (localStorage.getItem('tp_consent') === 'granted') {
+            gtag('consent', 'update', {
+                analytics_storage: 'granted',
+                ad_storage: 'granted',
+                ad_user_data: 'granted',
+                ad_personalization: 'granted'
+            });
+        }
+    </script>
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TC8JHQX2');</script>
+    <!-- End Google Tag Manager -->
+
     <style>
         /* === Phase visibility === */
         .phase { display: none; }
@@ -25,7 +54,6 @@
         [data-phase="report"]    .phase-report    { display: block; }
 
         /* === Layout === */
-        html, body { height: 100%; }
         body {
             min-height: 100svh;
             display: flex;
@@ -271,7 +299,10 @@
             border-color: var(--tp-teal);
         }
         .ps-other-input input::placeholder,
-        .ps-textarea::placeholder { color: var(--text-muted); }
+        .ps-textarea::placeholder { color: var(--tp-saltflat-deep); }
+
+        /* Contact form — placeholders clearly faint so filled fields stand out */
+        .ps-field input::placeholder { color: var(--tp-saltflat-deep); }
         .ps-textarea {
             resize: vertical;
             min-height: 80px;
@@ -584,15 +615,20 @@
             .ps-contact__inner { padding-top: var(--space-8); }
             .ps-report-body { padding-top: var(--space-8); }
             .ps-cta-card { padding: var(--space-8) var(--space-5); }
+            .ps-q-nav .tp-btn { width: auto; }
         }
     </style>
 </head>
 <body data-phase="intro">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TC8JHQX2"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
 <!-- Persistent header -->
 <header class="ps-header">
     <div class="ps-header__inner">
-        <a href="/" class="tp-wordmark" style="font-size: 24px; text-decoration: none;">Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup></a>
+        <a href="/" class="tp-wordmark" style="text-decoration: none;">Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup></a>
         <a href="/" class="ps-header__back">
             <i class="ph ph-arrow-left" aria-hidden="true"></i>
             Back to site
@@ -782,6 +818,25 @@ const state = {
 };
 
 // ============================================================
+// DROPOUT TRACKING
+// Push an event when the user leaves mid-quiz so we can see
+// which question causes the most dropouts in GA4.
+// ============================================================
+function pushDropoutEvent() {
+    if (document.body.dataset.phase !== 'questions') return;
+    dataLayer.push({
+        event: 'proof_score_question_dropout',
+        question_number: state.currentQ + 1,
+        questions_answered: Object.keys(state.answers).length,
+    });
+}
+
+document.addEventListener('visibilitychange', function () {
+    if (document.hidden) pushDropoutEvent();
+});
+window.addEventListener('pagehide', pushDropoutEvent);
+
+// ============================================================
 // PHASE MANAGEMENT
 // ============================================================
 function goToPhase(phase) {
@@ -793,6 +848,7 @@ function startQuiz() {
     state.currentQ = 0;
     renderQuestion();
     goToPhase('questions');
+    dataLayer.push({ event: 'proof_score_started' });
 }
 
 // ============================================================
@@ -996,6 +1052,13 @@ function showScore() {
     bandEl.textContent = state.band.label;
     descEl.textContent = state.band.desc;
 
+    dataLayer.push({
+        event: 'proof_score_completed',
+        proof_score: state.proofScore,
+        proof_score_percent: state.percentage,
+        proof_score_band: state.band.label,
+    });
+
     const circumference = 339.292;
     const target = state.percentage;
 
@@ -1078,8 +1141,13 @@ function submitForm() {
     .then(data => {
         if (data.success) {
             state.leadPriority = data.leadPriority;
+            dataLayer.push({
+                event: 'proof_score_lead_submitted',
+                lead_priority: data.leadPriority,
+            });
             renderReport();
             goToPhase('report');
+            dataLayer.push({ event: 'proof_score_report_viewed' });
         } else {
             showFormError();
         }
@@ -1117,7 +1185,8 @@ function renderReport() {
     document.getElementById('rpt-band-label').textContent = band.label;
 
     // --- Diagnosis ---
-    let diagText = `Your Proof Score of ${pct}% places you in the <strong>${esc(band.label)}</strong> band. ${esc(band.desc)}`;
+    const bandLabelInline = band.label.replace(/\.$/, '');
+    let diagText = `Your Proof Score of ${pct}% places you in the <strong>${esc(bandLabelInline)}</strong> band. ${esc(band.desc)}`;
     if (highSpend) {
         diagText += ` At ${esc(spend)} per month, there's real money at stake. Every dollar that can't be traced to an outcome is quietly working against you.`;
     }
@@ -1228,6 +1297,77 @@ function renderReport() {
         </div>
     `;
 }
+</script>
+
+<!-- Cookie consent (same as main site) -->
+<div class="tp-consent-backdrop" id="tp-consent-backdrop" hidden></div>
+<div class="tp-consent" id="tp-consent" role="dialog" aria-label="Cookie consent" aria-modal="true" hidden>
+    <div class="tp-consent__inner">
+        <div class="tp-consent__header">
+            <span class="tp-wordmark" aria-hidden="true">Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup></span>
+            <h2 class="tp-consent__title">Your cookie preferences</h2>
+            <p class="tp-consent__text">We use cookies for analytics and marketing to understand how our site is used. You can accept all cookies or continue with necessary cookies only. <a class="tp-consent__link" href="/privacy">Privacy policy</a></p>
+        </div>
+        <div class="tp-consent__actions">
+            <button class="tp-btn tp-consent__decline" type="button">Necessary only</button>
+            <button class="tp-btn tp-btn--emphasis tp-consent__accept" type="button">Accept all</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var consentBanner   = document.getElementById('tp-consent');
+    var consentBackdrop = document.getElementById('tp-consent-backdrop');
+    var CONSENT_KEY     = 'tp_consent';
+
+    function grantConsent() {
+        gtag('consent', 'update', {
+            analytics_storage: 'granted',
+            ad_storage: 'granted',
+            ad_user_data: 'granted',
+            ad_personalization: 'granted'
+        });
+    }
+
+    function hideBanner() {
+        consentBanner.classList.remove('tp-consent--visible');
+        consentBackdrop.classList.remove('tp-consent-backdrop--visible');
+        setTimeout(function () {
+            consentBanner.hidden = true;
+            consentBackdrop.hidden = true;
+        }, 300);
+    }
+
+    function showBanner() {
+        consentBanner.hidden = false;
+        consentBackdrop.hidden = false;
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                consentBanner.classList.add('tp-consent--visible');
+                consentBackdrop.classList.add('tp-consent-backdrop--visible');
+            });
+        });
+    }
+
+    var stored = localStorage.getItem(CONSENT_KEY);
+    if (stored === 'granted') {
+        grantConsent();
+    } else if (!stored) {
+        setTimeout(showBanner, 800);
+    }
+
+    consentBanner.querySelector('.tp-consent__accept').addEventListener('click', function () {
+        localStorage.setItem(CONSENT_KEY, 'granted');
+        grantConsent();
+        location.reload();
+    });
+
+    consentBanner.querySelector('.tp-consent__decline').addEventListener('click', function () {
+        localStorage.setItem(CONSENT_KEY, 'denied');
+        location.reload();
+    });
+})();
 </script>
 
 </body>
