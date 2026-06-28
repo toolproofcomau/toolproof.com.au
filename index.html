@@ -271,11 +271,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p class="tp-footer__acknowledgement">We acknowledge the Ngarluma people as the Traditional Custodians of the Country on which we live and work, and pay our respects to their Elders past, present and emerging.</p>
     </footer>
 
-    <div class="tp-consent" id="tp-consent" role="dialog" aria-label="Cookie consent" aria-modal="false" hidden>
+    <div class="tp-consent-backdrop" id="tp-consent-backdrop" hidden></div>
+
+    <div class="tp-consent" id="tp-consent" role="dialog" aria-label="Cookie consent" aria-modal="true" hidden>
         <div class="tp-consent__inner">
-            <p class="tp-consent__text">We use cookies for analytics and marketing to understand how our site is used. Accept all, or continue with necessary cookies only. <a class="tp-consent__link" href="/privacy">Privacy policy</a></p>
+            <div class="tp-consent__header">
+                <span class="tp-wordmark" aria-hidden="true">Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup></span>
+                <h2 class="tp-consent__title">Your cookie preferences</h2>
+                <p class="tp-consent__text">We use cookies for analytics and marketing to understand how our site is used. You can accept all cookies or continue with necessary cookies only. <a class="tp-consent__link" href="/privacy">Privacy policy</a></p>
+            </div>
             <div class="tp-consent__actions">
-                <button class="tp-btn tp-btn--ghost tp-consent__decline" type="button">Necessary only</button>
+                <button class="tp-btn tp-consent__decline" type="button">Necessary only</button>
                 <button class="tp-btn tp-btn--emphasis tp-consent__accept" type="button">Accept all</button>
             </div>
         </div>
@@ -322,6 +328,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             // Cookie consent
             var consentBanner = document.getElementById('tp-consent');
+            var consentBackdrop = document.getElementById('tp-consent-backdrop');
             var CONSENT_KEY = 'tp_consent';
 
             function grantConsent() {
@@ -335,14 +342,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             function hideBanner() {
                 consentBanner.classList.remove('tp-consent--visible');
-                setTimeout(function() { consentBanner.hidden = true; }, 300);
+                consentBackdrop.classList.remove('tp-consent-backdrop--visible');
+                setTimeout(function() {
+                    consentBanner.hidden = true;
+                    consentBackdrop.hidden = true;
+                }, 300);
             }
 
             function showBanner() {
                 consentBanner.hidden = false;
+                consentBackdrop.hidden = false;
                 requestAnimationFrame(function() {
                     requestAnimationFrame(function() {
                         consentBanner.classList.add('tp-consent--visible');
+                        consentBackdrop.classList.add('tp-consent-backdrop--visible');
                     });
                 });
             }
