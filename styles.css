@@ -849,6 +849,78 @@ body {
     color: var(--text-on-dark-muted);
 }
 
+/* ============================================================
+   Privacy page
+============================================================ */
+.tp-privacy-hero {
+    background-color: var(--surface-dark);
+    --grain-color: 255, 255, 255;
+    padding: var(--space-16) var(--space-6) var(--space-12);
+}
+.tp-privacy-hero__headline {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    color: var(--text-on-dark);
+    font-size: clamp(var(--text-2xl), 4vw, var(--text-3xl));
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
+    margin-top: var(--space-3);
+}
+.tp-privacy-hero__meta {
+    color: var(--text-on-dark-muted);
+    font-size: var(--text-sm);
+    margin-top: var(--space-3);
+}
+.tp-privacy-body {
+    padding: var(--space-16) var(--space-6);
+}
+.tp-prose-container {
+    max-width: 44rem;
+    margin-inline: auto;
+    width: 100%;
+}
+.tp-prose {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    color: var(--text-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+}
+.tp-prose h2 {
+    font-family: var(--font-display);
+    font-weight: var(--weight-bold);
+    font-size: var(--text-lg);
+    color: var(--text-strong);
+    letter-spacing: var(--tracking-heading);
+    margin-top: var(--space-4);
+}
+.tp-prose ul {
+    list-style: disc;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+.tp-prose a {
+    color: var(--text-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.tp-prose a:hover { color: var(--tp-teal-mid); }
+.tp-prose__cookie-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-accent);
+    font-family: var(--font-body);
+    font-size: inherit;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.tp-prose__cookie-btn:hover { color: var(--tp-teal-mid); }
+
 /* === Footer cookie preferences button === */
 .tp-footer__legal {
     display: flex;

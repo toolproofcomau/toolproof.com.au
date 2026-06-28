@@ -349,7 +349,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             consentBanner.querySelector('.tp-consent__accept').addEventListener('click', function() {
                 localStorage.setItem(CONSENT_KEY, 'granted');
                 grantConsent();
-                hideBanner();
+                location.reload();
             });
 
             consentBanner.querySelector('.tp-consent__decline').addEventListener('click', function() {
