@@ -301,8 +301,6 @@
         .ps-other-input input::placeholder,
         .ps-textarea::placeholder { color: var(--tp-saltflat-deep); }
 
-        /* Contact form — placeholders clearly faint so filled fields stand out */
-        .ps-field input::placeholder { color: var(--tp-saltflat-deep); }
         .ps-textarea {
             resize: vertical;
             min-height: 80px;
@@ -455,7 +453,7 @@
             outline: none;
             border-color: var(--tp-teal);
         }
-        .ps-field input::placeholder { color: var(--text-muted); }
+        .ps-field input::placeholder { color: var(--tp-saltflat-deep); }
         .ps-field__error {
             font-size: var(--text-xs);
             color: #C0392B;
@@ -683,9 +681,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p class="ps-contact__sub">We'll send the full breakdown to your inbox and may follow up with some tailored thoughts.</p>
         <form class="ps-form" id="ps-form" novalidate>
             <div class="ps-field" id="field-first-name">
-                <label for="ps-first-name">First name</label>
-                <input type="text" id="ps-first-name" name="firstName" placeholder="Jane" autocomplete="given-name">
-                <span class="ps-field__error" role="alert">Please enter your first name.</span>
+                <label for="ps-first-name">Your name</label>
+                <input type="text" id="ps-first-name" name="firstName" placeholder="Jane Smith" autocomplete="name">
+                <span class="ps-field__error" role="alert">Please enter your name.</span>
             </div>
             <div class="ps-field" id="field-email">
                 <label for="ps-email">Email address</label>
