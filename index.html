@@ -10,6 +10,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 
+    <!-- Consent Mode v2: default deny before GTM initialises -->
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500
+    });
+</script>
+
     <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -242,8 +255,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup>
         </span>
         <small>&copy; 2026 Toolproof. ABN: 18 878 662 154</small>
+        <div class="tp-footer__legal">
+            <button class="tp-footer__cookie-btn" id="tp-cookie-prefs" type="button">Cookie preferences</button>
+            <span aria-hidden="true">|</span>
+            <a class="tp-footer__legal-link" href="/privacy">Privacy policy</a>
+        </div>
         <p class="tp-footer__acknowledgement">We acknowledge the Ngarluma people as the Traditional Custodians of the Country on which we live and work, and pay our respects to their Elders past, present and emerging.</p>
     </footer>
+
+    <div class="tp-consent" id="tp-consent" role="dialog" aria-label="Cookie consent" aria-modal="false" hidden>
+        <div class="tp-consent__inner">
+            <p class="tp-consent__text">We use cookies for analytics and marketing to understand how our site is used. Accept all, or continue with necessary cookies only. <a class="tp-consent__link" href="/privacy">Privacy policy</a></p>
+            <div class="tp-consent__actions">
+                <button class="tp-btn tp-btn--ghost tp-consent__decline" type="button">Necessary only</button>
+                <button class="tp-btn tp-btn--emphasis tp-consent__accept" type="button">Accept all</button>
+            </div>
+        </div>
+    </div>
 
     <a class="tp-sticky-cta" href="tel:+61439612398" aria-hidden="true" tabindex="-1">Book an Inspection</a>
 
@@ -282,6 +310,59 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     stickyCta.setAttribute('aria-hidden', String(!past));
                     stickyCta.setAttribute('tabindex', past ? '0' : '-1');
                 }).observe(hero);
+            }
+
+            // Cookie consent
+            var consentBanner = document.getElementById('tp-consent');
+            var CONSENT_KEY = 'tp_consent';
+
+            function grantConsent() {
+                gtag('consent', 'update', {
+                    analytics_storage: 'granted',
+                    ad_storage: 'granted',
+                    ad_user_data: 'granted',
+                    ad_personalization: 'granted'
+                });
+            }
+
+            function hideBanner() {
+                consentBanner.classList.remove('tp-consent--visible');
+                setTimeout(function() { consentBanner.hidden = true; }, 300);
+            }
+
+            function showBanner() {
+                consentBanner.hidden = false;
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        consentBanner.classList.add('tp-consent--visible');
+                    });
+                });
+            }
+
+            var stored = localStorage.getItem(CONSENT_KEY);
+            if (stored === 'granted') {
+                grantConsent();
+            } else if (!stored) {
+                setTimeout(showBanner, 800);
+            }
+
+            consentBanner.querySelector('.tp-consent__accept').addEventListener('click', function() {
+                localStorage.setItem(CONSENT_KEY, 'granted');
+                grantConsent();
+                hideBanner();
+            });
+
+            consentBanner.querySelector('.tp-consent__decline').addEventListener('click', function() {
+                localStorage.setItem(CONSENT_KEY, 'denied');
+                hideBanner();
+            });
+
+            var cookiePrefsBtn = document.getElementById('tp-cookie-prefs');
+            if (cookiePrefsBtn) {
+                cookiePrefsBtn.addEventListener('click', function() {
+                    localStorage.removeItem(CONSENT_KEY);
+                    showBanner();
+                });
             }
         })();
     </script>
