@@ -1171,4 +1171,5 @@ html { scroll-behavior: smooth; }
     .tp-problem-card {
         padding: var(--space-8);
     }
+    .tp-hero__eyebrow { display: none; }
 }
