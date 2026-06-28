@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proof Score | How proof-ready is your marketing?</title>
+    <meta name="description" content="A free 5-minute marketing self-assessment. Find out how well you can prove your marketing is earning its keep.">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+    <link rel="stylesheet" href="../styles.css">
+
+    <style>
+        /* === Phase visibility === */
+        .phase { display: none; }
+        [data-phase="intro"]     .phase-intro     { display: block; }
+        [data-phase="questions"] .phase-questions { display: block; }
+        [data-phase="score"]     .phase-score     { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        [data-phase="contact"]   .phase-contact   { display: block; }
+        [data-phase="report"]    .phase-report    { display: block; }
+
+        /* === Layout === */
+        html, body { height: 100%; }
+        body {
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+        }
+        .phase { flex: 1; }
+
+        /* === Header === */
+        .ps-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+            background-color: var(--surface-page);
+            border-bottom: 1px solid var(--border-subtle);
+            box-shadow: 0 1px 8px rgba(13,31,37,0.06);
+            display: flex;
+            align-items: center;
+            padding-inline: var(--space-6);
+            flex-shrink: 0;
+        }
+        .ps-header__inner {
+            max-width: var(--container-max);
+            width: 100%;
+            margin-inline: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .ps-header__back {
+            font-family: var(--font-body);
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            transition: color var(--duration-base) var(--ease-standard);
+        }
+        .ps-header__back:hover { color: var(--text-body); }
+
+        /* === Intro === */
+        .phase-intro {
+            background-color: var(--surface-dark);
+            --grain-color: 255, 255, 255;
+        }
+        .ps-intro__inner {
+            max-width: 40rem;
+            margin-inline: auto;
+            padding: var(--space-20) var(--space-6);
+            text-align: center;
+        }
+        .ps-intro__eyebrow {
+            color: rgba(255,255,255,0.45);
+            margin-bottom: var(--space-6);
+        }
+        .ps-intro__headline {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: var(--weight-bold);
+            letter-spacing: var(--tracking-heading);
+            line-height: var(--leading-tight);
+            color: var(--text-on-dark);
+            margin-bottom: var(--space-6);
+        }
+        .ps-intro__lead {
+            font-size: var(--text-md);
+            color: var(--text-on-dark-muted);
+            line-height: var(--leading-body);
+            margin-bottom: var(--space-4);
+        }
+        .ps-intro__meta {
+            font-size: var(--text-sm);
+            color: rgba(255,255,255,0.35);
+            margin-bottom: var(--space-10);
+        }
+
+        /* === Progress bar === */
+        .ps-progress {
+            position: sticky;
+            top: var(--nav-height);
+            z-index: 90;
+            height: 3px;
+            background: var(--border-subtle);
+            flex-shrink: 0;
+        }
+        .ps-progress__fill {
+            height: 100%;
+            background: var(--tp-teal);
+            transition: width 0.4s var(--ease-standard);
+            width: 0%;
+        }
+
+        /* === Questions === */
+        .phase-questions { background: var(--surface-page); }
+        .ps-question-wrap {
+            max-width: 40rem;
+            margin-inline: auto;
+            padding: var(--space-12) var(--space-6) var(--space-6);
+        }
+        .ps-question__meta {
+            margin-bottom: var(--space-6);
+        }
+        .ps-question__text {
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 3vw, 1.625rem);
+            font-weight: var(--weight-bold);
+            letter-spacing: var(--tracking-heading);
+            line-height: var(--leading-heading);
+            color: var(--text-strong);
+            margin-bottom: var(--space-8);
+        }
+
+        /* === Scored / single option cards === */
+        .ps-options, .ps-radio-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+        .ps-option {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-4) var(--space-5);
+            border: 1.5px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            background: var(--surface-card);
+            cursor: pointer;
+            transition: border-color var(--duration-base) var(--ease-standard),
+                        background var(--duration-base) var(--ease-standard);
+            text-align: left;
+            width: 100%;
+            font-family: var(--font-body);
+        }
+        .ps-option:hover { border-color: var(--tp-teal); }
+        .ps-option.is-selected {
+            border-color: var(--tp-teal);
+            background: var(--tp-teal-xlight);
+        }
+        .ps-option__indicator {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1.5px solid var(--tp-saltflat-deep);
+            background: var(--surface-page);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--duration-base) var(--ease-standard);
+        }
+        .ps-option.is-selected .ps-option__indicator {
+            background: var(--tp-teal);
+            border-color: var(--tp-teal);
+        }
+        .ps-option.is-selected .ps-option__indicator::after {
+            content: "";
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            display: block;
+        }
+        .ps-option__label {
+            font-size: var(--text-base);
+            color: var(--text-body);
+            line-height: var(--leading-snug);
+        }
+
+        /* === Checkbox grid (multi) === */
+        .ps-checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3);
+        }
+        .ps-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            border: 1.5px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            background: var(--surface-card);
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: border-color var(--duration-base) var(--ease-standard),
+                        background var(--duration-base) var(--ease-standard);
+        }
+        .ps-checkbox:hover { border-color: var(--tp-teal); }
+        .ps-checkbox.is-selected {
+            border-color: var(--tp-teal);
+            background: var(--tp-teal-xlight);
+        }
+        .ps-checkbox__box {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            border: 1.5px solid var(--tp-saltflat-deep);
+            border-radius: var(--radius-sm);
+            background: var(--surface-page);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--duration-base) var(--ease-standard);
+        }
+        .ps-checkbox.is-selected .ps-checkbox__box {
+            background: var(--tp-teal);
+            border-color: var(--tp-teal);
+        }
+        .ps-checkbox.is-selected .ps-checkbox__box::after {
+            content: "";
+            width: 10px;
+            height: 6px;
+            border-left: 2px solid white;
+            border-bottom: 2px solid white;
+            transform: rotate(-45deg) translateY(-1px);
+            display: block;
+        }
+        .ps-checkbox__label {
+            font-size: var(--text-sm);
+            color: var(--text-body);
+            line-height: var(--leading-snug);
+            text-align: left;
+        }
+        .ps-other-input {
+            margin-top: var(--space-4);
+        }
+        .ps-other-input input,
+        .ps-textarea {
+            width: 100%;
+            font-family: var(--font-body);
+            font-size: var(--text-base);
+            color: var(--text-body);
+            background: var(--surface-card);
+            border: 1.5px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--space-3) var(--space-4);
+            transition: border-color var(--duration-base) var(--ease-standard);
+        }
+        .ps-other-input input:focus,
+        .ps-textarea:focus {
+            outline: none;
+            border-color: var(--tp-teal);
+        }
+        .ps-other-input input::placeholder,
+        .ps-textarea::placeholder { color: var(--text-muted); }
+        .ps-textarea {
+            resize: vertical;
+            min-height: 80px;
+            line-height: var(--leading-body);
+        }
+
+        /* === Spend question === */
+        .ps-spend-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+        .ps-spend-label {
+            font-size: var(--text-sm);
+            font-weight: var(--weight-semibold);
+            color: var(--text-strong);
+            margin-bottom: var(--space-3);
+        }
+
+        /* === Question nav === */
+        .ps-q-nav {
+            max-width: 40rem;
+            margin-inline: auto;
+            padding: var(--space-4) var(--space-6) var(--space-16);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ps-q-nav__back {
+            font-family: var(--font-body);
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) 0;
+            transition: color var(--duration-base) var(--ease-standard);
+        }
+        .ps-q-nav__back:hover:not(:disabled) { color: var(--text-body); }
+        .ps-q-nav__back:disabled { opacity: 0.3; cursor: default; }
+
+        /* === Score phase === */
+        .phase-score {
+            background: var(--surface-page);
+            padding: var(--space-16) var(--space-6);
+            text-align: center;
+        }
+        .ps-ring-wrap {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin-bottom: var(--space-8);
+        }
+        .ps-ring { transform: rotate(-90deg); transform-origin: center; }
+        .ps-ring__track {
+            fill: none;
+            stroke: var(--tp-saltflat);
+            stroke-width: 10;
+        }
+        .ps-ring__fill {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 339.292;
+            stroke-dashoffset: 339.292;
+            transition: stroke-dashoffset 1.2s var(--ease-standard);
+        }
+        .ps-ring__pct {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: var(--weight-bold);
+            letter-spacing: var(--tracking-heading);
+            color: var(--text-strong);
+        }
+        .ps-score-band {
+            font-family: var(--font-display);
+            font-size: var(--text-xl);
+            font-weight: var(--weight-bold);
+            letter-spacing: var(--tracking-heading);
+            color: var(--text-strong);
+            margin-bottom: var(--space-3);
+        }
+        .ps-score-desc {
+            font-size: var(--text-md);
+            color: var(--text-muted);
+            max-width: 30rem;
+            line-height: var(--leading-body);
+            margin-bottom: var(--space-10);
+        }
+
+        /* === Contact phase === */
+        .phase-contact { background: var(--surface-page); }
+        .ps-contact__inner {
+            max-width: 32rem;
+            margin-inline: auto;
+            padding: var(--space-12) var(--space-6) var(--space-20);
+        }
+        .ps-contact__eyebrow {
+            color: var(--text-accent);
+            margin-bottom: var(--space-4);
+        }
+        .ps-contact__headline {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: var(--weight-bold);
+            letter-spacing: var(--tracking-heading);
+            color: var(--text-strong);
+            margin-bottom: var(--space-3);
+        }
+        .ps-contact__sub {
+            font-size: var(--text-base);
+            color: var(--text-muted);
+            margin-bottom: var(--space-8);
+        }
+        .ps-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-5);
+        }
+        .ps-field {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+        .ps-field label {
+            font-size: var(--text-sm);
+            font-weight: var(--weight-semibold);
+            color: var(--text-strong);
+        }
+        .ps-field input {
+            font-family: var(--font-body);
+            font-size: var(--text-base);
+            color: var(--text-body);
+            background: var(--surface-card);
+            border: 1.5px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--space-3) var(--space-4);
+            transition: border-color var(--duration-base) var(--ease-standard);
+            width: 100%;
+        }
+        .ps-field input:focus {
+            outline: none;
+            border-color: var(--tp-teal);
+        }
+        .ps-field input::placeholder { color: var(--text-muted); }
+        .ps-field__error {
+            font-size: var(--text-xs);
+            color: #C0392B;
+            display: none;
+        }
+        .ps-field.has-error .ps-field__error { display: block; }
+        .ps-field.has-error input { border-color: #C0392B; }
+        .ps-consent {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-3);
+        }
+        .ps-consent input[type="checkbox"] {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: var(--tp-teal);
+            cursor: pointer;
+        }
+        .ps-consent label {
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+            line-height: var(--leading-body);
+            cursor: pointer;
+        }
+        .ps-consent.has-error label { color: #C0392B; }
+        .ps-form-error {
+            font-size: var(--text-sm);
+            color: #C0392B;
+            padding: var(--space-3) var(--space-4);
+            background: #FDECEA;
+            border-radius: var(--radius-md);
+            display: none;
+        }
+        .ps-form-error.is-visible { display: block; }
+        .tp-btn:disabled, .tp-btn--loading {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* === Report phase === */
+        .phase-report { background: var(--surface-page); }
+        .ps-report-header {
+            position: sticky;
+            top: var(--nav-height);
+            z-index: 80;
+            background: var(--surface-dark);
+            --grain-color: 255, 255, 255;
+            padding: var(--space-4) var(--space-6);
+        }
+        .ps-report-header__inner {
+            max-width: var(--container-max);
+            margin-inline: auto;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: var(--space-5);
+        }
+        .ps-report-score {
+            font-family: var(--font-display);
+            font-size: var(--text-2xl);
+            font-weight: var(--weight-bold);
+            color: var(--text-on-dark);
+            line-height: 1;
+        }
+        .ps-report-band-label {
+            font-family: var(--font-display);
+            font-weight: var(--weight-bold);
+            font-size: var(--text-base);
+            color: var(--text-on-dark);
+        }
+        .ps-report-band-sub {
+            font-size: var(--text-xs);
+            color: var(--text-on-dark-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+        .ps-report-body {
+            max-width: 44rem;
+            margin-inline: auto;
+            padding: var(--space-12) var(--space-6) var(--space-20);
+        }
+        .ps-report-section {
+            margin-bottom: var(--space-12);
+            padding-bottom: var(--space-12);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .ps-report-section:last-of-type { border-bottom: none; }
+        .ps-report-section__eyebrow {
+            color: var(--text-accent);
+            margin-bottom: var(--space-3);
+        }
+        .ps-report-section h2 {
+            font-family: var(--font-display);
+            font-size: var(--text-xl);
+            font-weight: var(--weight-bold);
+            letter-spacing: var(--tracking-heading);
+            color: var(--text-strong);
+            margin-bottom: var(--space-4);
+        }
+        .ps-report-section p {
+            color: var(--text-body);
+            line-height: var(--leading-body);
+            margin-bottom: var(--space-4);
+        }
+        .ps-report-section p:last-child { margin-bottom: 0; }
+        .ps-report-section ul {
+            list-style: disc;
+            padding-left: var(--space-6);
+            color: var(--text-body);
+            line-height: var(--leading-body);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+        .ps-callout {
+            padding: var(--space-4) var(--space-5);
+            background: var(--tp-teal-xlight);
+            border-left: 3px solid var(--tp-teal);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            font-size: var(--text-sm);
+            color: var(--tp-teal-mid);
+            margin-top: var(--space-4);
+            line-height: var(--leading-body);
+        }
+        .ps-cta-card {
+            background: var(--surface-dark);
+            border-radius: var(--radius-lg);
+            padding: var(--space-10) var(--space-8);
+            text-align: center;
+            --grain-color: 255, 255, 255;
+            margin-top: var(--space-4);
+        }
+        .ps-cta-card h2 {
+            font-family: var(--font-display);
+            font-size: var(--text-2xl);
+            font-weight: var(--weight-bold);
+            letter-spacing: var(--tracking-heading);
+            color: var(--text-on-dark);
+            margin-bottom: var(--space-3);
+        }
+        .ps-cta-card p {
+            color: var(--text-on-dark-muted);
+            margin-bottom: var(--space-8);
+            max-width: 28rem;
+            margin-inline: auto;
+            margin-bottom: var(--space-8);
+        }
+
+        /* === Responsive === */
+        @media (max-width: 600px) {
+            .ps-checkbox-grid { grid-template-columns: 1fr; }
+            .ps-intro__inner { padding-top: var(--space-12); }
+            .ps-contact__inner { padding-top: var(--space-8); }
+            .ps-report-body { padding-top: var(--space-8); }
+            .ps-cta-card { padding: var(--space-8) var(--space-5); }
+        }
+    </style>
+</head>
+<body data-phase="intro">
+
+<!-- Persistent header -->
+<header class="ps-header">
+    <div class="ps-header__inner">
+        <a href="/" class="tp-wordmark" style="font-size: 24px; text-decoration: none;">Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup></a>
+        <a href="/" class="ps-header__back">
+            <i class="ph ph-arrow-left" aria-hidden="true"></i>
+            Back to site
+        </a>
+    </div>
+</header>
+
+<!-- Phase: intro -->
+<div class="phase phase-intro tp-grain">
+    <div class="ps-intro__inner">
+        <span class="tp-eyebrow ps-intro__eyebrow">Free marketing assessment</span>
+        <h1 class="ps-intro__headline">How proof-ready is your marketing?</h1>
+        <p class="ps-intro__lead">Find out if your marketing spend can withstand the one question that matters: "Is it actually working?"</p>
+        <p class="ps-intro__meta">10 questions &middot; About 5 minutes</p>
+        <button class="tp-btn tp-btn--emphasis" onclick="startQuiz()">Start the assessment</button>
+    </div>
+</div>
+
+<!-- Phase: questions -->
+<div class="phase phase-questions">
+    <div class="ps-progress" aria-hidden="true">
+        <div class="ps-progress__fill" id="ps-progress-fill"></div>
+    </div>
+    <div id="ps-question-wrap" class="ps-question-wrap"></div>
+    <div class="ps-q-nav">
+        <button class="ps-q-nav__back" id="ps-back-btn" onclick="goBack()" disabled aria-label="Previous question">
+            <i class="ph ph-arrow-left" aria-hidden="true"></i> Back
+        </button>
+        <button class="tp-btn tp-btn--emphasis" id="ps-next-btn" onclick="goNext()" disabled>Next</button>
+    </div>
+</div>
+
+<!-- Phase: score -->
+<div class="phase phase-score">
+    <div class="ps-ring-wrap">
+        <svg class="ps-ring" width="160" height="160" viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="ps-ring__track" cx="60" cy="60" r="54"/>
+            <circle class="ps-ring__fill" id="ps-ring-fill" cx="60" cy="60" r="54"/>
+        </svg>
+        <div class="ps-ring__pct" id="ps-ring-pct" aria-live="polite">0%</div>
+    </div>
+    <div class="ps-score-band" id="ps-score-band"></div>
+    <p class="ps-score-desc" id="ps-score-desc"></p>
+    <button class="tp-btn tp-btn--emphasis" onclick="goToPhase('contact')">See my full report</button>
+</div>
+
+<!-- Phase: contact -->
+<div class="phase phase-contact">
+    <div class="ps-contact__inner">
+        <span class="tp-eyebrow ps-contact__eyebrow">Almost there</span>
+        <h2 class="ps-contact__headline">Unlock your personalised report</h2>
+        <p class="ps-contact__sub">We'll send the full breakdown to your inbox and may follow up with some tailored thoughts.</p>
+        <form class="ps-form" id="ps-form" novalidate>
+            <div class="ps-field" id="field-first-name">
+                <label for="ps-first-name">First name</label>
+                <input type="text" id="ps-first-name" name="firstName" placeholder="Jane" autocomplete="given-name">
+                <span class="ps-field__error" role="alert">Please enter your first name.</span>
+            </div>
+            <div class="ps-field" id="field-email">
+                <label for="ps-email">Email address</label>
+                <input type="email" id="ps-email" name="email" placeholder="jane@yourbusiness.com.au" autocomplete="email">
+                <span class="ps-field__error" role="alert">Please enter a valid email address.</span>
+            </div>
+            <div class="ps-field" id="field-phone">
+                <label for="ps-phone">Phone number</label>
+                <input type="tel" id="ps-phone" name="phone" placeholder="0412 345 678" autocomplete="tel">
+                <span class="ps-field__error" role="alert">Please enter your phone number.</span>
+            </div>
+            <div class="ps-field" id="field-company">
+                <label for="ps-company">Business name</label>
+                <input type="text" id="ps-company" name="company" placeholder="Acme Co." autocomplete="organization">
+                <span class="ps-field__error" role="alert">Please enter your business name.</span>
+            </div>
+            <div class="ps-field" id="field-website">
+                <label for="ps-website">Website</label>
+                <input type="url" id="ps-website" name="website" placeholder="https://yourbusiness.com.au" autocomplete="url">
+                <span class="ps-field__error" role="alert">Please enter your website address.</span>
+            </div>
+            <div class="ps-consent" id="field-consent">
+                <input type="checkbox" id="ps-consent" name="consent">
+                <label for="ps-consent">I agree to Toolproof storing my details and using them to follow up on my results. I can opt out at any time.</label>
+            </div>
+            <div class="ps-form-error" id="ps-form-error" role="alert">Something went wrong. Please try again in a moment.</div>
+            <button type="button" class="tp-btn tp-btn--emphasis" id="ps-submit-btn" onclick="submitForm()" style="width: 100%;">Unlock my full report</button>
+        </form>
+    </div>
+</div>
+
+<!-- Phase: report -->
+<div class="phase phase-report">
+    <div class="ps-report-header tp-grain" aria-label="Your Proof Score summary">
+        <div class="ps-report-header__inner">
+            <div class="ps-report-score" id="rpt-score-pct"></div>
+            <div>
+                <div class="ps-report-band-label" id="rpt-band-label"></div>
+                <div class="ps-report-band-sub">Your Proof Score</div>
+            </div>
+        </div>
+    </div>
+    <div class="ps-report-body" id="ps-report-body"></div>
+</div>
+
+<script>
+// ============================================================
+// CONFIG — replace with your deployed Worker URL before going live
+// ============================================================
+const API_URL = 'https://proof-score-api.toolproof.workers.dev/submit-lead';
+
+// ============================================================
+// DATA
+// ============================================================
+const SCORED_OPTIONS = [
+    { label: 'Yes, and I can provide evidence', value: 10 },
+    { label: 'Sort of / not sure', value: 5 },
+    { label: 'No', value: 0 },
+];
+
+const QUESTIONS = [
+    {
+        id: 1, type: 'scored',
+        text: 'If I asked what your last marketing campaign earned in revenue, could you answer with a number?'
+    },
+    {
+        id: 2, type: 'spend',
+        text: 'Roughly how much do you spend on marketing each month?',
+        spendOptions: ['Under $100', '$100-$250', '$250-$500', '$500-$1,000', '$1,000-$2,500', '$2,500+'],
+        traceLabel: 'How much of that could you trace to an actual sale?'
+    },
+    {
+        id: 3, type: 'multi',
+        text: "Where's that money actually going?",
+        options: ['Facebook/Instagram ads', 'Google Ads', 'Boosting posts', 'SEO', 'Email', 'Agency or freelancer', 'Print', 'Radio', 'TV', 'TikTok', 'LinkedIn', 'Not totally sure', 'Other'],
+        hasOther: true
+    },
+    {
+        id: 4, type: 'scored',
+        text: 'Can you say which channel brought in your last five customers?'
+    },
+    {
+        id: 5, type: 'multi',
+        text: "Which of these are you paying for but not sure you're getting full value from?",
+        options: ['CRM (like HubSpot)', 'Email / SMS marketing (like Kit)', 'Agency / freelancer', 'AI / chatbot (like ChatGPT Pro)', 'Social media scheduler', 'Design tool (like Canva Pro)', 'Other'],
+        hasOther: true
+    },
+    {
+        id: 6, type: 'scored',
+        text: 'When someone enquires, do you capture where they came from?'
+    },
+    {
+        id: 7, type: 'single',
+        text: 'Who looks after your marketing day to day?',
+        options: ['You', 'A staff member', 'A freelancer', 'An agency', 'No one really']
+    },
+    {
+        id: 8, type: 'scored',
+        text: "In the last 90 days, have you cut or stopped a marketing activity because the data told you it wasn't working?"
+    },
+    {
+        id: 9, type: 'single',
+        text: "What would make next year's marketing a genuine win?",
+        options: ['More enquiries and sales', 'More reach and followers', 'A stronger brand', 'Honestly not sure']
+    },
+    {
+        id: 10, type: 'scored',
+        text: 'Could you prove to a sceptical business partner that your marketing is worth the money?'
+    }
+];
+
+const BANDS = [
+    { max: 30,  label: 'Flying blind.',           desc: "You're spending on faith. Right now you couldn't tell a good month from a lucky one.",                        color: '#C0392B' },
+    { max: 60,  label: 'Confident but guessing.',  desc: "You have fragments of data, but nothing that connects spend to outcome.",                                   color: '#E67E22' },
+    { max: 85,  label: 'Measured but leaking.',    desc: "Your foundations are mostly there. The gaps are quiet, which is why they keep costing you.",                color: '#D4A017' },
+    { max: 100, label: 'Proof-ready.',             desc: "Rare. You can prove your marketing earns its keep.",                                                        color: '#1E8A5A' },
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+    currentQ: 0,
+    answers: {},
+    proofScore: 0,
+    percentage: 0,
+    band: null,
+    firstName: '',
+    leadPriority: null,
+};
+
+// ============================================================
+// PHASE MANAGEMENT
+// ============================================================
+function goToPhase(phase) {
+    document.body.dataset.phase = phase;
+    window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+function startQuiz() {
+    state.currentQ = 0;
+    renderQuestion();
+    goToPhase('questions');
+}
+
+// ============================================================
+// RENDERING
+// ============================================================
+function esc(str) {
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderQuestion() {
+    const q = QUESTIONS[state.currentQ];
+    const a = state.answers[state.currentQ];
+    let html = `
+        <div class="ps-question__meta">
+            <span class="tp-eyebrow" style="color: var(--text-muted);">Question ${q.id} of ${QUESTIONS.length}</span>
+        </div>
+        <p class="ps-question__text">${esc(q.text)}</p>
+    `;
+
+    if (q.type === 'scored') {
+        html += '<div class="ps-options">';
+        SCORED_OPTIONS.forEach(opt => {
+            const sel = a && a.value === opt.value ? 'is-selected' : '';
+            html += `<button class="ps-option ${sel}" onclick="selectScored(${opt.value},${JSON.stringify(opt.label)})">
+                <span class="ps-option__indicator" aria-hidden="true"></span>
+                <span class="ps-option__label">${esc(opt.label)}</span>
+            </button>`;
+        });
+        html += '</div>';
+    }
+
+    if (q.type === 'spend') {
+        const selSpend = a ? a.spend : '';
+        const selTrace = a ? (a.trace || '') : '';
+        html += `<div class="ps-spend-wrap">
+            <div>
+                <div class="ps-spend-label">Monthly marketing spend</div>
+                <div class="ps-radio-list">`;
+        q.spendOptions.forEach(opt => {
+            const sel = selSpend === opt ? 'is-selected' : '';
+            html += `<button class="ps-option ${sel}" onclick="selectSpend(${JSON.stringify(opt)})">
+                <span class="ps-option__indicator" aria-hidden="true"></span>
+                <span class="ps-option__label">${esc(opt)}</span>
+            </button>`;
+        });
+        html += `</div></div>
+            <div>
+                <div class="ps-spend-label">${esc(q.traceLabel)}</div>
+                <textarea class="ps-textarea" id="ps-trace" placeholder="e.g. About $500 from the Google ads in March" oninput="updateTrace(this.value)">${esc(selTrace)}</textarea>
+            </div>
+        </div>`;
+    }
+
+    if (q.type === 'multi') {
+        const selItems = a ? (a.selected || []) : [];
+        const otherText = a ? (a.otherText || '') : '';
+        const otherSel = selItems.includes('Other');
+        html += '<div class="ps-checkbox-grid">';
+        q.options.forEach(opt => {
+            const sel = selItems.includes(opt) ? 'is-selected' : '';
+            html += `<button class="ps-checkbox ${sel}" onclick="toggleMulti(${state.currentQ},${JSON.stringify(opt)})">
+                <span class="ps-checkbox__box" aria-hidden="true"></span>
+                <span class="ps-checkbox__label">${esc(opt)}</span>
+            </button>`;
+        });
+        html += '</div>';
+        if (q.hasOther) {
+            html += `<div class="ps-other-input" id="ps-other-wrap" style="${otherSel ? '' : 'display:none'}">
+                <input type="text" id="ps-other-text" placeholder="Please specify…" value="${esc(otherText)}" oninput="updateOtherText(${state.currentQ},this.value)" aria-label="Other (please specify)">
+            </div>`;
+        }
+    }
+
+    if (q.type === 'single') {
+        const selVal = a ? a.value : '';
+        html += '<div class="ps-radio-list">';
+        q.options.forEach(opt => {
+            const sel = selVal === opt ? 'is-selected' : '';
+            html += `<button class="ps-option ${sel}" onclick="selectSingle(${state.currentQ},${JSON.stringify(opt)})">
+                <span class="ps-option__indicator" aria-hidden="true"></span>
+                <span class="ps-option__label">${esc(opt)}</span>
+            </button>`;
+        });
+        html += '</div>';
+    }
+
+    document.getElementById('ps-question-wrap').innerHTML = html;
+    document.getElementById('ps-progress-fill').style.width = (state.currentQ / QUESTIONS.length * 100) + '%';
+    document.getElementById('ps-back-btn').disabled = state.currentQ === 0;
+    document.getElementById('ps-next-btn').disabled = !isAnswered(state.currentQ);
+
+    if (q.type === 'questions') {
+        const nextLabel = state.currentQ === QUESTIONS.length - 1 ? 'See my score' : 'Next';
+        document.getElementById('ps-next-btn').textContent = nextLabel;
+    }
+    document.getElementById('ps-next-btn').textContent = state.currentQ === QUESTIONS.length - 1 ? 'See my score' : 'Next';
+}
+
+function isAnswered(idx) {
+    const q = QUESTIONS[idx];
+    const a = state.answers[idx];
+    if (!a) return false;
+    if (q.type === 'scored') return a.value !== undefined;
+    if (q.type === 'spend')  return !!a.spend;
+    if (q.type === 'multi')  return a.selected && a.selected.length > 0;
+    if (q.type === 'single') return !!a.value;
+    return false;
+}
+
+// ============================================================
+// ANSWER HANDLERS
+// ============================================================
+function selectScored(value, label) {
+    state.answers[state.currentQ] = { value, label };
+    renderQuestion();
+}
+
+function selectSpend(opt) {
+    const prev = state.answers[state.currentQ] || {};
+    const prevTrace = document.getElementById('ps-trace')?.value || prev.trace || '';
+    state.answers[state.currentQ] = { ...prev, spend: opt, trace: prevTrace };
+    renderQuestion();
+}
+
+function updateTrace(val) {
+    const prev = state.answers[state.currentQ] || {};
+    state.answers[state.currentQ] = { ...prev, trace: val };
+}
+
+function toggleMulti(qIdx, opt) {
+    const prev = state.answers[qIdx] || { selected: [], otherText: '' };
+    let selected = [...(prev.selected || [])];
+    if (selected.includes(opt)) {
+        selected = selected.filter(s => s !== opt);
+    } else {
+        selected.push(opt);
+    }
+    const otherText = document.getElementById('ps-other-text')?.value || prev.otherText || '';
+    state.answers[qIdx] = { selected, otherText };
+    renderQuestion();
+}
+
+function updateOtherText(qIdx, val) {
+    const prev = state.answers[qIdx] || { selected: [] };
+    state.answers[qIdx] = { ...prev, otherText: val };
+}
+
+function selectSingle(qIdx, opt) {
+    state.answers[qIdx] = { value: opt };
+    renderQuestion();
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function goNext() {
+    if (!isAnswered(state.currentQ)) return;
+    if (state.currentQ < QUESTIONS.length - 1) {
+        state.currentQ++;
+        renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        computeScore();
+        showScore();
+    }
+}
+
+function goBack() {
+    if (state.currentQ > 0) {
+        state.currentQ--;
+        renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+// ============================================================
+// SCORING
+// ============================================================
+function computeScore() {
+    // Q1=idx0, Q4=idx3, Q6=idx5, Q8=idx7, Q10=idx9
+    const scoredIdxs = [0, 3, 5, 7, 9];
+    let total = 0;
+    scoredIdxs.forEach(i => {
+        const a = state.answers[i];
+        if (a && a.value !== undefined) total += a.value;
+    });
+    state.proofScore = total;
+    state.percentage = Math.round(total / 50 * 100);
+    state.band = BANDS.find(b => state.percentage <= b.max) || BANDS[BANDS.length - 1];
+}
+
+function showScore() {
+    goToPhase('score');
+
+    const fill   = document.getElementById('ps-ring-fill');
+    const pctEl  = document.getElementById('ps-ring-pct');
+    const bandEl = document.getElementById('ps-score-band');
+    const descEl = document.getElementById('ps-score-desc');
+
+    fill.style.stroke = state.band.color;
+    bandEl.textContent = state.band.label;
+    descEl.textContent = state.band.desc;
+
+    const circumference = 339.292;
+    const target = state.percentage;
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            fill.style.strokeDashoffset = circumference * (1 - target / 100);
+            let count = 0;
+            const timer = setInterval(() => {
+                count = Math.min(count + Math.max(1, Math.ceil(target / 60)), target);
+                pctEl.textContent = count + '%';
+                if (count >= target) clearInterval(timer);
+            }, 20);
+        });
+    });
+}
+
+// ============================================================
+// CONTACT FORM
+// ============================================================
+function submitForm() {
+    const get = id => document.getElementById(id);
+
+    const firstName = get('ps-first-name').value.trim();
+    const email     = get('ps-email').value.trim();
+    const phone     = get('ps-phone').value.trim();
+    const company   = get('ps-company').value.trim();
+    const website   = get('ps-website').value.trim();
+    const consent   = get('ps-consent').checked;
+
+    let valid = true;
+    function setErr(id, show) {
+        const el = get(id);
+        if (show) { el.classList.add('has-error'); valid = false; }
+        else el.classList.remove('has-error');
+    }
+
+    setErr('field-first-name', !firstName);
+    setErr('field-email', !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+    setErr('field-phone', !phone);
+    setErr('field-company', !company);
+    setErr('field-website', !website);
+    const consentEl = get('field-consent');
+    if (!consent) { consentEl.classList.add('has-error'); valid = false; }
+    else consentEl.classList.remove('has-error');
+
+    if (!valid) return;
+
+    state.firstName = firstName;
+
+    const btn = get('ps-submit-btn');
+    btn.classList.add('tp-btn--loading');
+    btn.textContent = 'Sending…';
+
+    const payload = {
+        firstName, email, phone, company, website, consent,
+        proofScore:       state.proofScore,
+        percentage:       state.percentage,
+        band:             state.band.label,
+        monthlySpend:     state.answers[1]?.spend    || '',
+        traceableSpend:   state.answers[1]?.trace    || '',
+        platforms:        state.answers[2]?.selected || [],
+        platformsOther:   state.answers[2]?.otherText || '',
+        toolGaps:         state.answers[4]?.selected || [],
+        toolGapsOther:    state.answers[4]?.otherText || '',
+        whoRunsMarketing: state.answers[6]?.value    || '',
+        statedWin:        state.answers[8]?.value    || '',
+        q1Answer:         state.answers[0]?.label    || '',
+        q4Answer:         state.answers[3]?.label    || '',
+        q6Answer:         state.answers[5]?.label    || '',
+        q8Answer:         state.answers[7]?.label    || '',
+        q10Answer:        state.answers[9]?.label    || '',
+    };
+
+    fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+    })
+    .then(r => r.ok ? r.json() : Promise.reject(r))
+    .then(data => {
+        if (data.success) {
+            state.leadPriority = data.leadPriority;
+            renderReport();
+            goToPhase('report');
+        } else {
+            showFormError();
+        }
+    })
+    .catch(() => showFormError())
+    .finally(() => {
+        btn.classList.remove('tp-btn--loading');
+        btn.textContent = 'Unlock my full report';
+    });
+}
+
+function showFormError() {
+    const el = document.getElementById('ps-form-error');
+    el.classList.add('is-visible');
+    setTimeout(() => el.classList.remove('is-visible'), 7000);
+}
+
+// ============================================================
+// REPORT
+// ============================================================
+function renderReport() {
+    const pct      = state.percentage;
+    const band     = state.band;
+    const spend    = state.answers[1]?.spend    || '';
+    const trace    = state.answers[1]?.trace    || '';
+    const platforms    = state.answers[2]?.selected  || [];
+    const platOther    = state.answers[2]?.otherText || '';
+    const toolGaps     = state.answers[4]?.selected  || [];
+    const toolOther    = state.answers[4]?.otherText || '';
+    const whoRuns  = state.answers[6]?.value    || '';
+    const statedWin = state.answers[8]?.value   || '';
+    const highSpend = ['$1,000-$2,500', '$2,500+'].includes(spend);
+
+    document.getElementById('rpt-score-pct').textContent  = pct + '%';
+    document.getElementById('rpt-band-label').textContent = band.label;
+
+    // --- Diagnosis ---
+    let diagText = `Your Proof Score of ${pct}% places you in the <strong>${esc(band.label)}</strong> band. ${esc(band.desc)}`;
+    if (highSpend) {
+        diagText += ` At ${esc(spend)} per month, there's real money at stake. Every dollar that can't be traced to an outcome is quietly working against you.`;
+    }
+
+    // --- Channels ---
+    const allPlatforms = platforms.filter(p => p !== 'Other');
+    if (platforms.includes('Other') && platOther) allPlatforms.push(platOther);
+    const hasFB     = platforms.includes('Facebook/Instagram ads');
+    const hasGoogle = platforms.includes('Google Ads');
+
+    let channelHtml = '';
+    if (allPlatforms.length) {
+        channelHtml = '<ul>' + allPlatforms.map(p => `<li>${esc(p)}</li>`).join('') + '</ul>';
+    } else {
+        channelHtml = '<p>No specific channels were identified. That in itself is worth investigating.</p>';
+    }
+    if (hasFB && hasGoogle) {
+        channelHtml += `<div class="ps-callout">You're running Facebook/Instagram ads and Google Ads simultaneously. Both platforms typically count conversions independently, which means you may be counting the same customers twice. Your total attributed revenue is likely inflated.</div>`;
+    }
+
+    // --- Tool gaps ---
+    const allGaps = toolGaps.filter(g => g !== 'Other');
+    if (toolGaps.includes('Other') && toolOther) allGaps.push(toolOther);
+    let gapsHtml = '';
+    if (allGaps.length) {
+        gapsHtml = '<ul>' + allGaps.map(g => `<li>${esc(g)}</li>`).join('') + '</ul>';
+    } else {
+        gapsHtml = '<p>No tool gaps identified. Either your stack is lean and purposeful, or this question didn\'t quite fit your situation.</p>';
+    }
+
+    // --- Goal ---
+    const winCopy = {
+        'More enquiries and sales':
+            "You're focused on outcomes. That's the right place to start. Every marketing activity should have a traceable line to an enquiry or a sale. An Initial Inspection would show you where those lines are currently broken.",
+        'More reach and followers':
+            "Reach without conversion data quickly becomes a vanity metric. The goal of an Initial Inspection would be to help you understand which part of your audience actually becomes a customer, so you can reach more of those people.",
+        'A stronger brand':
+            "Brand investment is real and valuable, but it's the hardest type of marketing to defend without a measurement framework. An Inspection gives your brand work a foundation it can stand on.",
+        'Honestly not sure':
+            "Not knowing your goal is the first gap. Before budget, before channels, before tactics, we'd work to clarify what a genuine win would look like for your business this year.",
+    };
+    const whoCopy = {
+        'You':
+            "You're handling marketing yourself, which usually means you're time-poor and making calls without complete data. An Initial Inspection is designed to cut through that quickly.",
+        'A staff member':
+            "When a team member manages marketing without a shared measurement framework, good intentions can quietly replace hard evidence. An Inspection helps set the right foundation.",
+        'A freelancer':
+            "Freelancers move fast, which is valuable. But without a shared measurement framework, it's difficult to know whether that speed is pointed in the right direction.",
+        'An agency':
+            "Agencies typically report on what they control. An Initial Inspection looks at whether what they control is actually connected to outcomes you care about.",
+        'No one really':
+            "Marketing without a clear owner is marketing without accountability. That would be the first thing we'd address.",
+    };
+
+    const goalText = winCopy[statedWin] || '';
+    const whoText  = whoCopy[whoRuns]   || '';
+
+    // --- Inspection bullets ---
+    const bullets = [];
+    if (allPlatforms.length) {
+        const named = allPlatforms.slice(0, 3).join(', ') + (allPlatforms.length > 3 ? ' and others' : '');
+        bullets.push(`How each active channel (${esc(named)}) is tracked and attributed to an outcome`);
+    }
+    if (highSpend) {
+        bullets.push(`Whether your ${esc(spend)} monthly spend has a traceable return, and where the measurement gaps are`);
+    }
+    if (allGaps.length) {
+        const named = allGaps.slice(0, 2).map(esc).join(' and ');
+        bullets.push(`Whether tools like ${named} are being used to their potential, or could be rationalised`);
+    }
+    if (hasFB && hasGoogle) {
+        bullets.push('How to de-duplicate conversion data across Facebook and Google to get an accurate picture of return');
+    }
+    bullets.push('What a simple, usable measurement framework would look like for your business specifically');
+    bullets.push('The two or three changes most likely to have an impact in the next 90 days');
+
+    document.getElementById('ps-report-body').innerHTML = `
+        <div class="ps-report-section">
+            <span class="tp-eyebrow ps-report-section__eyebrow">Your diagnosis</span>
+            <h2>What your score means</h2>
+            <p>${diagText}</p>
+        </div>
+        <div class="ps-report-section">
+            <span class="tp-eyebrow ps-report-section__eyebrow">Your marketing channels</span>
+            <h2>Where your money is going</h2>
+            ${channelHtml}
+        </div>
+        <div class="ps-report-section">
+            <span class="tp-eyebrow ps-report-section__eyebrow">The tools costing you clarity</span>
+            <h2>What might be draining your budget</h2>
+            ${gapsHtml}
+        </div>
+        <div class="ps-report-section">
+            <span class="tp-eyebrow ps-report-section__eyebrow">What this means for your goal</span>
+            <h2>${esc(statedWin) || 'Your goal'}</h2>
+            ${goalText ? `<p>${esc(goalText)}</p>` : ''}
+            ${whoText  ? `<p>${esc(whoText)}</p>`  : ''}
+        </div>
+        <div class="ps-report-section">
+            <span class="tp-eyebrow ps-report-section__eyebrow">What we'd look at in an Initial Inspection</span>
+            <h2>Where to start</h2>
+            <ul>${bullets.map(b => `<li>${b}</li>`).join('')}</ul>
+        </div>
+        <div class="ps-cta-card tp-grain">
+            <h2>Book your Initial Inspection</h2>
+            <p>A focused, no-obligation session to identify where your marketing is leaking value and what to do about it.</p>
+            <a href="tel:+61439612398" class="tp-btn tp-btn--emphasis">Call Rob now</a>
+        </div>
+    `;
+}
+</script>
+
+</body>
+</html>
