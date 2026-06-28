@@ -816,7 +816,7 @@ function renderQuestion() {
         html += '<div class="ps-options">';
         SCORED_OPTIONS.forEach(opt => {
             const sel = a && a.value === opt.value ? 'is-selected' : '';
-            html += `<button class="ps-option ${sel}" onclick="selectScored(${opt.value},${JSON.stringify(opt.label)})">
+            html += `<button class="ps-option ${sel}" onclick="selectScored(${opt.value},${esc(JSON.stringify(opt.label))})">
                 <span class="ps-option__indicator" aria-hidden="true"></span>
                 <span class="ps-option__label">${esc(opt.label)}</span>
             </button>`;
@@ -833,7 +833,7 @@ function renderQuestion() {
                 <div class="ps-radio-list">`;
         q.spendOptions.forEach(opt => {
             const sel = selSpend === opt ? 'is-selected' : '';
-            html += `<button class="ps-option ${sel}" onclick="selectSpend(${JSON.stringify(opt)})">
+            html += `<button class="ps-option ${sel}" onclick="selectSpend(${esc(JSON.stringify(opt))})">
                 <span class="ps-option__indicator" aria-hidden="true"></span>
                 <span class="ps-option__label">${esc(opt)}</span>
             </button>`;
@@ -853,7 +853,7 @@ function renderQuestion() {
         html += '<div class="ps-checkbox-grid">';
         q.options.forEach(opt => {
             const sel = selItems.includes(opt) ? 'is-selected' : '';
-            html += `<button class="ps-checkbox ${sel}" onclick="toggleMulti(${state.currentQ},${JSON.stringify(opt)})">
+            html += `<button class="ps-checkbox ${sel}" onclick="toggleMulti(${state.currentQ},${esc(JSON.stringify(opt))})">
                 <span class="ps-checkbox__box" aria-hidden="true"></span>
                 <span class="ps-checkbox__label">${esc(opt)}</span>
             </button>`;
@@ -871,7 +871,7 @@ function renderQuestion() {
         html += '<div class="ps-radio-list">';
         q.options.forEach(opt => {
             const sel = selVal === opt ? 'is-selected' : '';
-            html += `<button class="ps-option ${sel}" onclick="selectSingle(${state.currentQ},${JSON.stringify(opt)})">
+            html += `<button class="ps-option ${sel}" onclick="selectSingle(${state.currentQ},${esc(JSON.stringify(opt))})">
                 <span class="ps-option__indicator" aria-hidden="true"></span>
                 <span class="ps-option__label">${esc(opt)}</span>
             </button>`;
