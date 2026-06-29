@@ -1097,6 +1097,7 @@ function showScore() {
 // ============================================================
 let _turnstileWidgetId = null;
 let _turnstileReady    = false;
+let _submitting        = false;
 
 function onTurnstileLoad() {
     _turnstileWidgetId = turnstile.render('#cf-turnstile-widget', {
@@ -1109,10 +1110,13 @@ function onTurnstileLoad() {
 }
 
 function _onTurnstileSuccess(token) {
+    if (!_submitting) return;
+    _submitting = false;
     doSubmit(token);
 }
 
 function _onTurnstileError() {
+    _submitting = false;
     const btn = document.getElementById('ps-submit-btn');
     btn.classList.remove('tp-btn--loading');
     btn.textContent = 'Unlock my full report';
@@ -1156,6 +1160,7 @@ function submitForm() {
     btn.classList.add('tp-btn--loading');
     btn.textContent = 'Verifying…';
 
+    _submitting = true;
     if (_turnstileWidgetId !== null) turnstile.reset(_turnstileWidgetId);
     turnstile.execute(_turnstileWidgetId);
 }
