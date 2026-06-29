@@ -1,3 +1,8 @@
 name = "proof-score-api"
 main = "index.js"
 compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "5f4fb1d2b7ab45fa862c79438df2f9a3"
+preview_id = "9ad70234aaae4e10b96159c805b47e3f"

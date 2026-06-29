@@ -615,7 +615,19 @@
             .ps-cta-card { padding: var(--space-8) var(--space-5); }
             .ps-q-nav .tp-btn { width: auto; }
         }
+
+        /* === Honeypot (off-screen, invisible to humans) === */
+        .ps-hp {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
     </style>
+
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad" async defer></script>
 </head>
 <body data-phase="intro">
 <!-- Google Tag Manager (noscript) -->
@@ -710,6 +722,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <label for="ps-consent">I agree to Toolproof storing my details and using them to follow up on my results. I can opt out at any time.</label>
             </div>
             <div class="ps-form-error" id="ps-form-error" role="alert">Something went wrong. Please try again in a moment.</div>
+            <!-- Honeypot: hidden from humans, filled by bots -->
+            <div class="ps-hp" aria-hidden="true">
+                <label for="ps-hp-field">Leave this field empty</label>
+                <input type="text" id="ps-hp-field" name="contact_url" tabindex="-1" autocomplete="off">
+            </div>
+            <!-- Turnstile invisible widget -->
+            <div id="cf-turnstile-widget"></div>
             <button type="button" class="tp-btn tp-btn--emphasis" id="ps-submit-btn" onclick="submitForm()" style="width: 100%;">Unlock my full report</button>
         </form>
     </div>
@@ -1074,6 +1093,33 @@ function showScore() {
 }
 
 // ============================================================
+// TURNSTILE
+// ============================================================
+let _turnstileWidgetId = null;
+let _turnstileReady    = false;
+
+function onTurnstileLoad() {
+    _turnstileWidgetId = turnstile.render('#cf-turnstile-widget', {
+        sitekey: '0x4AAAAAADsj7I2qq0lB9Uh-',
+        callback: _onTurnstileSuccess,
+        'error-callback': _onTurnstileError,
+        size: 'invisible',
+    });
+    _turnstileReady = true;
+}
+
+function _onTurnstileSuccess(token) {
+    doSubmit(token);
+}
+
+function _onTurnstileError() {
+    const btn = document.getElementById('ps-submit-btn');
+    btn.classList.remove('tp-btn--loading');
+    btn.textContent = 'Unlock my full report';
+    showFormError();
+}
+
+// ============================================================
 // CONTACT FORM
 // ============================================================
 function submitForm() {
@@ -1104,14 +1150,35 @@ function submitForm() {
 
     if (!valid) return;
 
-    state.firstName = firstName;
+    if (!_turnstileReady) { showFormError(); return; }
 
     const btn = get('ps-submit-btn');
     btn.classList.add('tp-btn--loading');
+    btn.textContent = 'Verifying…';
+
+    if (_turnstileWidgetId !== null) turnstile.reset(_turnstileWidgetId);
+    turnstile.execute(_turnstileWidgetId);
+}
+
+function doSubmit(turnstileToken) {
+    const get = id => document.getElementById(id);
+
+    const firstName = get('ps-first-name').value.trim();
+    const email     = get('ps-email').value.trim();
+    const phone     = get('ps-phone').value.trim();
+    const company   = get('ps-company').value.trim();
+    const website   = get('ps-website').value.trim();
+    const consent   = get('ps-consent').checked;
+    const hp        = get('ps-hp-field').value;
+
+    state.firstName = firstName;
+
+    const btn = get('ps-submit-btn');
     btn.textContent = 'Sending…';
 
     const payload = {
         firstName, email, phone, company, website, consent,
+        hp, turnstileToken,
         proofScore:       state.proofScore,
         percentage:       state.percentage,
         band:             state.band.label,
@@ -1143,7 +1210,6 @@ function submitForm() {
             dataLayer.push({
                 event: 'proof_score_lead_submitted',
                 lead_priority: data.leadPriority,
-                // Normalised for FB advanced matching (FB hashes these in-browser)
                 user_email:      email.toLowerCase().trim(),
                 user_phone:      phone.replace(/\D/g, '').replace(/^0/, '61'),
                 user_first_name: (nameParts[0] || '').toLowerCase(),

@@ -58,12 +58,50 @@ function multiSelect(arr) {
         .map(name => ({ name: String(name).slice(0, 100) }));
 }
 
+async function verifyTurnstile(token, ip, secret) {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret, response: token, remoteip: ip }),
+    });
+    const data = await res.json();
+    return data.success === true;
+}
+
+async function checkRateLimit(env, ip) {
+    const window = Math.floor(Date.now() / 3600000); // 1-hour fixed bucket
+    const key = `rl:${ip}:${window}`;
+    const current = await env.RATE_LIMIT.get(key);
+    const count = current ? parseInt(current, 10) : 0;
+    if (count >= 5) return false;
+    await env.RATE_LIMIT.put(key, String(count + 1), { expirationTtl: 3600 });
+    return true;
+}
+
 async function handleSubmitLead(request, env) {
     let body;
     try {
         body = await request.json();
     } catch {
         return new Response(JSON.stringify({ success: false, error: 'Invalid JSON' }), { status: 400 });
+    }
+
+    // Honeypot check — bots fill hidden fields, humans don't
+    if (body.hp) {
+        return new Response(JSON.stringify({ success: true, leadPriority: 'Not a fit' }), { status: 200 });
+    }
+
+    // Turnstile verification
+    const ip = request.headers.get('CF-Connecting-IP') || '';
+    const turnstileOk = await verifyTurnstile(body.turnstileToken, ip, env.TURNSTILE_SECRET);
+    if (!turnstileOk) {
+        return new Response(JSON.stringify({ success: false, error: 'Bot verification failed' }), { status: 403 });
+    }
+
+    // Rate limiting — 5 submissions per IP per hour
+    const withinLimit = await checkRateLimit(env, ip);
+    if (!withinLimit) {
+        return new Response(JSON.stringify({ success: false, error: 'Too many submissions' }), { status: 429 });
     }
 
     const {
