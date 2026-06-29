@@ -91,6 +91,11 @@ async function handleSubmitLead(request, env) {
         return new Response(JSON.stringify({ success: true, leadPriority: 'Not a fit' }), { status: 200 });
     }
 
+    // Required field presence check — reject empty submissions before they touch the rate limiter
+    if (!body.email || !body.firstName) {
+        return new Response(JSON.stringify({ success: false, error: 'Missing required fields' }), { status: 400 });
+    }
+
     // Turnstile verification
     const ip = request.headers.get('CF-Connecting-IP') || '';
     const turnstileOk = await verifyTurnstile(body.turnstileToken, ip, env.TURNSTILE_SECRET);
