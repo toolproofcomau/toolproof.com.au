@@ -1139,9 +1139,16 @@ function submitForm() {
     .then(data => {
         if (data.success) {
             state.leadPriority = data.leadPriority;
+            const nameParts = firstName.trim().split(/\s+/);
             dataLayer.push({
                 event: 'proof_score_lead_submitted',
                 lead_priority: data.leadPriority,
+                // Normalised for FB advanced matching (FB hashes these in-browser)
+                user_email:      email.toLowerCase().trim(),
+                user_phone:      phone.replace(/\D/g, '').replace(/^0/, '61'),
+                user_first_name: (nameParts[0] || '').toLowerCase(),
+                user_last_name:  (nameParts.slice(1).join(' ') || '').toLowerCase(),
+                user_country:    'au',
             });
             renderReport();
             goToPhase('report');
