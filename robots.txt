@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /workers/
+Disallow: /brand-kit.html
+
+Sitemap: https://www.toolproof.com.au/sitemap.xml
