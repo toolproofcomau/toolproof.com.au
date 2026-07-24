@@ -239,6 +239,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <section class="tp-closing tp-grain" id="get-started">
         <div class="tp-closing__container">
             <div class="tp-closing__content">
+                <span class="tp-eyebrow tp-closing__eyebrow">Let's get started</span>
                 <h2 class="tp-closing__headline">Ready to find what your marketing isn't earning back?</h2>
                 <p class="tp-closing__body">Every quarter you wait is another quarter you can't say what your marketing actually earned. We fix that, starting with numbers you can trust.</p>
                 <div class="tp-closing__split">
@@ -304,10 +305,62 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </section>
 
+    <section class="tp-loop" id="in-the-loop">
+        <div class="tp-loop__container">
+            <div class="tp-loop__text">
+                <h2 class="tp-loop__headline">Stay In The Loop</h2>
+                <p class="tp-loop__body">Every fortnight, one useful idea on proving what your marketing earns.</p>
+            </div>
+            <div class="tp-loop__form-wrap">
+                <form class="tp-loop__form" id="loop-form" novalidate>
+                    <div class="ct-field tp-loop__field" id="loop-field-email">
+                        <label class="tp-eyebrow" for="loop-email">Email address</label>
+                        <input type="email" id="loop-email" name="email" placeholder="jane@yourbusiness.com.au" autocomplete="email">
+                        <span class="ct-field__error" role="alert">Please enter a valid email address.</span>
+                    </div>
+                    <div class="ct-field tp-loop__field" id="loop-field-name">
+                        <label class="tp-eyebrow" for="loop-name">Name <span class="tp-loop__optional">(optional)</span></label>
+                        <input type="text" id="loop-name" name="name" placeholder="Jane Smith" autocomplete="name">
+                    </div>
+                    <!-- Honeypot: hidden from humans, filled by bots -->
+                    <div class="ct-hp" aria-hidden="true">
+                        <label for="loop-hp-field">Leave this field empty</label>
+                        <input type="text" id="loop-hp-field" name="contact_url" tabindex="-1" autocomplete="off">
+                    </div>
+                    <!-- Turnstile invisible widget -->
+                    <div id="loop-turnstile-widget"></div>
+                    <button type="button" class="tp-btn tp-loop__submit" id="loop-submit-btn" onclick="submitLoop('loop')">Join The Loop</button>
+                </form>
+                <div class="ct-success" id="loop-success" hidden>Thanks — you're on the list.</div>
+                <div class="ct-form-error" id="loop-form-error" role="alert">Something went wrong. Please try again in a moment.</div>
+                <p class="tp-loop__consent" id="loop-consent-text">By submitting, you agree to receive In The Loop emails from Toolproof. No spam, no hard sell, unsubscribe whenever.</p>
+            </div>
+        </div>
+    </section>
+
     <footer class="tp-footer">
         <span class="tp-wordmark tp-wordmark--light">
             Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup>
         </span>
+        <!-- Footer newsletter signup: temporarily hidden, layout being reworked -->
+        <div class="tp-footer__loop" hidden>
+            <form class="tp-footer__loop-form" id="loop-footer-form" novalidate>
+                <div class="ct-field tp-footer__loop-field" id="loop-footer-field-email">
+                    <label for="loop-footer-email">In The Loop</label>
+                    <input type="email" id="loop-footer-email" name="email" placeholder="you@business.com.au" autocomplete="email">
+                    <span class="ct-field__error" role="alert">Please enter a valid email address.</span>
+                </div>
+                <div class="ct-hp" aria-hidden="true">
+                    <label for="loop-footer-hp-field">Leave this field empty</label>
+                    <input type="text" id="loop-footer-hp-field" name="contact_url" tabindex="-1" autocomplete="off">
+                </div>
+                <div id="loop-footer-turnstile-widget"></div>
+                <button type="button" class="tp-btn tp-btn--ghost tp-footer__loop-btn" id="loop-footer-submit-btn" onclick="submitLoop('loop-footer')">Join The Loop</button>
+            </form>
+            <div class="ct-success" id="loop-footer-success" hidden>Thanks — you're on the list.</div>
+            <div class="ct-form-error" id="loop-footer-form-error" role="alert">Something went wrong. Please try again in a moment.</div>
+        </div>
+        <p class="tp-footer__loop-consent" hidden>By submitting, you agree to receive In The Loop emails from Toolproof. No spam, no hard sell, unsubscribe whenever.</p>
         <small>&copy; 2026 Toolproof. ABN: 18 878 662 154</small>
         <div class="tp-footer__legal">
             <button class="tp-footer__cookie-btn" id="tp-cookie-prefs" type="button">Cookie preferences</button>
@@ -448,6 +501,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 size: 'invisible',
             });
             _ctTurnstileReady = true;
+            onLoopTurnstileLoad();
         }
 
         function _onContactTurnstileSuccess(token) {
@@ -542,6 +596,117 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         function showContactFormError() {
             var el = document.getElementById('ct-form-error');
+            el.classList.add('is-visible');
+            setTimeout(function () { el.classList.remove('is-visible'); }, 7000);
+        }
+
+        var LOOP_API_URL = 'https://in-the-loop-api.toolproof.workers.dev/subscribe';
+        var LOOP_SOURCE_MAP = { 'loop': 'bar', 'loop-footer': 'footer' };
+        var _loopState = {};
+
+        function onLoopTurnstileLoad() {
+            ['loop', 'loop-footer'].forEach(function (prefix) {
+                var container = document.getElementById(prefix + '-turnstile-widget');
+                if (!container) return;
+                var widgetId = turnstile.render('#' + prefix + '-turnstile-widget', {
+                    sitekey: '0x4AAAAAADsj7I2qq0lB9Uh-',
+                    callback: function (token) { _onLoopTurnstileSuccess(prefix, token); },
+                    'error-callback': function () { _onLoopTurnstileError(prefix); },
+                    size: 'invisible',
+                });
+                _loopState[prefix] = { widgetId: widgetId, ready: true, submitting: false };
+            });
+        }
+
+        function _onLoopTurnstileSuccess(prefix, token) {
+            var state = _loopState[prefix];
+            if (!state || !state.submitting) return;
+            state.submitting = false;
+            doLoopSubmit(prefix, token);
+        }
+
+        function _onLoopTurnstileError(prefix) {
+            var state = _loopState[prefix];
+            if (state) state.submitting = false;
+            var btn = document.getElementById(prefix + '-submit-btn');
+            btn.classList.remove('tp-btn--loading');
+            btn.textContent = btn.dataset.defaultLabel || btn.textContent;
+            showLoopFormError(prefix);
+        }
+
+        function submitLoop(prefix) {
+            var get = function (id) { return document.getElementById(prefix + '-' + id); };
+
+            var email = get('email').value.trim();
+            var emailField = get('field-email');
+            var emailOk = !!email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            if (emailOk) { emailField.classList.remove('has-error'); }
+            else { emailField.classList.add('has-error'); return; }
+
+            var state = _loopState[prefix];
+            if (!state || !state.ready) { showLoopFormError(prefix); return; }
+
+            var btn = document.getElementById(prefix + '-submit-btn');
+            if (!btn.dataset.defaultLabel) btn.dataset.defaultLabel = btn.textContent;
+            btn.classList.add('tp-btn--loading');
+            btn.textContent = 'Verifying…';
+
+            state.submitting = true;
+            if (state.widgetId !== null) turnstile.reset(state.widgetId);
+            turnstile.execute(state.widgetId);
+        }
+
+        function doLoopSubmit(prefix, turnstileToken) {
+            var get = function (id) { return document.getElementById(prefix + '-' + id); };
+
+            var email = get('email').value.trim();
+            var nameEl = get('name');
+            var name = nameEl ? nameEl.value.trim() : '';
+            var hp = get('hp-field').value;
+            var consentEl = document.getElementById(prefix === 'loop' ? 'loop-consent-text' : 'loop-footer-consent-text')
+                || document.querySelector('.tp-footer__loop-consent');
+            var consentWording = consentEl.textContent.trim();
+
+            var btn = document.getElementById(prefix + '-submit-btn');
+            btn.textContent = 'Sending…';
+
+            var payload = {
+                email: email, name: name, hp: hp, turnstileToken: turnstileToken,
+                source: LOOP_SOURCE_MAP[prefix], consentWording: consentWording,
+            };
+
+            fetch(LOOP_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            })
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+            .then(function (data) {
+                if (data.success) {
+                    document.getElementById(prefix + '-form').hidden = true;
+                    document.getElementById(prefix + '-success').hidden = false;
+                    var nameParts = name.split(/\s+/);
+                    dataLayer.push({
+                        event: 'newsletter_signup',
+                        signup_source:   LOOP_SOURCE_MAP[prefix],
+                        user_email:      email.toLowerCase(),
+                        user_first_name: (nameParts[0] || '').toLowerCase(),
+                        user_last_name:  (nameParts.slice(1).join(' ') || '').toLowerCase(),
+                        user_country:    'au',
+                    });
+                } else {
+                    showLoopFormError(prefix);
+                }
+            })
+            .catch(function () { showLoopFormError(prefix); })
+            .finally(function () {
+                btn.classList.remove('tp-btn--loading');
+                btn.textContent = btn.dataset.defaultLabel;
+            });
+        }
+
+        function showLoopFormError(prefix) {
+            var el = document.getElementById(prefix + '-form-error');
             el.classList.add('is-visible');
             setTimeout(function () { el.classList.remove('is-visible'); }, 7000);
         }

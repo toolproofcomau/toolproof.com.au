@@ -1,0 +1,7 @@
+name = "in-the-loop-api"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "8550af94408b427a960f2753c54be582"
