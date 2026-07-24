@@ -12,7 +12,7 @@
     --tp-saltflat:        #E3E0DA;
     --tp-saltflat-deep:   #D4D0C8;
     --tp-charcoal:        #2C3A3E;
-    --tp-charcoal-light:  #5A7278;
+    --tp-charcoal-light:  #4D6167;
     --tp-white:           #FFFFFF;
 
     --surface-page:            var(--tp-limestone);
@@ -201,6 +201,7 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: var(--space-2);
     font-family: var(--font-display);
     font-weight: var(--weight-semibold);
     font-size: 15px;
@@ -217,6 +218,7 @@ body {
         color var(--duration-base) var(--ease-standard),
         transform var(--duration-fast) var(--ease-standard);
 }
+.tp-btn__icon { flex-shrink: 0; }
 .tp-btn:focus-visible {
     outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
@@ -234,7 +236,7 @@ body {
 .tp-btn--ghost {
     background: transparent;
     color: var(--text-on-dark);
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 .tp-btn--ghost:hover {
     background: rgba(255, 255, 255, 0.07);
@@ -251,6 +253,27 @@ body {
    Sticky limestone header; sits above and is excluded from
    the hero's min-height so nav + hero = 100svh on load.
 ============================================================ */
+.tp-skip-link {
+    position: absolute;
+    top: -100%;
+    left: var(--space-4);
+    z-index: 200;
+    background-color: var(--surface-card);
+    color: var(--text-strong);
+    font-family: var(--font-display);
+    font-weight: var(--weight-semibold);
+    font-size: var(--text-sm);
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 12px rgba(13, 31, 37, 0.3);
+    text-decoration: none;
+}
+.tp-skip-link:focus {
+    top: var(--space-4);
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+}
+
 .tp-site-nav {
     position: sticky;
     top: 0;
@@ -658,6 +681,11 @@ body {
     gap: var(--space-6);
     box-shadow: var(--shadow-card);
 }
+.tp-why-card__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
 .tp-why-card__icon-tile {
     display: inline-flex;
     align-items: center;
@@ -960,7 +988,7 @@ body {
     margin-bottom: var(--space-2);
 }
 .tp-loop__body {
-    color: var(--text-muted);
+    color: var(--text-body);
     font-size: var(--text-base);
     line-height: var(--leading-snug);
 }
@@ -995,7 +1023,7 @@ body {
 }
 .tp-loop__consent {
     font-size: var(--text-xs);
-    color: var(--text-muted);
+    color: var(--text-body);
     line-height: var(--leading-body);
 }
 
@@ -1184,6 +1212,7 @@ body {
     transform: translate(-50%, -48%);
     transition: opacity 0.25s var(--ease-standard), transform 0.25s var(--ease-standard);
 }
+.tp-consent:focus { outline: none; }
 .tp-consent--visible {
     opacity: 1;
     transform: translate(-50%, -50%);
@@ -1269,6 +1298,7 @@ html { scroll-behavior: smooth; }
 
     .tp-closing__split {
         flex-direction: column;
+        align-items: stretch;
     }
 
     .tp-loop__container {
@@ -1281,7 +1311,10 @@ html { scroll-behavior: smooth; }
         max-width: none;
         flex: none;
     }
-    .tp-loop__form { justify-content: center; }
+    .tp-loop__form {
+        flex-direction: column;
+        align-items: stretch;
+    }
 
     .tp-nav {
         display: none;
@@ -1316,6 +1349,7 @@ html { scroll-behavior: smooth; }
         display: flex;
         align-items: center;
         justify-content: center;
+        gap: var(--space-2);
         position: fixed;
         bottom: 0;
         left: 0;
