@@ -149,7 +149,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                 <article class="tp-problem-card">
                     <span class="tp-eyebrow tp-problem-card__label--tools">The Tools</span>
-                    <img class="tp-problem-card__illustration" src="assets/tools-illustration.webp" alt="A business owner at her laptop, looking frustrated as she thinks through a cluster of marketing tools — email, social, analytics, and more." width="1408" height="768">
+                    <img class="tp-problem-card__illustration" src="assets/tools-illustration.webp" alt="A business owner at her laptop, looking frustrated as she thinks through a cluster of marketing tools — email, social, analytics, and more." width="1408" height="768" loading="lazy" decoding="async">
                     <h3 class="tp-problem-card__headline">You're paying for software you barely scratch the surface with.</h3>
                     <p class="tp-problem-card__body">Most businesses have already invested in capable marketing software - a CRM, an email platform, analytics, maybe a social or ads tool. The trouble is that many use less than a fraction of what those subscriptions can actually do. The features that would save you time and reveal what's working are sitting one level deeper than anyone has had time to explore. So month after month, you keep paying the full price for a portion of the value (and features you touched just once then forgot about).</p>
                     <hr class="tp-problem-card__rule">
@@ -163,7 +163,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                 <article class="tp-problem-card">
                     <span class="tp-eyebrow tp-problem-card__label--proof">The Proof</span>
-                    <img class="tp-problem-card__illustration" src="assets/proof-illusration.webp" alt="A small business owner in an apron standing in front of his coffee van, looking puzzled at a tablet, with marketing charts floating in his thoughts." width="1408" height="768">
+                    <img class="tp-problem-card__illustration" src="assets/proof-illusration.webp" alt="A small business owner in an apron standing in front of his coffee van, looking puzzled at a tablet, with marketing charts floating in his thoughts." width="1408" height="768" loading="lazy" decoding="async">
                     <h3 class="tp-problem-card__headline">You're spending time and effort on marketing without knowing what's truly working.</h3>
                     <p class="tp-problem-card__body">Marketing is the only line in your accounts where most business owners can't tell you, with confidence, what each dollar earned. Campaigns get launched, content gets posted, ads get run - and the answer to "is it working?" comes back as a shrug, a screenshot of likes, or a number from a dashboard that nobody acts on. That's not just a measurement problem. It's an accountability problem: if you pay someone for your marketing, they don't carry the cost when it misses.</p>
                     <hr class="tp-problem-card__rule">
@@ -192,7 +192,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="tp-fix__phase">
                     <h3 class="tp-fix__phase-title">First, we make your numbers trustworthy...</h3>
                     <p class="tp-fix__phase-intro">You can't act on figures you don't trust, so we sort that out before anything else.</p>
-                    <img class="tp-fix__illustration" src="assets/measurement.webp" alt="A consultant working methodically through a notebook of marketing diagrams at a desk, magnifying glass nearby." width="1408" height="768">
+                    <img class="tp-fix__illustration" src="assets/measurement.webp" alt="A consultant working methodically through a notebook of marketing diagrams at a desk, magnifying glass nearby." width="1408" height="768" loading="lazy" decoding="async">
                     <ul class="tp-fix__steps">
                         <li><strong>Pre-Inspection.</strong> A free, five-minute scoring exercise so you know where you stand before we speak. <a href="/proof-score/" style="color: var(--text-accent);">Take the Proof Score &rarr;</a></li>
                         <li><strong>Initial Inspection.</strong> A more detailed look under the bonnet and a detailed read on where you stand.</li>
@@ -204,7 +204,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="tp-fix__phase">
                     <h3 class="tp-fix__phase-title">...then we run the Proof Loop</h3>
                     <p class="tp-fix__phase-intro">A simple cycle that repeats for as long as we work together. Every turn, your marketing has to earn its place.</p>
-                    <img class="tp-fix__illustration" src="assets/proof-loop.webp" alt="A circular diagram showing the four steps of the Proof Loop: Decide, Act, Measure, Prove — arranged as a repeating cycle." width="1408" height="768">
+                    <img class="tp-fix__illustration" src="assets/proof-loop.webp" alt="A circular diagram showing the four steps of the Proof Loop: Decide, Act, Measure, Prove — arranged as a repeating cycle." width="1408" height="768" loading="lazy" decoding="async">
                     <ol class="tp-fix__loop">
                         <li><strong>Decide.</strong> We pick the one change most likely to pay off, and we say up front what we expect it to return and by when. No vague promises.</li>
                         <li><strong>Act.</strong> We do it, help you do it, or hand it over for you (or a partner) to run. This is where an underused tool finally gets put to work, a campaign goes live, or a broken process gets fixed.</li>
@@ -278,7 +278,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             <div class="tp-about__body">
                 <div class="tp-about__image-wrap">
-                    <img class="tp-about__image" src="assets/rob.webp" alt="A sketch portrait of Rob Jefferson, founder of Toolproof." width="1024" height="1024">
+                    <img class="tp-about__image" src="assets/rob.webp" alt="A sketch portrait of Rob Jefferson, founder of Toolproof." width="1024" height="1024" loading="lazy" decoding="async">
                 </div>
                 <div class="tp-about__text">
                     <h3 class="tp-about__headline">Meet Rob Jefferson, the founder</h3>
@@ -698,7 +698,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         function onLoopTurnstileLoad() {
             ['loop', 'loop-footer'].forEach(function (prefix) {
                 var container = document.getElementById(prefix + '-turnstile-widget');
-                if (!container) return;
+                if (!container || container.offsetParent === null) return;
                 var widgetId = turnstile.render('#' + prefix + '-turnstile-widget', {
                     sitekey: '0x4AAAAAADsj7I2qq0lB9Uh-',
                     callback: function (token) { _onLoopTurnstileSuccess(prefix, token); },
