@@ -35,6 +35,22 @@
     --focus-ring:              var(--tp-teal);
 }
 
+/* === Self-hosted fonts === */
+@font-face {
+    font-family: "Cal Sans";
+    src: url('assets/fonts/CalSans-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Manrope";
+    src: url('assets/fonts/Manrope-Variable.woff2') format('woff2-variations');
+    font-weight: 200 800;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* === Design system: typography tokens === */
 :root {
     --font-display:     "Cal Sans", ui-sans-serif, system-ui, sans-serif;
