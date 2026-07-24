@@ -13,6 +13,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onContactTurnstileLoad" async defer></script>
 
     <!-- Consent Mode v2: default deny, then immediately update if previously granted -->
 <script>
@@ -240,18 +241,54 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="tp-closing__content">
                 <h2 class="tp-closing__headline">Ready to find what your marketing isn't earning back?</h2>
                 <p class="tp-closing__body">Every quarter you wait is another quarter you can't say what your marketing actually earned. We fix that, starting with numbers you can trust.</p>
-                <div class="tp-closing__options">
-                    <p class="tp-closing__options-intro">Two ways to begin, depending on how ready you are:</p>
-                    <ul class="tp-closing__options-list">
-                        <li><strong>Score your marketing now.</strong> A free Pre-Inspection that shows where you stand. No cost, no obligation, and no sales call unless you ask for one.</li>
-                        <li><strong>Book an Inspection.</strong> A detailed read on your tools and your results, with a clear plan for what to fix first.</li>
-                    </ul>
+                <div class="tp-closing__split">
+                    <div class="tp-closing__ctas">
+                        <p class="tp-closing__options-intro">Two ways to begin, depending on how ready you are:</p>
+                        <ul class="tp-closing__options-list">
+                            <li><strong>Score your marketing now.</strong> A free Pre-Inspection that shows where you stand. No cost, no obligation, and no sales call unless you ask for one.</li>
+                            <li><strong>Book an Inspection.</strong> A detailed read on your tools and your results, with a clear plan for what to fix first.</li>
+                        </ul>
+                        <div class="tp-closing__actions">
+                            <a class="tp-btn tp-btn--ghost" href="/proof-score/">Score your marketing now</a>
+                            <a class="tp-btn tp-btn--emphasis" href="tel:+61439612398">Book an Inspection</a>
+                        </div>
+                    </div>
+                    <div class="ct-card">
+                        <form class="ct-form" id="ct-form" novalidate>
+                            <div class="ct-field" id="ct-field-name">
+                                <label for="ct-name">Your name</label>
+                                <input type="text" id="ct-name" name="name" placeholder="Jane Smith" autocomplete="name">
+                                <span class="ct-field__error" role="alert">Please enter your name.</span>
+                            </div>
+                            <div class="ct-field" id="ct-field-email">
+                                <label for="ct-email">Email address</label>
+                                <input type="email" id="ct-email" name="email" placeholder="jane@yourbusiness.com.au" autocomplete="email">
+                                <span class="ct-field__error" role="alert">Please enter a valid email address.</span>
+                            </div>
+                            <div class="ct-field" id="ct-field-business">
+                                <label for="ct-business">Business name</label>
+                                <input type="text" id="ct-business" name="business" placeholder="Acme Co." autocomplete="organization">
+                                <span class="ct-field__error" role="alert">Please enter your business name.</span>
+                            </div>
+                            <div class="ct-field" id="ct-field-message">
+                                <label for="ct-message">Message</label>
+                                <textarea id="ct-message" name="message" rows="4" placeholder="What are you hoping to fix?"></textarea>
+                                <span class="ct-field__error" role="alert">Please enter a message.</span>
+                            </div>
+                            <div class="ct-form-error" id="ct-form-error" role="alert">Something went wrong. Please try again in a moment.</div>
+                            <!-- Honeypot: hidden from humans, filled by bots -->
+                            <div class="ct-hp" aria-hidden="true">
+                                <label for="ct-hp-field">Leave this field empty</label>
+                                <input type="text" id="ct-hp-field" name="contact_url" tabindex="-1" autocomplete="off">
+                            </div>
+                            <!-- Turnstile invisible widget -->
+                            <div id="ct-turnstile-widget"></div>
+                            <button type="button" class="tp-btn tp-btn--emphasis" id="ct-submit-btn" onclick="submitContact()" style="width: 100%;">Send message</button>
+                        </form>
+                        <div class="ct-success" id="ct-success" hidden>Thanks — we've got your message and will be in touch shortly.</div>
+                    </div>
                 </div>
-                <div class="tp-closing__actions">
-                    <a class="tp-btn tp-btn--ghost" href="/proof-score/">Score your marketing now</a>
-                    <a class="tp-btn tp-btn--emphasis" href="tel:+61439612398">Book an Inspection</a>
-                </div>
-                <p class="tp-closing__note">We're based in Karratha, Western Australia and work with local owners who want straight answers. You'll talk to a person, not a form.</p>
+                <p class="tp-closing__note">We're based in Karratha, WA. You'll always speak directly with Rob.</p>
             </div>
         </div>
     </section>
@@ -384,6 +421,112 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 });
             }
         })();
+    </script>
+
+    <script>
+        var CONTACT_API_URL = 'https://contact-api.toolproof.workers.dev/submit';
+        var _ctTurnstileWidgetId = null;
+        var _ctTurnstileReady = false;
+        var _ctSubmitting = false;
+
+        function onContactTurnstileLoad() {
+            _ctTurnstileWidgetId = turnstile.render('#ct-turnstile-widget', {
+                sitekey: '0x4AAAAAADsj7I2qq0lB9Uh-',
+                callback: _onContactTurnstileSuccess,
+                'error-callback': _onContactTurnstileError,
+                size: 'invisible',
+            });
+            _ctTurnstileReady = true;
+        }
+
+        function _onContactTurnstileSuccess(token) {
+            if (!_ctSubmitting) return;
+            _ctSubmitting = false;
+            doContactSubmit(token);
+        }
+
+        function _onContactTurnstileError() {
+            _ctSubmitting = false;
+            var btn = document.getElementById('ct-submit-btn');
+            btn.classList.remove('tp-btn--loading');
+            btn.textContent = 'Send message';
+            showContactFormError();
+        }
+
+        function submitContact() {
+            var get = function (id) { return document.getElementById(id); };
+
+            var name = get('ct-name').value.trim();
+            var email = get('ct-email').value.trim();
+            var business = get('ct-business').value.trim();
+            var message = get('ct-message').value.trim();
+
+            var valid = true;
+            function setErr(id, show) {
+                var el = get(id);
+                if (show) { el.classList.add('has-error'); valid = false; }
+                else el.classList.remove('has-error');
+            }
+
+            setErr('ct-field-name', !name);
+            setErr('ct-field-email', !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+            setErr('ct-field-business', !business);
+            setErr('ct-field-message', !message);
+
+            if (!valid) return;
+
+            if (!_ctTurnstileReady) { showContactFormError(); return; }
+
+            var btn = get('ct-submit-btn');
+            btn.classList.add('tp-btn--loading');
+            btn.textContent = 'Verifying…';
+
+            _ctSubmitting = true;
+            if (_ctTurnstileWidgetId !== null) turnstile.reset(_ctTurnstileWidgetId);
+            turnstile.execute(_ctTurnstileWidgetId);
+        }
+
+        function doContactSubmit(turnstileToken) {
+            var get = function (id) { return document.getElementById(id); };
+
+            var name = get('ct-name').value.trim();
+            var email = get('ct-email').value.trim();
+            var business = get('ct-business').value.trim();
+            var message = get('ct-message').value.trim();
+            var hp = get('ct-hp-field').value;
+
+            var btn = get('ct-submit-btn');
+            btn.textContent = 'Sending…';
+
+            var payload = { name: name, email: email, business: business, message: message, hp: hp, turnstileToken: turnstileToken };
+
+            fetch(CONTACT_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            })
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
+            .then(function (data) {
+                if (data.success) {
+                    get('ct-form').hidden = true;
+                    get('ct-success').hidden = false;
+                    dataLayer.push({ event: 'contact_form_submitted' });
+                } else {
+                    showContactFormError();
+                }
+            })
+            .catch(function () { showContactFormError(); })
+            .finally(function () {
+                btn.classList.remove('tp-btn--loading');
+                btn.textContent = 'Send message';
+            });
+        }
+
+        function showContactFormError() {
+            var el = document.getElementById('ct-form-error');
+            el.classList.add('is-visible');
+            setTimeout(function () { el.classList.remove('is-visible'); }, 7000);
+        }
     </script>
 </body>
 </html>

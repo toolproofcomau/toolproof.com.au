@@ -1,0 +1,8 @@
+name = "contact-api"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "a961cca1558e4b81a3a0dec9920da802"
+preview_id = "abccb6214d15482784e9061d1ce4a73b"
