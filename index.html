@@ -510,7 +510,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 if (data.success) {
                     get('ct-form').hidden = true;
                     get('ct-success').hidden = false;
-                    dataLayer.push({ event: 'contact_form_submitted' });
+                    var nameParts = name.split(/\s+/);
+                    dataLayer.push({
+                        event: 'contact_form_submitted',
+                        user_email:      email.toLowerCase(),
+                        user_first_name: (nameParts[0] || '').toLowerCase(),
+                        user_last_name:  (nameParts.slice(1).join(' ') || '').toLowerCase(),
+                        user_country:    'au',
+                    });
                 } else {
                     showContactFormError();
                 }
