@@ -861,6 +861,7 @@ body {
 .tp-closing__options-list li::before {
     content: counter(option);
     flex-shrink: 0;
+    width: 1.2em;
     font-family: var(--font-display);
     font-size: var(--text-2xl);
     font-weight: var(--weight-bold);
