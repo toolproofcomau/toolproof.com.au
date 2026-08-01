@@ -1336,7 +1336,12 @@ html { scroll-behavior: smooth; }
     .tp-loop__field {
         flex: none;
     }
+}
 
+/* Nav switches to the hamburger menu earlier than other breakpoints —
+   at 769–900px (tablet portrait, e.g. iPad Air/Pro) the full desktop nav
+   no longer has room and its links wrap mid-word. */
+@media (max-width: 900px) {
     .tp-nav {
         display: none;
         flex-direction: column;
