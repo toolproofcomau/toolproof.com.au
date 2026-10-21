@@ -4,10 +4,15 @@ compatibility_date = "2024-01-01"
 workers_dev = true
 preview_urls = false
 
+# Generic short-link domain shared by all clients. Its DNS is on Cloudflare
+# (registered with an Australian registrar); Cloudflare creates the record and certificate.
+routes = [
+  { pattern = "taggd.au", custom_domain = true }
+]
+
 [vars]
-# Where short links point. Change to a custom domain (e.g. "https://go.toolproof.com.au")
-# once a route is added for it.
-SHORT_BASE = "https://links-api.toolproof.workers.dev/s"
+# Where short links point: SHORT_BASE/{code}. Old workers.dev /s/{code} links keep working.
+SHORT_BASE = "https://taggd.au"
 
 # Create with: npx wrangler d1 create links-db  — then paste the id below.
 [[d1_databases]]

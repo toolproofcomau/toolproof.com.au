@@ -68,7 +68,9 @@ function shapeLink(row, env) {
 
 // --- Short link redirect -------------------------------------------------
 
-async function handleRedirect(code, request, env, ctx) {
+// Codes are stored lowercase; people retyping a printed link may not be.
+async function handleRedirect(rawCode, request, env, ctx) {
+    const code = rawCode.toLowerCase();
     const row = await env.DB.prepare('SELECT final_url FROM links WHERE short_code = ?').bind(code).first();
     if (!row) return new Response('Link not found', { status: 404 });
     ctx.waitUntil(env.DB.prepare('INSERT INTO clicks (short_code, referrer, country) VALUES (?, ?, ?)')
@@ -240,9 +242,19 @@ export default {
         const origin = request.headers.get('Origin') || '';
         const url = new URL(request.url);
         const parts = url.pathname.split('/').filter(Boolean);
+        const shortHost = new URL(env.SHORT_BASE).hostname;
 
-        if (parts[0] === 's' && parts[1] && request.method === 'GET') {
-            return handleRedirect(parts[1], request, env, ctx);
+        // Short links: taggd.au/{code}, plus the original workers.dev /s/{code} form.
+        if (request.method === 'GET') {
+            if (parts[0] === 's' && parts.length === 2) return handleRedirect(parts[1], request, env, ctx);
+            if (parts.length === 1 && !['api', 'admin', 's', 'favicon.ico'].includes(parts[0])) {
+                return handleRedirect(parts[0], request, env, ctx);
+            }
+        }
+
+        // The short domain only serves redirects, never the API.
+        if (url.hostname === shortHost) {
+            return new Response('Link not found', { status: 404 });
         }
 
         if (request.method === 'OPTIONS') {

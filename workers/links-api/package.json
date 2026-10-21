@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "wrangler dev --port 8787 --local --local-upstream links-api.toolproof.workers.dev",
     "deploy": "wrangler deploy",
     "db:init": "wrangler d1 execute links-db --remote --file=schema.sql",
     "db:init:local": "wrangler d1 execute links-db --local --file=schema.sql"
