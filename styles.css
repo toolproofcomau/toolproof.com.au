@@ -170,6 +170,8 @@ body {
     color: var(--text-strong);
     white-space: nowrap;
 }
+a.tp-wordmark { text-decoration: none; }
+a.tp-wordmark:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; border-radius: 2px; }
 .tp-wordmark--light { color: var(--text-on-dark); }
 .tp-wordmark--light .tp-wordmark__reg { color: var(--text-on-dark); }
 .tp-wordmark__tool { color: var(--text-emphasis); }
