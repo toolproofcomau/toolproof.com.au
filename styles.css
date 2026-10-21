@@ -1145,6 +1145,22 @@ a.tp-wordmark:focus-visible { outline: 2px solid var(--focus-ring); outline-offs
     font-size: var(--text-sm);
     margin-top: var(--space-3);
 }
+/* === 404 page (reuses the privacy hero) === */
+.tp-404 {
+    padding-block: var(--space-16);
+}
+.tp-404__lead {
+    color: var(--text-on-dark-muted);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+    margin-top: var(--space-4);
+}
+.tp-404__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+}
 .tp-privacy-body {
     padding: var(--space-16) var(--space-6);
 }
