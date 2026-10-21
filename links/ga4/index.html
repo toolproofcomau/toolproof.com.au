@@ -267,7 +267,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <li><strong>Metrics:</strong>
                             <span class="ga-chips"><span>Sessions</span><span>Engaged sessions</span><span>Engagement rate</span><span>Key events</span><span>Session key event rate</span><span>Total revenue</span></span>
                             Leave out revenue if the client doesn't sell online.</li>
-                        <li><strong>Filter:</strong> add one that <em>excludes</em> <em>Session campaign</em> values <code class="ut-code">(not set)</code>, <code class="ut-code">(organic)</code>, <code class="ut-code">(direct)</code> and <code class="ut-code">(referral)</code>. Now only tagged campaigns are listed.</li>
+                        <li><strong>Filter:</strong> add a filter on <em>Session campaign</em>, set the match type to <strong>does not match regex</strong>, and enter <code class="ut-code">^\((not set|organic|direct|referral)\)$</code>. That hides GA4's untagged buckets <code class="ut-code">(not set)</code>, <code class="ut-code">(organic)</code>, <code class="ut-code">(direct)</code> and <code class="ut-code">(referral)</code>, so only tagged campaigns are listed.</li>
                         <li>Under <strong>Report data</strong>, rename the report <strong>Campaign Performance</strong>. Click <strong>Save <i class="ph ph-caret-right"></i> Save as a new report</strong>.</li>
                     </ol>
                 </div>
