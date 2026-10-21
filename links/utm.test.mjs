@@ -1,7 +1,7 @@
 // Run: node --test links/
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { cleanValue, cleanSource, buildUrl, channelFor, nearMiss } from './utm.js';
+import { cleanValue, cleanSource, buildUrl, channelFor, nearMiss, cleanSlug, slugProblem } from './utm.js';
 
 test('cleanValue enforces lowercase_underscore', () => {
     assert.equal(cleanValue('Funding Workshop June 26'), 'funding_workshop_june_26');
@@ -85,4 +85,23 @@ test('nearMiss catches campaign typos', () => {
     assert.equal(nearMiss('awareness_aug_2027', existing), 'awareness_aug_2026');
     assert.equal(nearMiss('awareness_aug_2026', existing), null);
     assert.equal(nearMiss('black_friday_nov_26', existing), null);
+});
+
+test('cleanSlug makes readable lowercase-hyphen names', () => {
+    assert.equal(cleanSlug('Onslow AI Workshop'), 'onslow-ai-workshop');
+    assert.equal(cleanSlug('spring_sale.2026'), 'spring-sale-2026');
+    assert.equal(cleanSlug('  --Q&A Night!-- '), 'q-and-a-night');
+    assert.equal(cleanSlug('Café'), 'cafe');
+    assert.equal(cleanSlug('a'.repeat(39) + '-bcd').length, 39);
+});
+
+test('slugProblem enforces length, reserved and blocked words', () => {
+    assert.equal(slugProblem('spring-sale'), '');
+    assert.equal(slugProblem(''), 'Enter a name.');
+    assert.equal(slugProblem('ab'), 'Use at least 3 characters.');
+    assert.equal(slugProblem('admin'), 'That name is reserved.');
+    assert.match(slugProblem('westpac-login-help'), /westpac/);
+    assert.match(slugProblem('ato-refund'), /ato/);
+    assert.equal(slugProblem('potato-festival'), '');
+    assert.equal(slugProblem('tomato-day'), '');
 });

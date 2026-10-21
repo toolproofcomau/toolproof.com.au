@@ -150,3 +150,39 @@ export function nearMiss(name, existing) {
     }
     return best ? best.name : null;
 }
+
+// --- Custom short-link names (taggd.au/{name}) ---------------------------
+// One namespace shared by every client: first come, first served.
+
+// System paths and words that would make a shared domain look official.
+const RESERVED_SLUGS = ['api', 'admin', 's', 'www', 'mail', 'help', 'support', 'about', 'status', 'login'];
+const BLOCKED_SLUG_WORDS = [
+    'login', 'logon', 'signin', 'password', 'verify', 'verification', 'secure', 'account',
+    'paypal', 'bank', 'banking', 'westpac', 'anz', 'nab', 'commbank', 'ato', 'mygov',
+    'centrelink', 'medicare', 'auspost', 'crypto', 'bitcoin', 'giftcard', 'invoice',
+];
+
+// lowercase, spaces/underscores/dots -> hyphen, strip anything else, collapse hyphens.
+export function cleanSlug(raw) {
+    return String(raw ?? '')
+        .normalize('NFKD').replace(/[̀-ͯ]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/&/g, '-and-')
+        .replace(/[\s_.\/]+/g, '-')
+        .replace(/[^a-z0-9-]/g, '')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+        .slice(0, 40)
+        .replace(/-$/, '');
+}
+
+// Returns a plain-English reason the (cleaned) name can't be used, or ''.
+export function slugProblem(slug) {
+    if (!slug) return 'Enter a name.';
+    if (slug.length < 3) return 'Use at least 3 characters.';
+    if (RESERVED_SLUGS.includes(slug)) return 'That name is reserved.';
+    const blocked = slug.split('-').find(word => BLOCKED_SLUG_WORDS.includes(word));
+    if (blocked) return `Names can't include "${blocked}", so links on the shared domain don't look like phishing.`;
+    return '';
+}

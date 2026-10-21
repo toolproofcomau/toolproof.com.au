@@ -49,3 +49,14 @@ CREATE TABLE IF NOT EXISTS clicks (
     country     TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX IF NOT EXISTS clicks_code ON clicks (short_code);
+
+-- Custom short-link names (e.g. taggd.au/spring-sale), shared across all clients.
+-- A link keeps every name it has had, so renaming never breaks a printed link;
+-- the newest (highest rowid) is shown. Clicks are recorded against the link's short_code.
+CREATE TABLE IF NOT EXISTS short_aliases (
+    alias         TEXT PRIMARY KEY,         -- lowercase, a-z 0-9 and hyphens, 3–40 chars
+    link_id       INTEGER NOT NULL REFERENCES links(id) ON DELETE CASCADE,
+    workspace_id  TEXT NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+    created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS short_aliases_link ON short_aliases (link_id);

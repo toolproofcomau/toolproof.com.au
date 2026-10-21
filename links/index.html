@@ -192,6 +192,36 @@
         .lb-saved__short { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-2); flex-wrap: wrap; }
         .lb-saved__short a { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--tp-teal); font-weight: 600; }
 
+        /* === Custom short-link name === */
+        .lb-slug { margin-top: var(--space-5); }
+        .lb-slug__row {
+            display: flex; align-items: stretch; background: var(--surface-card);
+            border: 1.5px solid var(--border-subtle); border-radius: var(--radius-md); overflow: hidden;
+            transition: border-color var(--duration-base) var(--ease-standard);
+        }
+        .lb-slug__row:focus-within { border-color: var(--tp-teal); }
+        .lb-slug__prefix {
+            display: flex; align-items: center; padding: 0 var(--space-3); white-space: nowrap;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--text-sm);
+            color: var(--text-muted); background: var(--surface-page); border-right: 1px solid var(--border-subtle);
+        }
+        .lb-slug .lb-slug__row input {
+            border: 0; border-radius: 0; flex: 1; min-width: 0; padding: var(--space-3);
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--text-sm); background: transparent;
+        }
+        .lb-hint--ok { color: #2E7D5B; }
+        .lb-btn-name { text-transform: none; letter-spacing: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+        .lb-suggest {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--text-xs); color: var(--tp-teal);
+            background: var(--tp-teal-xlight); border: 0; border-radius: 999px; padding: 2px 8px; margin: 4px 4px 0 0; cursor: pointer;
+        }
+        .lb-suggest:hover { background: var(--tp-teal-light); }
+        .lb-item__slug {
+            grid-column: 1 / -1; display: flex; flex-direction: column; gap: var(--space-2); margin: 0;
+            padding: var(--space-4); background: var(--surface-page); border-radius: var(--radius-md);
+        }
+        .lb-item__slug-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-1); }
+
         .lb-tip { margin-top: var(--space-6); font-size: var(--text-sm); color: var(--text-muted); border-top: 1px solid var(--border-subtle); padding-top: var(--space-4); }
         .lb-tip a { color: var(--text-accent); }
 
@@ -380,6 +410,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="lb-preview__url" id="lb-preview"><span class="lb-preview__empty">Add a page, campaign, source and medium to see your link.</span></div>
                 <div class="lb-channel" id="lb-channel" hidden></div>
                 <div class="lb-messages" id="lb-messages"></div>
+                <div class="lb-field lb-slug" id="lb-slug-wrap" hidden>
+                    <label for="f-slug">Short link name <span class="lb-optional">(optional)</span></label>
+                    <div class="lb-slug__row">
+                        <span class="lb-slug__prefix" data-short-prefix>taggd.au/</span>
+                        <input id="f-slug" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. spring-sale" maxlength="60" aria-describedby="h-slug">
+                    </div>
+                    <span class="lb-hint" id="h-slug" aria-live="polite">A memorable name for print, QR codes and social posts. Leave blank for a random code.</span>
+                </div>
                 <div class="lb-actions">
                     <button type="button" class="tp-btn tp-btn--emphasis" id="lb-save" disabled><i class="ph ph-floppy-disk tp-btn__icon" aria-hidden="true"></i>Save &amp; copy</button>
                     <button type="button" class="lb-btn-quiet" id="lb-save-short" disabled><i class="ph ph-link-simple" aria-hidden="true"></i>Save with short link</button>
@@ -442,7 +480,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="lb-toast" id="lb-toast" role="status"></div>
 
 <script type="module">
-import { MEDIUMS, SOURCES, RECIPES, buildUrl, cleanValue, cleanSource, channelFor, nearMiss } from './utm.js';
+import { MEDIUMS, SOURCES, RECIPES, buildUrl, cleanValue, cleanSource, channelFor, nearMiss, cleanSlug, slugProblem } from './utm.js';
 
 const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
     ? 'http://localhost:8787'
@@ -453,7 +491,8 @@ const OTHER = '__other__';
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-const state = { token: '', workspace: null, sources: [], campaigns: [], links: [], recipe: null, lastSaved: null };
+const state = { token: '', workspace: null, sources: [], campaigns: [], links: [], recipe: null, lastSaved: null, shortBase: 'https://taggd.au', slug: null, editingSlug: null };
+const SLUG_HINT = 'A memorable name for print, QR codes and social posts. Leave blank for a random code.';
 
 // ---------- Workspace token ----------
 // The secret lives in the URL fragment (#id.secret), which browsers never send to servers or analytics.
@@ -473,9 +512,53 @@ async function api(path, options = {}) {
         body: options.body ? JSON.stringify(options.body) : undefined,
     });
     const data = await res.json().catch(() => ({ success: false, error: 'Unexpected response' }));
-    if (!res.ok || !data.success) throw Object.assign(new Error(data.error || 'Something went wrong'), { status: res.status });
+    if (!res.ok || !data.success) throw Object.assign(new Error(data.error || 'Something went wrong'), { status: res.status, data });
     return data;
 }
+
+// ---------- Custom short-link names ----------
+const shortHost = () => state.shortBase.replace(/^https?:\/\//, '');
+
+// Checks a name as it's typed: rules locally first, then availability (debounced) via the API.
+// `linkId` lets a link keep a name it already owns. `onResult` gets { slug, available, error, suggestions }.
+function makeSlugChecker(onResult) {
+    let timer, seq = 0;
+    return (raw, linkId = null) => {
+        clearTimeout(timer);
+        const slug = cleanSlug(raw);
+        if (!raw.trim()) { onResult(null); return; }
+        const problem = slugProblem(slug);
+        if (problem) { onResult({ slug, available: false, error: problem, suggestions: [] }); return; }
+        onResult({ slug, checking: true });
+        const mine = ++seq;
+        timer = setTimeout(async () => {
+            try {
+                const data = await api(`/api/slug-check?slug=${encodeURIComponent(slug)}${linkId ? `&link=${linkId}` : ''}`);
+                if (mine === seq) onResult(data);
+            } catch (e) {
+                if (mine === seq) onResult({ slug, available: false, error: 'Couldn\'t check that name. Try again.', suggestions: [] });
+            }
+        }, 350);
+    };
+}
+
+// Fills a hint element for a check result; suggestion buttons carry data-use-slug.
+function renderSlugHint(el, result, idle) {
+    if (!result) { el.className = 'lb-hint'; el.textContent = idle; return; }
+    const url = `${esc(shortHost())}/${esc(result.slug)}`;
+    if (result.checking) { el.className = 'lb-hint'; el.innerHTML = `Checking <code>${url}</code>…`; return; }
+    if (result.available) { el.className = 'lb-hint lb-hint--ok'; el.innerHTML = `<i class="ph ph-check-circle" aria-hidden="true"></i> <code>${url}</code> is available.`; return; }
+    el.className = 'lb-hint lb-hint--warn';
+    el.innerHTML = esc(result.error) + (result.suggestions?.length
+        ? `<br>Try: ${result.suggestions.map(s => `<button type="button" class="lb-suggest" data-use-slug="${esc(s)}">${esc(s)}</button>`).join('')}`
+        : '');
+}
+
+const checkBuilderSlug = makeSlugChecker(result => {
+    state.slug = result;
+    renderSlugHint($('h-slug'), result, SLUG_HINT);
+    updatePreview();
+});
 
 function showError(msg) {
     $('lb-notice-error-text').textContent = msg;
@@ -635,6 +718,12 @@ function updatePreview() {
     $('lb-save').disabled = !current.ok;
     $('lb-save-short').disabled = !current.ok || !state.token;
     if (!state.token) $('lb-save').innerHTML = '<i class="ph ph-copy tp-btn__icon" aria-hidden="true"></i>Copy link';
+
+    // A chosen short-link name is saved with either button; block saving while it's unusable.
+    const slugBlocked = Boolean(state.slug && !state.slug.checking && !state.slug.available);
+    if (slugBlocked) { $('lb-save').disabled = true; $('lb-save-short').disabled = true; }
+    const slugReady = state.slug && state.slug.available;
+    $('lb-save-short').innerHTML = `<i class="ph ph-link-simple" aria-hidden="true"></i>${slugReady ? `Save as <span class="lb-btn-name">${esc(shortHost())}/${esc(state.slug.slug)}</span>` : 'Save with short link'}`;
 }
 
 function applyRecipe(id) {
@@ -680,7 +769,8 @@ async function save(shorten) {
     const btns = [$('lb-save'), $('lb-save-short')];
     btns.forEach(b => b.disabled = true);
     try {
-        const data = await api('/api/links', { method: 'POST', body: { ...formValues(), shorten } });
+        const custom_slug = state.slug?.slug || '';
+        const data = await api('/api/links', { method: 'POST', body: { ...formValues(), shorten, custom_slug } });
         let link = data.link;
         if (data.duplicate && shorten && !link.short_code) {
             link = (await api('/api/links/' + link.id, { method: 'PATCH', body: { shorten: true } })).link;
@@ -688,10 +778,18 @@ async function save(shorten) {
         await copy(shorten && link.short_url ? link.short_url : link.final_url,
             shorten ? 'Short link copied' : 'Link copied');
         renderSaved(link, data.duplicate);
-        dataLayer.push({ event: 'utm_link_saved', link_medium: link.medium, link_shortened: Boolean(link.short_code) });
+        dataLayer.push({ event: 'utm_link_saved', link_medium: link.medium, link_shortened: Boolean(link.short_code), link_custom_name: Boolean(custom_slug) });
+        $('f-slug').value = '';
+        checkBuilderSlug('');
         await load();
     } catch (e) {
-        showError(e.message);
+        // Someone took the name between the check and the save: show it like a live check.
+        if (e.data?.suggestions) {
+            state.slug = { slug: cleanSlug($('f-slug').value), available: false, error: e.message, suggestions: e.data.suggestions };
+            renderSlugHint($('h-slug'), state.slug, SLUG_HINT);
+        } else {
+            showError(e.message);
+        }
     } finally {
         updatePreview();
     }
@@ -740,6 +838,7 @@ function renderLibrary() {
                 </div>
                 ${l.notes ? `<div class="lb-item__notes">${esc(l.notes)}</div>` : ''}
                 <div class="lb-item__url">${esc(l.short_url || l.final_url)}</div>
+                ${l.custom_slug && l.code_url ? `<div class="lb-item__url">Also works: ${esc(l.code_url)}</div>` : ''}
             </div>
             <div class="lb-item__side">
                 ${l.short_code ? `<div class="lb-item__clicks">${l.clicks}</div>short-link clicks<br>` : ''}
@@ -750,12 +849,75 @@ function renderLibrary() {
                 ${l.short_url
                     ? `<button type="button" class="lb-link-btn" data-copy="${esc(l.short_url)}"><i class="ph ph-link-simple" aria-hidden="true"></i>Copy short link</button>`
                     : `<button type="button" class="lb-link-btn" data-shorten="${l.id}"><i class="ph ph-link-simple" aria-hidden="true"></i>Make short link</button>`}
+                <button type="button" class="lb-link-btn" data-name-link="${l.id}"><i class="ph ph-pencil-simple-line" aria-hidden="true"></i>${l.custom_slug ? 'Rename short link' : 'Customise short link'}</button>
                 <button type="button" class="lb-link-btn" data-duplicate="${l.id}"><i class="ph ph-copy-simple" aria-hidden="true"></i>Reuse for another post</button>
                 <button type="button" class="lb-link-btn" data-notes="${l.id}"><i class="ph ph-note-pencil" aria-hidden="true"></i>${l.notes ? 'Edit note' : 'Add note'}</button>
                 <button type="button" class="lb-link-btn lb-link-btn--danger" data-delete="${l.id}"><i class="ph ph-trash" aria-hidden="true"></i>Delete</button>
             </div>
+            ${state.editingSlug === l.id ? slugEditor(l) : ''}
         </article>`;
     }).join('');
+}
+
+// Inline editor for naming (or renaming) an existing link's short link.
+function slugEditor(l) {
+    const idle = l.custom_slug
+        ? 'Your previous short addresses keep working, so nothing already shared or printed breaks.'
+        : 'A memorable name for print, QR codes and social posts. The random code keeps working too.';
+    return `<form class="lb-field lb-slug lb-item__slug" data-slug-form="${l.id}">
+        <label for="slug-${l.id}">${l.custom_slug ? 'Rename short link' : 'Short link name'}</label>
+        <div class="lb-slug__row">
+            <span class="lb-slug__prefix">${esc(shortHost())}/</span>
+            <input id="slug-${l.id}" type="text" autocomplete="off" spellcheck="false" maxlength="60" value="${esc(l.custom_slug)}" placeholder="e.g. spring-sale" data-slug-input="${l.id}" aria-describedby="slug-hint-${l.id}">
+        </div>
+        <span class="lb-hint" id="slug-hint-${l.id}" data-idle="${esc(idle)}" aria-live="polite">${esc(idle)}</span>
+        <div class="lb-item__slug-actions">
+            <button type="submit" class="lb-btn-quiet" data-slug-save="${l.id}"><i class="ph ph-check" aria-hidden="true"></i>Save name</button>
+            <button type="button" class="lb-link-btn" data-slug-cancel="${l.id}">Cancel</button>
+        </div>
+    </form>`;
+}
+
+const checkLibrarySlug = makeSlugChecker(result => {
+    const id = state.editingSlug;
+    const hint = document.getElementById('slug-hint-' + id);
+    if (!hint) return;
+    const link = state.links.find(l => l.id === id);
+    // Unchanged name: nothing to check.
+    if (result && link && result.slug === link.custom_slug) result = null;
+    state.librarySlug = result;
+    renderSlugHint(hint, result, hint.dataset.idle);
+    const save = document.querySelector(`[data-slug-save="${id}"]`);
+    if (save) save.disabled = !result || !result.available;
+});
+
+function openSlugEditor(id) {
+    state.editingSlug = id;
+    state.librarySlug = null;
+    renderLibrary();
+    const input = document.getElementById('slug-' + id);
+    if (input) { input.focus(); input.select(); }
+    const save = document.querySelector(`[data-slug-save="${id}"]`);
+    if (save) save.disabled = true;
+}
+
+async function saveLibrarySlug(id) {
+    const result = state.librarySlug;
+    if (!result || !result.available) return;
+    try {
+        const { link } = await api('/api/links/' + id, { method: 'PATCH', body: { custom_slug: result.slug } });
+        state.editingSlug = null;
+        await copy(link.short_url, 'Short link saved and copied');
+        await load();
+    } catch (e) {
+        const hint = document.getElementById('slug-hint-' + id);
+        if (hint && e.data?.suggestions) {
+            state.librarySlug = { slug: result.slug, available: false, error: e.message, suggestions: e.data.suggestions };
+            renderSlugHint(hint, state.librarySlug, hint.dataset.idle);
+        } else {
+            showError(e.message);
+        }
+    }
 }
 
 function renderFilters() {
@@ -817,6 +979,8 @@ async function load() {
     try {
         const data = await api('/api/workspace');
         Object.assign(state, { workspace: data.workspace, sources: data.sources, campaigns: data.campaigns, links: data.links });
+        if (data.short_base) state.shortBase = data.short_base;
+        document.querySelectorAll('[data-short-prefix]').forEach(el => { el.textContent = shortHost() + '/'; });
         $('lb-ws-name').textContent = data.workspace.name + ' · Link builder';
         document.title = `${data.workspace.name} links | Toolproof`;
         if (!$('f-url').value && data.workspace.domains) {
@@ -852,9 +1016,26 @@ $('f-campaign').addEventListener('blur', () => { $('f-campaign').value = cleanVa
 ['f-content', 'f-term'].forEach(id => $(id).addEventListener('blur', () => { $(id).value = cleanValue($(id).value); updatePreview(); }));
 $('f-source-other').addEventListener('blur', () => { $('f-source-other').value = cleanSource($('f-source-other').value); updatePreview(); });
 $('lb-form').addEventListener('reset', () => setTimeout(() => {
-    state.recipe = null; renderRecipes(); $('f-source-other').hidden = true; $('lb-saved').hidden = true; updatePreview();
+    state.recipe = null; renderRecipes(); $('f-source-other').hidden = true; $('lb-saved').hidden = true;
+    $('f-slug').value = ''; checkBuilderSlug('');
 }));
 $('lb-form').addEventListener('submit', e => e.preventDefault());
+
+$('f-slug').addEventListener('input', () => checkBuilderSlug($('f-slug').value));
+$('f-slug').addEventListener('blur', () => { if ($('f-slug').value) $('f-slug').value = cleanSlug($('f-slug').value); });
+$('lib-list').addEventListener('input', e => {
+    const input = e.target.closest('[data-slug-input]');
+    if (input) checkLibrarySlug(input.value, Number(input.dataset.slugInput));
+});
+$('lib-list').addEventListener('submit', e => {
+    const form = e.target.closest('[data-slug-form]');
+    if (!form) return;
+    e.preventDefault();
+    saveLibrarySlug(Number(form.dataset.slugForm));
+});
+$('lib-list').addEventListener('keydown', e => {
+    if (e.key === 'Escape' && e.target.closest('[data-slug-form]')) { state.editingSlug = null; renderLibrary(); }
+});
 
 $('lb-save').addEventListener('click', () => save(false));
 $('lb-save-short').addEventListener('click', () => save(true));
@@ -865,12 +1046,28 @@ document.addEventListener('click', async e => {
     if (!t) return;
     if (t.dataset.useCampaign) { $('f-campaign').value = t.dataset.useCampaign; updatePreview(); return; }
     if (t.dataset.copy) { copy(t.dataset.copy); return; }
-    const id = t.dataset.duplicate || t.dataset.shorten || t.dataset.notes || t.dataset.delete;
+    if (t.dataset.useSlug) {
+        const form = t.closest('[data-slug-form]');
+        if (form) {
+            const input = form.querySelector('[data-slug-input]');
+            input.value = t.dataset.useSlug;
+            checkLibrarySlug(input.value, Number(form.dataset.slugForm));
+            input.focus();
+        } else {
+            $('f-slug').value = t.dataset.useSlug;
+            checkBuilderSlug($('f-slug').value);
+        }
+        return;
+    }
+    if (t.dataset.slugCancel) { state.editingSlug = null; renderLibrary(); return; }
+    const id = t.dataset.duplicate || t.dataset.shorten || t.dataset.notes || t.dataset.delete || t.dataset.nameLink;
     if (!id) return;
     const link = state.links.find(l => String(l.id) === id);
     if (!link) return;
     try {
-        if (t.dataset.duplicate) {
+        if (t.dataset.nameLink) {
+            openSlugEditor(link.id);
+        } else if (t.dataset.duplicate) {
             fillForm(link);
             toast('Change the content (or anything else) and save');
         } else if (t.dataset.shorten) {
@@ -918,6 +1115,7 @@ state.token = readToken();
 if (location.hash) history.replaceState(null, '', location.pathname + location.search);
 $('lb-notice-guest').hidden = Boolean(state.token);
 $('lb-copy').hidden = !state.token;
+$('lb-slug-wrap').hidden = !state.token;
 renderRecipes();
 renderMediumOptions();
 renderAll();

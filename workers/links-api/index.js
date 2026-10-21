@@ -1,4 +1,4 @@
-import { buildUrl, cleanValue, cleanSource, SOURCES } from '../../links/utm.js';
+import { buildUrl, cleanValue, cleanSource, cleanSlug, slugProblem, SOURCES } from '../../links/utm.js';
 
 const ALLOWED_ORIGINS = [
     'https://www.toolproof.com.au',
@@ -53,28 +53,99 @@ function isAdmin(request, env) {
     return Boolean(env.ADMIN_TOKEN) && bearer(request) === env.ADMIN_TOKEN;
 }
 
+// Random codes and custom names share one namespace on the short domain.
+async function shortNameOwner(env, name) {
+    return env.DB.prepare(`
+        SELECT id AS link_id FROM links WHERE short_code = ?1
+        UNION ALL SELECT link_id FROM short_aliases WHERE alias = ?1
+        LIMIT 1`).bind(name).first();
+}
+
 async function newShortCode(env) {
     for (let i = 0; i < 5; i++) {
         const code = randomString(6);
-        const taken = await env.DB.prepare('SELECT 1 FROM links WHERE short_code = ?').bind(code).first();
-        if (!taken) return code;
+        if (!await shortNameOwner(env, code)) return code;
     }
     throw new Error('Could not allocate short code');
 }
 
+// Short URL uses the link's latest custom name if it has one; the random code always keeps working.
 function shapeLink(row, env) {
-    return { ...row, short_url: row.short_code ? `${env.SHORT_BASE}/${row.short_code}` : '' };
+    const name = row.custom_slug || row.short_code;
+    return {
+        ...row,
+        custom_slug: row.custom_slug || '',
+        short_url: name ? `${env.SHORT_BASE}/${name}` : '',
+        code_url: row.short_code ? `${env.SHORT_BASE}/${row.short_code}` : '',
+    };
+}
+
+const CUSTOM_SLUG_SQL = `(SELECT a.alias FROM short_aliases a WHERE a.link_id = l.id ORDER BY a.rowid DESC LIMIT 1) AS custom_slug`;
+
+async function loadLink(env, id) {
+    return env.DB.prepare(`
+        SELECT l.*, ${CUSTOM_SLUG_SQL}, (SELECT COUNT(*) FROM clicks k WHERE k.short_code = l.short_code) AS clicks
+        FROM links l WHERE l.id = ?`).bind(id).first();
+}
+
+// Checks a custom name for `link` (null when the link doesn't exist yet).
+// Returns { slug } when usable, or { error, status, suggestions }.
+async function checkSlug(env, ws, rawSlug, link = null) {
+    const slug = cleanSlug(rawSlug);
+    const problem = slugProblem(slug);
+    if (problem) return { slug, error: problem, status: 400, suggestions: [] };
+    const owner = await shortNameOwner(env, slug);
+    if (!owner || (link && owner.link_id === link.id)) return { slug };
+    return { slug, error: `${new URL(env.SHORT_BASE).host}/${slug} is already taken.`, status: 409, suggestions: await suggestSlugs(env, ws, slug) };
+}
+
+async function suggestSlugs(env, ws, slug) {
+    const yy = String(new Date().getUTCFullYear()).slice(2);
+    const place = cleanSlug(String(ws.domains || '').split(',')[0].split('.')[0]);
+    const candidates = [...new Set([
+        `${slug}-${yy}`,
+        place && !slug.includes(place) ? `${slug}-${place}` : '',
+        `${slug}-2`, `${slug}-3`, `${slug}-${randomString(3)}`,
+    ].map(cleanSlug).filter(s => s && !slugProblem(s)))];
+    const free = [];
+    for (const s of candidates) {
+        if (!await shortNameOwner(env, s)) free.push(s);
+        if (free.length === 3) break;
+    }
+    return free;
+}
+
+// Gives the link a random code if needed, then records the custom name. Older names keep redirecting.
+async function applySlug(env, link, slug) {
+    const stmts = [];
+    if (!link.short_code) {
+        link.short_code = await newShortCode(env);
+        stmts.push(env.DB.prepare('UPDATE links SET short_code = ? WHERE id = ?').bind(link.short_code, link.id));
+    }
+    if (slug !== link.short_code) {
+        // Re-inserting a name this link used before gives it the newest rowid, making it current again.
+        stmts.push(env.DB.prepare('DELETE FROM short_aliases WHERE alias = ? AND link_id = ?').bind(slug, link.id));
+        stmts.push(env.DB.prepare('INSERT OR IGNORE INTO short_aliases (alias, link_id, workspace_id) VALUES (?, ?, ?)')
+            .bind(slug, link.id, link.workspace_id));
+    }
+    if (stmts.length) await env.DB.batch(stmts);
+    return loadLink(env, link.id);
 }
 
 // --- Short link redirect -------------------------------------------------
 
 // Codes are stored lowercase; people retyping a printed link may not be.
 async function handleRedirect(rawCode, request, env, ctx) {
-    const code = rawCode.toLowerCase();
-    const row = await env.DB.prepare('SELECT final_url FROM links WHERE short_code = ?').bind(code).first();
+    const name = rawCode.toLowerCase();
+    // A random code or any custom name (current or previous); clicks are counted against the link's code.
+    const row = await env.DB.prepare(`
+        SELECT final_url, short_code FROM links WHERE short_code = ?1
+        UNION ALL
+        SELECT l.final_url, l.short_code FROM short_aliases a JOIN links l ON l.id = a.link_id WHERE a.alias = ?1
+        LIMIT 1`).bind(name).first();
     if (!row) return new Response('Link not found', { status: 404 });
     ctx.waitUntil(env.DB.prepare('INSERT INTO clicks (short_code, referrer, country) VALUES (?, ?, ?)')
-        .bind(code, (request.headers.get('Referer') || '').slice(0, 300), request.cf?.country || '').run());
+        .bind(row.short_code, (request.headers.get('Referer') || '').slice(0, 300), request.cf?.country || '').run());
     return Response.redirect(row.final_url, 301);
 }
 
@@ -119,12 +190,13 @@ async function handleAdmin(request, env, parts) {
         const id = parts[1];
         const results = await env.DB.batch([
             env.DB.prepare('DELETE FROM clicks WHERE short_code IN (SELECT short_code FROM links WHERE workspace_id = ? AND short_code IS NOT NULL)').bind(id),
+            env.DB.prepare('DELETE FROM short_aliases WHERE workspace_id = ?').bind(id),
             env.DB.prepare('DELETE FROM links WHERE workspace_id = ?').bind(id),
             env.DB.prepare('DELETE FROM campaigns WHERE workspace_id = ?').bind(id),
             env.DB.prepare('DELETE FROM sources WHERE workspace_id = ?').bind(id),
             env.DB.prepare('DELETE FROM workspaces WHERE id = ?').bind(id),
         ]);
-        if (!results[4].meta.changes) return json({ success: false, error: 'Not found' }, 404);
+        if (!results.at(-1).meta.changes) return json({ success: false, error: 'Not found' }, 404);
         return json({ success: true });
     }
 
@@ -148,12 +220,13 @@ async function getWorkspace(ws, env) {
             SELECT c.*, (SELECT COUNT(*) FROM links l WHERE l.workspace_id = c.workspace_id AND l.campaign = c.name) AS link_count
             FROM campaigns c WHERE c.workspace_id = ? ORDER BY c.created_at DESC`).bind(ws.id),
         env.DB.prepare(`
-            SELECT l.*, (SELECT COUNT(*) FROM clicks k WHERE k.short_code = l.short_code) AS clicks
+            SELECT l.*, ${CUSTOM_SLUG_SQL}, (SELECT COUNT(*) FROM clicks k WHERE k.short_code = l.short_code) AS clicks
             FROM links l WHERE l.workspace_id = ? ORDER BY l.created_at DESC, l.id DESC`).bind(ws.id),
     ]);
     return json({
         success: true,
         workspace: { id: ws.id, name: ws.name, domains: ws.domains },
+        short_base: env.SHORT_BASE,
         sources: sources.results.map(r => r.value),
         campaigns: campaigns.results,
         links: links.results.map(r => shapeLink(r, env)),
@@ -166,11 +239,24 @@ async function createLink(ws, request, env) {
     if (!built.ok) return json({ success: false, error: built.errors.join(' ') }, 400);
     const c = built.clean;
 
-    const dupe = await env.DB.prepare('SELECT * FROM links WHERE workspace_id = ? AND final_url = ?')
+    const dupe = await env.DB.prepare('SELECT id FROM links WHERE workspace_id = ? AND final_url = ?')
         .bind(ws.id, built.url).first();
-    if (dupe) return json({ success: true, duplicate: true, link: shapeLink(dupe, env) });
+    const existing = dupe ? await loadLink(env, dupe.id) : null;
 
-    const shortCode = body.shorten ? await newShortCode(env) : null;
+    // A custom short name implies a short link; check it before saving anything.
+    let slug = null;
+    if (body.custom_slug) {
+        const check = await checkSlug(env, ws, body.custom_slug, existing);
+        if (check.error) return json({ success: false, error: check.error, suggestions: check.suggestions }, check.status);
+        slug = check.slug;
+    }
+
+    if (existing) {
+        const link = slug ? await applySlug(env, existing, slug) : existing;
+        return json({ success: true, duplicate: true, link: shapeLink(link, env) });
+    }
+
+    const shortCode = body.shorten || slug ? await newShortCode(env) : null;
     const stmts = [
         env.DB.prepare('INSERT OR IGNORE INTO campaigns (workspace_id, name) VALUES (?, ?)').bind(ws.id, c.utm_campaign),
         env.DB.prepare(`INSERT INTO links (workspace_id, base_url, source, medium, campaign, term, content, final_url, short_code, notes)
@@ -182,26 +268,47 @@ async function createLink(ws, request, env) {
         stmts.push(env.DB.prepare('INSERT OR IGNORE INTO sources (workspace_id, value) VALUES (?, ?)').bind(ws.id, c.utm_source));
     }
     const results = await env.DB.batch(stmts);
-    return json({ success: true, link: shapeLink({ ...results[1].results[0], clicks: 0 }, env) }, 201);
+    let link = { ...results[1].results[0], clicks: 0 };
+    if (slug) link = await applySlug(env, link, slug);
+    return json({ success: true, link: shapeLink(link, env) }, 201);
 }
 
 async function handleLink(ws, request, env, id) {
-    const link = await env.DB.prepare('SELECT * FROM links WHERE id = ? AND workspace_id = ?').bind(id, ws.id).first();
+    const link = await env.DB.prepare(`SELECT l.*, ${CUSTOM_SLUG_SQL} FROM links l WHERE l.id = ? AND l.workspace_id = ?`)
+        .bind(id, ws.id).first();
     if (!link) return json({ success: false, error: 'Not found' }, 404);
 
     if (request.method === 'DELETE') {
-        await env.DB.prepare('DELETE FROM links WHERE id = ?').bind(id).run();
+        await env.DB.batch([
+            env.DB.prepare('DELETE FROM short_aliases WHERE link_id = ?').bind(id),
+            env.DB.prepare('DELETE FROM links WHERE id = ?').bind(id),
+        ]);
         return json({ success: true });
     }
     if (request.method === 'PATCH') {
         const body = await request.json().catch(() => ({}));
+        let slug = null;
+        if (body.custom_slug) {
+            const check = await checkSlug(env, ws, body.custom_slug, link);
+            if (check.error) return json({ success: false, error: check.error, suggestions: check.suggestions }, check.status);
+            slug = check.slug;
+        }
         if (typeof body.notes === 'string') link.notes = body.notes.slice(0, 1000);
         if (body.shorten && !link.short_code) link.short_code = await newShortCode(env);
         await env.DB.prepare('UPDATE links SET notes = ?, short_code = ? WHERE id = ?')
             .bind(link.notes, link.short_code, id).run();
-        return json({ success: true, link: shapeLink(link, env) });
+        const updated = slug ? await applySlug(env, link, slug) : await loadLink(env, id);
+        return json({ success: true, link: shapeLink(updated, env) });
     }
     return json({ success: false, error: 'Method not allowed' }, 405);
+}
+
+// Live availability check for the builder's custom-name field.
+async function slugCheck(ws, request, env) {
+    const params = new URL(request.url).searchParams;
+    const link = params.get('link') ? { id: Number(params.get('link')) } : null;
+    const check = await checkSlug(env, ws, params.get('slug'), link);
+    return json({ success: true, slug: check.slug, available: !check.error, error: check.error || '', suggestions: check.suggestions || [] });
 }
 
 async function upsertCampaign(ws, request, env) {
@@ -234,6 +341,7 @@ async function handleApi(request, env, parts) {
     if (resource === 'links' && id) return handleLink(ws, request, env, Number(id));
     if (resource === 'campaigns' && request.method === 'POST') return upsertCampaign(ws, request, env);
     if (resource === 'sources' && request.method === 'POST') return addSource(ws, request, env);
+    if (resource === 'slug-check' && request.method === 'GET') return slugCheck(ws, request, env);
     return json({ success: false, error: 'Not found' }, 404);
 }
 
