@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Link Builder | Toolproof</title>
+    <title>taggd by Toolproof</title>
     <meta name="description" content="Build, save and reuse campaign-tagged links so Google Analytics shows which marketing is working.">
     <meta name="robots" content="noindex">
     <meta name="referrer" content="no-referrer">
@@ -307,7 +307,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <header class="lb-header">
     <div class="lb-header__inner">
-        <a href="/" class="tp-wordmark" style="text-decoration: none;">Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup></a>
+        <span class="tg-lockup"><a href="/links/" class="tg-lockup__taggd">taggd</a><span class="tg-lockup__by">by</span><a href="/" class="tp-wordmark" aria-label="Toolproof home">Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup></a></span>
         <div class="lb-header__right">
             <a href="/links/why/" class="lb-header__link"><i class="ph ph-question" aria-hidden="true"></i><span>Why tag links?</span></a>
             <a href="/links/ga4/" class="lb-header__link"><i class="ph ph-chart-bar" aria-hidden="true"></i><span>See results in GA4</span></a>
@@ -982,7 +982,7 @@ async function load() {
         if (data.short_base) state.shortBase = data.short_base;
         document.querySelectorAll('[data-short-prefix]').forEach(el => { el.textContent = shortHost() + '/'; });
         $('lb-ws-name').textContent = data.workspace.name + ' · Link builder';
-        document.title = `${data.workspace.name} links | Toolproof`;
+        document.title = `${data.workspace.name} · taggd by Toolproof`;
         if (!$('f-url').value && data.workspace.domains) {
             $('f-url').placeholder = 'https://' + data.workspace.domains.split(',')[0].trim() + '/page';
         }

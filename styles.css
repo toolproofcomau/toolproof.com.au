@@ -183,6 +183,33 @@ body {
     font-weight: var(--weight-semibold);
 }
 
+/* === taggd by Toolproof lockup (links/ pages) ===
+   "taggd" uses the wordmark type; "by" is a Times italic in teal,
+   the complement to the wordmark's oxblood. */
+.tg-lockup {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3em;
+    font-size: 36px;
+    line-height: 1;
+    white-space: nowrap;
+}
+.tg-lockup a { text-decoration: none; }
+.tg-lockup a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; border-radius: 2px; }
+.tg-lockup__taggd {
+    font-family: var(--font-display);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-logo);
+    color: var(--text-strong);
+}
+.tg-lockup__by {
+    font-family: "Times New Roman", Times, serif;
+    font-style: italic;
+    font-size: 0.55em;
+    color: var(--tp-teal-mid);
+}
+.tg-lockup .tp-wordmark { font-size: 0.55em; }
+
 /* === Badge === */
 .tp-badge {
     display: inline-flex;
@@ -1426,6 +1453,8 @@ html { scroll-behavior: smooth; }
         width: 100%;
     }
     .tp-wordmark { font-size: 26px; }
+    .tg-lockup { font-size: 26px; }
+    .tg-lockup .tp-wordmark { font-size: 0.6em; }
     .tp-hero__lead { font-size: var(--text-base); }
 
     .tp-consent__inner {
