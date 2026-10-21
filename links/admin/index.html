@@ -94,6 +94,8 @@
             border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); margin: var(--space-3) 0;
         }
         .ad-result__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+        .ad-email { display: grid; gap: var(--space-3); margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--tp-teal-light); }
+        .ad-email__body { resize: vertical; line-height: var(--leading-snug); font-family: var(--font-body); }
         .ad-result__warn { font-size: var(--text-xs); color: var(--tp-oxblood); margin-top: var(--space-3); display: flex; gap: var(--space-2); }
         .ad-close { background: none; border: 0; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; padding: 2px; }
         .ad-close:hover { color: var(--text-strong); }
@@ -214,7 +216,22 @@
             <div class="ad-result__link" id="ad-result-link"></div>
             <div class="ad-result__actions">
                 <button type="button" class="tp-btn tp-btn--emphasis" id="ad-result-copy"><i class="ph ph-copy" aria-hidden="true"></i>Copy link</button>
-                <a class="ad-btn-quiet" id="ad-result-email" href="#"><i class="ph ph-envelope-simple" aria-hidden="true"></i>Draft email</a>
+                <a class="ad-btn-quiet" id="ad-result-gmail" href="#" target="_blank" rel="noopener"><i class="ph ph-envelope-simple" aria-hidden="true"></i>Open in Gmail</a>
+                <button type="button" class="ad-btn-quiet" id="ad-result-show-email" aria-expanded="false" aria-controls="ad-email"><i class="ph ph-text-align-left" aria-hidden="true"></i>Show email text</button>
+            </div>
+            <div class="ad-email" id="ad-email" hidden>
+                <div class="ad-field">
+                    <label for="ad-email-subject">Subject</label>
+                    <input class="ad-input ad-input--sm" id="ad-email-subject" type="text" readonly>
+                </div>
+                <div class="ad-field">
+                    <label for="ad-email-body">Message</label>
+                    <textarea class="ad-input ad-input--sm ad-email__body" id="ad-email-body" rows="11" readonly></textarea>
+                </div>
+                <div class="ad-result__actions">
+                    <button type="button" class="ad-btn-quiet" id="ad-email-copy-subject"><i class="ph ph-copy" aria-hidden="true"></i>Copy subject</button>
+                    <button type="button" class="ad-btn-quiet" id="ad-email-copy-body"><i class="ph ph-copy" aria-hidden="true"></i>Copy message</button>
+                </div>
             </div>
             <p class="ad-result__warn"><i class="ph ph-warning" aria-hidden="true"></i><span>This link won't be shown again. Anyone with it can use the workspace, so only send it to the client.</span></p>
         </div>
@@ -443,8 +460,14 @@ function showResult(title, link, clientName) {
     $('ad-result-title').textContent = title;
     $('ad-result-link').textContent = link;
     const subject = 'Your campaign link builder';
-    const body = `Hi,\n\nHere is your private link to the Toolproof campaign link builder for ${clientName}:\n\n${link}\n\nBookmark it, and keep it within your team. Anyone with the link can use your workspace.\n\nNew to tagging links? This short guide explains why it matters: https://www.toolproof.com.au/links/why/\n\nThanks,\nRob`;
-    $('ad-result-email').href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const body = `Hi,\n\nHere is your private link to the Toolproof campaign link builder for ${clientName}:\n\n${link}\n\nKeep this email somewhere safe. Use this link to open the builder on a new computer or phone, or to give a teammate access; bookmarking the page itself won't keep your access. Anyone with the link can use your workspace, so please keep it within your team.\n\nNew to tagging links? This short guide explains why it matters: https://www.toolproof.com.au/links/why/\n\nThanks,\nRob`;
+    // Gmail's compose URL works for Gmail and Google Workspace accounts (opens the default signed-in account).
+    $('ad-result-gmail').href = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    $('ad-email-subject').value = subject;
+    $('ad-email-body').value = body;
+    $('ad-email').hidden = true;
+    $('ad-result-show-email').setAttribute('aria-expanded', 'false');
+    $('ad-result-show-email').lastChild.textContent = 'Show email text';
     $('ad-result').hidden = false;
     $('ad-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
     $('ad-result-copy').focus();
@@ -452,6 +475,14 @@ function showResult(title, link, clientName) {
 
 $('ad-result-copy').addEventListener('click', () => copy($('ad-result-link').textContent, 'Link copied'));
 $('ad-result-close').addEventListener('click', () => { $('ad-result').hidden = true; });
+$('ad-result-show-email').addEventListener('click', e => {
+    const open = $('ad-email').hidden;
+    $('ad-email').hidden = !open;
+    e.currentTarget.setAttribute('aria-expanded', String(open));
+    e.currentTarget.lastChild.textContent = open ? 'Hide email text' : 'Show email text';
+});
+$('ad-email-copy-subject').addEventListener('click', () => copy($('ad-email-subject').value, 'Subject copied'));
+$('ad-email-copy-body').addEventListener('click', () => copy($('ad-email-body').value, 'Message copied'));
 
 $('create-form').addEventListener('submit', async e => {
     e.preventDefault();
