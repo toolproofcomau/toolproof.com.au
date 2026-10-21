@@ -7,7 +7,7 @@ const ALLOWED_ORIGINS = [
     'http://localhost:3000',
 ];
 
-const APP_URL = 'https://toolproof.com.au/links/';
+const APP_URL = 'https://www.toolproof.com.au/links/';
 const PRESET_SOURCES = SOURCES.flatMap(g => g.values);
 const CODE_ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789'; // no 0/o/1/l/i
 
