@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Tag Your Links | Toolproof</title>
+    <meta name="description" content="Campaign tags (UTMs) tell Google Analytics which post, email, ad or flyer brought each visitor. Here's why they matter and the 3-step habit that makes them easy.">
+    <link rel="canonical" href="https://toolproof.com.au/links/why/">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+    <link rel="stylesheet" href="/styles.css">
+
+    <!-- Consent Mode v2: default deny, then immediately update if previously granted -->
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500
+    });
+    if (localStorage.getItem('tp_consent') === 'granted') {
+        gtag('consent', 'update', {
+            analytics_storage: 'granted',
+            ad_storage: 'granted',
+            ad_user_data: 'granted',
+            ad_personalization: 'granted'
+        });
+    }
+</script>
+
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TC8JHQX2');</script>
+<!-- End Google Tag Manager -->
+
+    <style>
+        .ut-section { padding-block: var(--space-16); }
+        .ut-section--band { background: var(--surface-band); }
+        .ut-section--card { background: var(--surface-card); }
+        .ut-container { max-width: 56rem; margin-inline: auto; padding-inline: var(--space-6); }
+        .ut-eyebrow { color: var(--text-accent); margin-bottom: var(--space-3); }
+        .ut-h2 {
+            font-family: var(--font-display); font-weight: var(--weight-regular);
+            font-size: clamp(var(--text-xl), 3vw, var(--text-2xl));
+            letter-spacing: var(--tracking-heading); line-height: var(--leading-heading);
+            color: var(--text-strong); margin-bottom: var(--space-4);
+        }
+        .ut-lead { font-size: var(--text-md); color: var(--text-body); max-width: 44rem; line-height: var(--leading-body); }
+        .ut-lead + .ut-lead { margin-top: var(--space-4); }
+        .ut-hero__lead { color: var(--text-on-dark-muted); font-size: var(--text-md); max-width: 40rem; margin-top: var(--space-4); }
+        .ut-hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
+
+        /* Without vs with tags */
+        .ut-compare { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-8); }
+        .ut-panel { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: var(--shadow-card); }
+        .ut-panel__label { font-family: var(--font-display); font-size: var(--text-xs); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; margin-bottom: var(--space-4); display: flex; gap: var(--space-2); align-items: center; }
+        .ut-panel--before .ut-panel__label { color: var(--tp-oxblood); }
+        .ut-panel--after .ut-panel__label { color: var(--tp-teal); }
+        .ut-mini { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+        .ut-mini th { text-align: left; font-size: var(--text-xs); color: var(--text-muted); font-weight: var(--weight-semibold); padding: 0 0 var(--space-2); border-bottom: 1.5px solid var(--border-subtle); }
+        .ut-mini th:last-child, .ut-mini td:last-child { text-align: right; }
+        .ut-mini td { padding: var(--space-2) 0; border-bottom: 1px solid var(--border-subtle); font-variant-numeric: tabular-nums; }
+        .ut-mini tr.is-murky td { color: var(--tp-oxblood); font-weight: var(--weight-semibold); }
+        .ut-panel__note { margin-top: var(--space-4); font-size: var(--text-sm); color: var(--text-muted); }
+
+        /* Benefits */
+        .ut-benefits { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); margin-top: var(--space-8); }
+        .ut-benefit { background: var(--surface-card); border-radius: var(--radius-lg); padding: var(--space-6); border: 1px solid var(--border-subtle); }
+        .ut-benefit i { font-size: 1.5rem; color: var(--tp-teal); background: var(--tp-teal-xlight); border-radius: var(--radius-md); padding: 8px; display: inline-block; margin-bottom: var(--space-4); }
+        .ut-benefit h3 { font-family: var(--font-display); font-weight: var(--weight-regular); font-size: var(--text-lg); color: var(--text-strong); margin-bottom: var(--space-2); line-height: var(--leading-snug); }
+        .ut-benefit p { font-size: var(--text-sm); color: var(--text-body); }
+
+        /* Anatomy */
+        .ut-anatomy {
+            margin-top: var(--space-8); padding: var(--space-5); border-radius: var(--radius-lg);
+            background: var(--surface-dark); color: var(--text-on-dark);
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--text-sm); line-height: 2; word-break: break-all;
+        }
+        .ut-anatomy .base { color: var(--text-on-dark-muted); }
+        .ut-anatomy .p { border-bottom: 2px solid var(--tp-oxblood-light); padding-bottom: 2px; }
+        .ut-anatomy sup { font-family: var(--font-display); font-size: 10px; background: var(--tp-oxblood-light); color: var(--tp-oxblood); border-radius: 999px; padding: 1px 6px; margin-left: 2px; vertical-align: super; }
+        .ut-parts { list-style: none; margin-top: var(--space-6); display: grid; gap: var(--space-4); counter-reset: part; }
+        .ut-parts li { display: grid; grid-template-columns: 2rem minmax(7.5rem, auto) 1fr; gap: var(--space-3); align-items: baseline; counter-increment: part; font-size: var(--text-sm); }
+        .ut-parts li::before { content: counter(part); font-family: var(--font-display); font-size: 11px; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--tp-oxblood-light); color: var(--tp-oxblood); display: inline-flex; align-items: center; justify-content: center; }
+        .ut-parts code, .ut-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em; color: var(--tp-teal); background: var(--tp-teal-xlight); padding: 1px 5px; border-radius: 3px; }
+        .ut-parts strong { color: var(--text-strong); }
+        .ut-parts .ut-req { font-size: var(--text-xs); color: var(--text-muted); display: block; }
+
+        /* Habit */
+        .ut-steps { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); margin-top: var(--space-8); counter-reset: step; }
+        .ut-steps li { counter-increment: step; border-top: 3px solid var(--tp-oxblood); padding-top: var(--space-4); }
+        .ut-steps li::before { content: "Step " counter(step); font-family: var(--font-display); font-size: var(--text-xs); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; color: var(--tp-oxblood); display: block; margin-bottom: var(--space-2); }
+        .ut-steps h3 { font-family: var(--font-display); font-weight: var(--weight-regular); font-size: var(--text-xl); color: var(--text-strong); margin-bottom: var(--space-2); }
+        .ut-steps p { font-size: var(--text-sm); }
+
+        /* Rules + cheat sheet */
+        .ut-rules { list-style: none; margin-top: var(--space-6); display: grid; gap: var(--space-3); }
+        .ut-rules li { display: flex; gap: var(--space-3); align-items: baseline; font-size: var(--text-base); }
+        .ut-rules i { color: var(--tp-teal); flex-shrink: 0; position: relative; top: 2px; }
+        .ut-table-wrap { overflow-x: auto; margin-top: var(--space-6); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); background: var(--surface-card); }
+        .ut-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); min-width: 34rem; }
+        .ut-table th { text-align: left; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: var(--weight-semibold); padding: var(--space-3) var(--space-4); background: var(--surface-page); border-bottom: 1.5px solid var(--border-subtle); }
+        .ut-table td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+        .ut-table tr:last-child td { border-bottom: 0; }
+        .ut-table td:first-child { font-weight: var(--weight-semibold); color: var(--text-strong); }
+
+        .ut-fix { display: grid; grid-template-columns: 1fr auto 1fr; gap: var(--space-3) var(--space-4); align-items: center; margin-top: var(--space-6); font-size: var(--text-sm); }
+        .ut-fix__bad { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--tp-oxblood); background: var(--tp-oxblood-light); padding: 4px 8px; border-radius: var(--radius-sm); text-decoration: line-through; text-decoration-color: rgba(107,31,42,0.4); }
+        .ut-fix__good { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--tp-teal); background: var(--tp-teal-xlight); padding: 4px 8px; border-radius: var(--radius-sm); }
+        .ut-fix i { color: var(--text-muted); }
+        .ut-fix__why { grid-column: 1 / -1; color: var(--text-muted); font-size: var(--text-xs); margin: calc(var(--space-2) * -1) 0 var(--space-2); }
+
+        /* CTA */
+        .ut-cta { background: var(--surface-dark); color: var(--text-on-dark); --grain-color: 255, 255, 255; }
+        .ut-cta .ut-h2 { color: var(--text-on-dark); }
+        .ut-cta p { color: var(--text-on-dark-muted); max-width: 40rem; }
+        .ut-cta .ut-hero__actions { margin-top: var(--space-6); }
+        .ut-print-btn { background: transparent; color: var(--text-on-dark); border-color: rgba(255,255,255,0.4); }
+
+        @media (max-width: 760px) {
+            .ut-section { padding-block: var(--space-12); }
+            .ut-compare, .ut-benefits, .ut-steps { grid-template-columns: 1fr; }
+            .ut-parts li { grid-template-columns: 2rem 1fr; }
+            .ut-parts li > span:last-child { grid-column: 2; }
+            .ut-fix { grid-template-columns: 1fr; }
+            .ut-fix i { transform: rotate(90deg); justify-self: start; }
+        }
+        @media (max-width: 560px) { .ut-container { padding-inline: var(--space-4); } }
+
+        /* One-page handout */
+        @media print {
+            .tp-site-nav, .tp-footer, .tp-consent, .tp-consent-backdrop, .ut-hero__actions, .ut-noprint { display: none !important; }
+            body { background: #fff; font-size: 11px; }
+            .ut-section { padding-block: 14px; break-inside: avoid; background: #fff !important; }
+            .tp-privacy-hero { padding-block: 14px !important; }
+            .ut-anatomy { background: #fff; color: #000; border: 1px solid #999; }
+            .ut-anatomy .base { color: #555; }
+            .tp-grain::before { display: none; }
+            .ut-compare, .ut-benefits, .ut-steps { gap: 10px; margin-top: 10px; }
+        }
+    </style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TC8JHQX2"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <header class="tp-site-nav">
+        <div class="tp-nav-progress" aria-hidden="true"></div>
+        <div class="tp-site-nav__container">
+            <a class="tp-wordmark" href="/" style="text-decoration: none;">
+                Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup>
+            </a>
+            <nav class="tp-nav" id="tp-nav" aria-label="Site navigation">
+                <ul class="tp-nav__list">
+                    <li><a class="tp-nav__link" href="/#the-problem">The problem</a></li>
+                    <li><a class="tp-nav__link" href="/#the-fix">The fix</a></li>
+                    <li><a class="tp-nav__link" href="/#why-toolproof">Why Toolproof</a></li>
+                    <li><a class="tp-nav__link" href="/#about">About</a></li>
+                </ul>
+                <a class="tp-btn tp-btn--emphasis tp-nav__cta" href="tel:+61439612398">Book an Inspection</a>
+            </nav>
+            <button class="tp-nav__hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="tp-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+    <section class="tp-privacy-hero tp-grain">
+        <div class="ut-container">
+            <span class="tp-eyebrow" style="color: var(--tp-teal-light);">Campaign tagging, made simple</span>
+            <h1 class="tp-privacy-hero__headline">Which post actually brought that customer?</h1>
+            <p class="ut-hero__lead">You shared the workshop on Facebook, sent it in the newsletter, and stuck a QR code on the counter. Bookings came in. Google Analytics can tell you which one worked, but only if the link carries a tag.</p>
+            <div class="ut-hero__actions">
+                <a class="tp-btn tp-btn--emphasis" href="/links/">Open the link builder</a>
+                <button class="tp-btn ut-print-btn" type="button" onclick="window.print()"><i class="ph ph-printer" aria-hidden="true"></i>Print this page</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- The problem -->
+    <section class="ut-section">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">The problem</span>
+            <h2 class="ut-h2">Most of your marketing arrives in Google Analytics unlabelled</h2>
+            <p class="ut-lead">When someone taps a link inside the Facebook or Instagram app, an email, a PDF, a text message or a QR code, the website usually can't tell where they came from. Google Analytics files those visits as <strong>Direct</strong> or <strong>Unassigned</strong>, which really means "no idea".</p>
+            <p class="ut-lead">The fix is a few labels added to the end of the link, called <strong>UTM tags</strong>. They tell Google Analytics the source, the type of channel and the campaign, so every visit gets credited to the thing that earned it.</p>
+
+            <div class="ut-compare">
+                <div class="ut-panel ut-panel--before">
+                    <div class="ut-panel__label"><i class="ph ph-question" aria-hidden="true"></i>Without tags</div>
+                    <table class="ut-mini">
+                        <thead><tr><th>Channel</th><th>Bookings</th></tr></thead>
+                        <tbody>
+                            <tr class="is-murky"><td>Direct</td><td>14</td></tr>
+                            <tr class="is-murky"><td>Unassigned</td><td>6</td></tr>
+                            <tr><td>Organic Search</td><td>5</td></tr>
+                            <tr><td>Referral</td><td>2</td></tr>
+                        </tbody>
+                    </table>
+                    <p class="ut-panel__note">20 of 27 bookings can't be explained. Was it the newsletter? The reel? Nobody knows.</p>
+                </div>
+                <div class="ut-panel ut-panel--after">
+                    <div class="ut-panel__label"><i class="ph ph-check-circle" aria-hidden="true"></i>With tags</div>
+                    <table class="ut-mini">
+                        <thead><tr><th>Campaign · source / medium</th><th>Bookings</th></tr></thead>
+                        <tbody>
+                            <tr><td>funding_workshop_jun_26 · newsletter / email</td><td>11</td></tr>
+                            <tr><td>funding_workshop_jun_26 · facebook / social</td><td>6</td></tr>
+                            <tr><td>funding_workshop_jun_26 · flyer / qr</td><td>3</td></tr>
+                            <tr><td>Organic Search</td><td>5</td></tr>
+                        </tbody>
+                    </table>
+                    <p class="ut-panel__note">Same bookings, now with names on them. The newsletter did the heavy lifting.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section class="ut-section ut-section--band">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">What you get</span>
+            <h2 class="ut-h2">Three reasons it's worth ten seconds per link</h2>
+            <div class="ut-benefits">
+                <div class="ut-benefit">
+                    <i class="ph ph-target" aria-hidden="true"></i>
+                    <h3>Know what brings enquiries</h3>
+                    <p>See which channel, campaign and even which post led to a booking, a form or a sale, instead of guessing.</p>
+                </div>
+                <div class="ut-benefit">
+                    <i class="ph ph-currency-dollar" aria-hidden="true"></i>
+                    <h3>Stop paying for what doesn't work</h3>
+                    <p>Move time and money away from the posts, ads and print runs that don't deliver, and into the ones that do.</p>
+                </div>
+                <div class="ut-benefit">
+                    <i class="ph ph-scales" aria-hidden="true"></i>
+                    <h3>Compare like with like</h3>
+                    <p>Reel or carousel? Top button or bottom? Flyer or newspaper? Tag each version differently and let the numbers settle it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Anatomy -->
+    <section class="ut-section ut-section--card">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">How it works</span>
+            <h2 class="ut-h2">Anatomy of a tagged link</h2>
+            <p class="ut-lead">It's the same page, with labels added after the <code class="ut-code">?</code>. Visitors land in exactly the same place. The tags are only read by Google Analytics.</p>
+            <div class="ut-anatomy" aria-label="Example tagged link"><span class="base">https://yourbusiness.com.au/workshops</span>?<span class="p">utm_source=facebook</span><sup>1</sup>&amp;<span class="p">utm_medium=social</span><sup>2</sup>&amp;<span class="p">utm_campaign=funding_workshop_jun_26</span><sup>3</sup>&amp;<span class="p">utm_content=reel</span><sup>4</sup></div>
+            <ol class="ut-parts">
+                <li><strong>Source</strong><span><span class="ut-req">Required</span>The site, platform or publication the visitor came from: <code>facebook</code>, <code>newsletter</code>, <code>flyer</code>.</span></li>
+                <li><strong>Medium</strong><span><span class="ut-req">Required</span>The type of channel: <code>social</code>, <code>email</code>, <code>paid_social</code>, <code>qr</code>. This decides which channel GA4 puts the visit in, so pick it from the list.</span></li>
+                <li><strong>Campaign</strong><span><span class="ut-req">Required</span>The promotion, offer or event, plus the month and year: <code>funding_workshop_jun_26</code>. Use the same name on every link for that campaign.</span></li>
+                <li><strong>Content</strong><span><span class="ut-req">Optional</span>What tells two links in the same campaign apart: <code>reel</code> vs <code>carousel</code>, <code>header_button</code> vs <code>footer_button</code>.</span></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Habit -->
+    <section class="ut-section">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">The habit</span>
+            <h2 class="ut-h2">Build, copy, paste, every time a link leaves the building</h2>
+            <ol class="ut-steps">
+                <li>
+                    <h3>Build</h3>
+                    <p>Open your link builder and pick the shortcut that matches, like "Facebook post" or "Email newsletter". Paste the page and choose or type the campaign.</p>
+                </li>
+                <li>
+                    <h3>Copy</h3>
+                    <p>Save it. It's copied and stored in your library. Use a short link for print, QR codes and SMS.</p>
+                </li>
+                <li>
+                    <h3>Paste</h3>
+                    <p>Use the tagged link in your post, email, ad or design, never the plain address. Reusing it later? Find it in <em>My links</em>.</p>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Rules -->
+    <section class="ut-section ut-section--band">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">The house rules</span>
+            <h2 class="ut-h2">Consistency is the whole game</h2>
+            <p class="ut-lead">Google Analytics treats <code class="ut-code">Facebook</code>, <code class="ut-code">facebook</code> and <code class="ut-code">facebook.com</code> as three different sources. Tiny differences split your results into pieces. The link builder applies these rules for you:</p>
+            <ul class="ut-rules">
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>Always lowercase.</strong> <code class="ut-code">facebook</code>, never <code class="ut-code">Facebook</code>.</span></li>
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>Underscores, not spaces.</strong> <code class="ut-code">spring_sale_oct_26</code>.</span></li>
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>Pick from the list.</strong> Use the standard sources and mediums so GA4 puts visits in the right channel.</span></li>
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>Reuse campaign names.</strong> Every link for one campaign shares one name. The builder warns you about near-misses.</span></li>
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>Only tag links to your own site</strong> from outside it. Never tag links between pages of your own website, because that restarts the visit and wipes out the real source.</span></li>
+            </ul>
+
+            <h3 class="ut-h2" style="font-size: var(--text-lg); margin-top: var(--space-10);">Real examples, tidied up</h3>
+            <div class="ut-fix">
+                <span class="ut-fix__bad">facebook.com · hubspot.com</span><i class="ph ph-arrow-right" aria-hidden="true"></i><span class="ut-fix__good">facebook · hubspot</span>
+                <span class="ut-fix__why">One name per source, so results aren't split across rows.</span>
+                <span class="ut-fix__bad">awarness_aug_2026</span><i class="ph ph-arrow-right" aria-hidden="true"></i><span class="ut-fix__good">awareness_aug_26</span>
+                <span class="ut-fix__why">A typo creates a second campaign. The builder now asks "did you mean…?"</span>
+                <span class="ut-fix__bad">medium = appointments</span><i class="ph ph-arrow-right" aria-hidden="true"></i><span class="ut-fix__good">medium = organic, content = booking_button</span>
+                <span class="ut-fix__why">Non-standard mediums land in Unassigned. Put the detail in content instead.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cheat sheet -->
+    <section class="ut-section">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">Cheat sheet</span>
+            <h2 class="ut-h2">What to use where</h2>
+            <div class="ut-table-wrap">
+                <table class="ut-table">
+                    <thead><tr><th>Where the link goes</th><th>Source</th><th>Medium</th><th>Content (example)</th><th>Shows in GA4 as</th></tr></thead>
+                    <tbody>
+                        <tr><td>Facebook post</td><td>facebook</td><td>social</td><td>post, reel, carousel</td><td>Organic Social</td></tr>
+                        <tr><td>Facebook / Instagram ad</td><td>facebook</td><td>paid_social</td><td>ad name</td><td>Paid Social</td></tr>
+                        <tr><td>Instagram bio link</td><td>instagram</td><td>social</td><td>bio_link</td><td>Organic Social</td></tr>
+                        <tr><td>LinkedIn post</td><td>linkedin</td><td>social</td><td>post</td><td>Organic Social</td></tr>
+                        <tr><td>Email newsletter</td><td>newsletter</td><td>email</td><td>header_button</td><td>Email</td></tr>
+                        <tr><td>Email signature</td><td>outlook</td><td>email</td><td>email_signature</td><td>Email</td></tr>
+                        <tr><td>Google Business Profile</td><td>google_business_profile</td><td>organic</td><td>website_button, gbp_post</td><td>Organic Search</td></tr>
+                        <tr><td>Google Ads</td><td>google</td><td>cpc</td><td>ad group</td><td>Paid Search</td></tr>
+                        <tr><td>Flyer or poster QR code</td><td>flyer</td><td>qr</td><td>counter_flyer</td><td>Offline / Print*</td></tr>
+                        <tr><td>Event listing (Humanitix)</td><td>humanitix</td><td>referral</td><td>event_listing</td><td>Referral</td></tr>
+                        <tr><td>Partner or directory website</td><td>partner name</td><td>referral</td><td>listing</td><td>Referral</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: var(--space-3);">* Toolproof adds an Offline / Print channel to your Google Analytics so QR and print visits don't land in Unassigned.</p>
+        </div>
+    </section>
+
+    <section class="ut-section ut-cta tp-grain">
+        <div class="ut-container">
+            <h2 class="ut-h2">Ready to tag your next link?</h2>
+            <p>Toolproof clients get a private link library that saves every tagged link, keeps names consistent, and makes short links for print. Then we set up a report in Google Analytics so you can see the results.</p>
+            <div class="ut-hero__actions">
+                <a class="tp-btn tp-btn--emphasis" href="/links/">Open the link builder</a>
+                <a class="tp-btn ut-print-btn" href="/links/ga4/">See results in GA4</a>
+            </div>
+        </div>
+    </section>
+    </main>
+
+    <footer class="tp-footer">
+        <span class="tp-wordmark tp-wordmark--light">
+            Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup>
+        </span>
+        <small>&copy; 2026 Toolproof. ABN: 18 878 662 154</small>
+        <div class="tp-footer__legal">
+            <button class="tp-footer__cookie-btn" id="tp-cookie-prefs-footer" type="button">Cookie preferences</button>
+            <span aria-hidden="true">|</span>
+            <a class="tp-footer__legal-link" href="/privacy">Privacy policy</a>
+        </div>
+        <p class="tp-footer__acknowledgement">We acknowledge the Ngarluma people as the Traditional Custodians of the Country on which we live and work, and pay our respects to their Elders past, present and emerging.</p>
+    </footer>
+
+    <div class="tp-consent-backdrop" id="tp-consent-backdrop" hidden></div>
+
+    <div class="tp-consent" id="tp-consent" role="dialog" aria-label="Cookie consent" aria-modal="true" hidden>
+        <div class="tp-consent__inner">
+            <div class="tp-consent__header">
+                <span class="tp-wordmark" aria-hidden="true">Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup></span>
+                <h2 class="tp-consent__title">Your cookie preferences</h2>
+                <p class="tp-consent__text">We use cookies for analytics and marketing to understand how our site is used. You can accept all cookies or continue with necessary cookies only. <a class="tp-consent__link" href="/privacy">Privacy policy</a></p>
+            </div>
+            <div class="tp-consent__actions">
+                <button class="tp-btn tp-consent__decline" type="button">Necessary only</button>
+                <button class="tp-btn tp-btn--emphasis tp-consent__accept" type="button">Accept all</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var header = document.querySelector('.tp-site-nav');
+            var btn = document.querySelector('.tp-nav__hamburger');
+            btn.addEventListener('click', function () {
+                var open = header.classList.toggle('tp-site-nav--open');
+                btn.setAttribute('aria-expanded', open);
+                btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+            });
+            document.querySelectorAll('.tp-nav__link').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    header.classList.remove('tp-site-nav--open');
+                    btn.setAttribute('aria-expanded', 'false');
+                    btn.setAttribute('aria-label', 'Open menu');
+                });
+            });
+
+            var progressBar = document.querySelector('.tp-nav-progress');
+            if (progressBar) {
+                window.addEventListener('scroll', function () {
+                    var scrolled = window.scrollY || document.documentElement.scrollTop;
+                    var total = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    progressBar.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
+                }, { passive: true });
+            }
+
+            // Cookie consent
+            var consentBanner = document.getElementById('tp-consent');
+            var consentBackdrop = document.getElementById('tp-consent-backdrop');
+            var CONSENT_KEY = 'tp_consent';
+
+            function grantConsent() {
+                gtag('consent', 'update', {
+                    analytics_storage: 'granted',
+                    ad_storage: 'granted',
+                    ad_user_data: 'granted',
+                    ad_personalization: 'granted'
+                });
+            }
+
+            function hideBanner() {
+                consentBanner.classList.remove('tp-consent--visible');
+                consentBackdrop.classList.remove('tp-consent-backdrop--visible');
+                setTimeout(function() {
+                    consentBanner.hidden = true;
+                    consentBackdrop.hidden = true;
+                }, 300);
+            }
+
+            function showBanner() {
+                consentBanner.hidden = false;
+                consentBackdrop.hidden = false;
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        consentBanner.classList.add('tp-consent--visible');
+                        consentBackdrop.classList.add('tp-consent-backdrop--visible');
+                    });
+                });
+            }
+
+            var stored = localStorage.getItem(CONSENT_KEY);
+            if (stored === 'granted') {
+                grantConsent();
+            } else if (!stored) {
+                setTimeout(showBanner, 800);
+            }
+
+            consentBanner.querySelector('.tp-consent__accept').addEventListener('click', function() {
+                localStorage.setItem(CONSENT_KEY, 'granted');
+                grantConsent();
+                location.reload();
+            });
+
+            consentBanner.querySelector('.tp-consent__decline').addEventListener('click', function() {
+                localStorage.setItem(CONSENT_KEY, 'denied');
+                location.reload();
+            });
+
+            function openCookiePrefs() {
+                localStorage.removeItem(CONSENT_KEY);
+                showBanner();
+            }
+
+            var footerBtn = document.getElementById('tp-cookie-prefs-footer');
+            if (footerBtn) footerBtn.addEventListener('click', openCookiePrefs);
+        })();
+    </script>
+</body>
+</html>

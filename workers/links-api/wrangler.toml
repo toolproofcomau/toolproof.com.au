@@ -1,0 +1,18 @@
+name = "links-api"
+main = "index.js"
+compatibility_date = "2024-01-01"
+workers_dev = true
+preview_urls = false
+
+[vars]
+# Where short links point. Change to a custom domain (e.g. "https://go.toolproof.com.au")
+# once a route is added for it.
+SHORT_BASE = "https://links-api.toolproof.workers.dev/s"
+
+# Create with: npx wrangler d1 create links-db  — then paste the id below.
+[[d1_databases]]
+binding = "DB"
+database_name = "links-db"
+database_id = "759e26da-7c22-4bc7-b09f-ab666a750a5d"
+
+# Secret (not in this file): npx wrangler secret put ADMIN_TOKEN

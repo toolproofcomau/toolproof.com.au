@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Builder | Toolproof</title>
+    <meta name="description" content="Build, save and reuse campaign-tagged links so Google Analytics shows which marketing is working.">
+    <meta name="robots" content="noindex">
+    <meta name="referrer" content="no-referrer">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Consent Mode v2: default deny, then immediately update if previously granted -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('consent', 'default', {
+            analytics_storage: 'denied',
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            wait_for_update: 500
+        });
+        try {
+            if (localStorage.getItem('tp_consent') === 'granted') {
+                gtag('consent', 'update', {
+                    analytics_storage: 'granted',
+                    ad_storage: 'granted',
+                    ad_user_data: 'granted',
+                    ad_personalization: 'granted'
+                });
+            }
+        } catch (e) {}
+    </script>
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TC8JHQX2');</script>
+    <!-- End Google Tag Manager -->
+
+    <style>
+        body { min-height: 100svh; display: flex; flex-direction: column; background: var(--surface-page); }
+        [hidden] { display: none !important; }
+
+        /* === Header === */
+        .lb-header {
+            position: sticky; top: 0; z-index: 100;
+            height: var(--nav-height);
+            background-color: var(--surface-page);
+            border-bottom: 1px solid var(--border-subtle);
+            box-shadow: 0 1px 8px rgba(13,31,37,0.06);
+            display: flex; align-items: center;
+            padding-inline: var(--space-6);
+        }
+        .lb-header__inner {
+            max-width: var(--container-max); width: 100%; margin-inline: auto;
+            display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+        }
+        .lb-header__right { display: flex; align-items: center; gap: var(--space-5); }
+        .lb-header__link {
+            font-size: var(--text-sm); color: var(--text-muted); text-decoration: none;
+            display: flex; align-items: center; gap: var(--space-2);
+        }
+        .lb-header__link:hover { color: var(--text-body); }
+
+        /* === Intro band === */
+        .lb-intro { background: var(--surface-dark); color: var(--text-on-dark); --grain-color: 255, 255, 255; }
+        .lb-intro__inner {
+            max-width: var(--container-max); margin-inline: auto;
+            padding: var(--space-10) var(--space-6) var(--space-8);
+        }
+        .lb-intro__eyebrow { color: rgba(255,255,255,0.5); margin-bottom: var(--space-3); }
+        .lb-intro__headline {
+            font-family: var(--font-display); font-weight: var(--weight-regular);
+            font-size: clamp(var(--text-2xl), 4vw, var(--text-3xl));
+            letter-spacing: var(--tracking-heading); line-height: var(--leading-heading);
+            margin-bottom: var(--space-3);
+        }
+        .lb-intro__lead { color: var(--text-on-dark-muted); max-width: 44rem; }
+        .lb-intro__lead a { color: var(--text-on-dark); }
+
+        /* === Tabs === */
+        .lb-tabs {
+            max-width: var(--container-max); margin: 0 auto; padding: 0 var(--space-6);
+            display: flex; gap: var(--space-1); overflow-x: auto;
+        }
+        .lb-tab {
+            font-family: var(--font-display); font-size: var(--text-sm); letter-spacing: var(--tracking-button);
+            text-transform: uppercase; color: var(--text-on-dark-muted);
+            background: none; border: 0; border-bottom: 3px solid transparent;
+            padding: var(--space-3) var(--space-4); cursor: pointer; white-space: nowrap;
+        }
+        .lb-tab:hover { color: var(--text-on-dark); }
+        .lb-tab[aria-selected="true"] { color: var(--text-on-dark); border-bottom-color: var(--tp-oxblood-light); }
+        .lb-tab:focus-visible { outline: 2px solid var(--tp-teal-light); outline-offset: -2px; }
+        .lb-tab__count { opacity: 0.6; }
+
+        /* === Layout === */
+        .lb-main { flex: 1; width: 100%; max-width: var(--container-max); margin: 0 auto; padding: var(--space-8) var(--space-6) var(--space-16); }
+        .lb-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+        .lb-card {
+            background: var(--surface-card); border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: var(--space-6);
+        }
+        .lb-card__title {
+            font-family: var(--font-display); font-weight: var(--weight-regular); font-size: var(--text-lg);
+            color: var(--text-strong); margin-bottom: var(--space-1);
+        }
+        .lb-card__sub { font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-5); }
+        .lb-sticky { position: sticky; top: calc(var(--nav-height) + var(--space-6)); }
+
+        /* === Form === */
+        .lb-form { display: flex; flex-direction: column; gap: var(--space-5); }
+        .lb-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+        .lb-field { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+        .lb-field label { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--text-strong); }
+        .lb-field .lb-optional { font-weight: var(--weight-regular); color: var(--text-muted); }
+        .lb-field input, .lb-field select, .lb-field textarea, .lb-input {
+            font-family: var(--font-body); font-size: var(--text-base); color: var(--text-body);
+            background: var(--surface-card); border: 1.5px solid var(--border-subtle);
+            border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); width: 100%;
+            transition: border-color var(--duration-base) var(--ease-standard);
+        }
+        .lb-field select { appearance: auto; padding-block: 0.7rem; }
+        .lb-field textarea { resize: vertical; min-height: 4.5rem; }
+        .lb-field input:focus, .lb-field select:focus, .lb-field textarea:focus, .lb-input:focus { outline: none; border-color: var(--tp-teal); }
+        .lb-field input::placeholder, .lb-field textarea::placeholder, .lb-input::placeholder { color: var(--tp-saltflat-deep); }
+        .lb-hint { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-snug); }
+        .lb-hint code, .lb-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em; background: var(--tp-teal-xlight); color: var(--tp-teal); padding: 0 4px; border-radius: 3px; }
+        .lb-hint--warn { color: var(--tp-oxblood); }
+        .lb-hint--warn button { font: inherit; color: inherit; text-decoration: underline; background: none; border: 0; padding: 0; cursor: pointer; }
+
+        .lb-recipes { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+        .lb-chip {
+            font-family: var(--font-body); font-size: var(--text-sm); color: var(--text-body);
+            background: var(--surface-page); border: 1.5px solid var(--border-subtle); border-radius: 999px;
+            padding: 6px 12px; cursor: pointer; transition: border-color var(--duration-base), background var(--duration-base);
+        }
+        .lb-chip:hover { border-color: var(--tp-teal); }
+        .lb-chip[aria-pressed="true"] { background: var(--tp-teal); border-color: var(--tp-teal); color: var(--tp-white); }
+        .lb-chip:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+        .lb-more { font-size: var(--text-sm); }
+        .lb-more summary { cursor: pointer; color: var(--text-accent); font-weight: var(--weight-semibold); }
+        .lb-more[open] summary { margin-bottom: var(--space-4); }
+        .lb-more .lb-form { gap: var(--space-4); }
+
+        /* === Preview === */
+        .lb-preview__url {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--text-sm);
+            line-height: 1.55; word-break: break-all; color: var(--text-body);
+            background: var(--surface-page); border: 1px dashed var(--tp-saltflat-deep);
+            border-radius: var(--radius-md); padding: var(--space-4); min-height: 6rem;
+        }
+        .lb-preview__url .k { color: var(--text-muted); }
+        .lb-preview__url .v { color: var(--tp-oxblood); font-weight: 600; }
+        .lb-preview__empty { color: var(--text-muted); font-family: var(--font-body); }
+        .lb-channel {
+            display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-4);
+            padding: var(--space-3) var(--space-4); border-radius: var(--radius-md);
+            background: var(--tp-teal-xlight); color: var(--tp-teal); font-size: var(--text-sm);
+        }
+        .lb-channel strong { font-weight: var(--weight-bold); }
+        .lb-channel--bad { background: var(--tp-oxblood-light); color: var(--tp-oxblood); }
+        .lb-messages { margin-top: var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
+        .lb-messages p { font-size: var(--text-sm); display: flex; gap: var(--space-2); }
+        .lb-messages .err { color: #B42318; }
+        .lb-messages .warn { color: var(--tp-oxblood); }
+        .lb-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
+        .lb-btn-quiet {
+            display: inline-flex; align-items: center; gap: var(--space-2);
+            font-family: var(--font-display); font-size: 14px; letter-spacing: var(--tracking-button); text-transform: uppercase;
+            color: var(--text-strong); background: var(--surface-card);
+            border: 1.5px solid var(--border-strong); border-radius: var(--radius-sm);
+            padding: 10px 18px; cursor: pointer;
+        }
+        .lb-btn-quiet:hover { background: var(--surface-page); }
+        .lb-btn-quiet:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+        .lb-actions .tp-btn { font-size: 14px; padding: 10px 18px; }
+        button:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+        .lb-saved {
+            margin-top: var(--space-4); padding: var(--space-4); border-radius: var(--radius-md);
+            border: 1.5px solid var(--tp-teal); background: var(--tp-teal-xlight); font-size: var(--text-sm);
+        }
+        .lb-saved__short { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-2); flex-wrap: wrap; }
+        .lb-saved__short a { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--tp-teal); font-weight: 600; }
+
+        .lb-tip { margin-top: var(--space-6); font-size: var(--text-sm); color: var(--text-muted); border-top: 1px solid var(--border-subtle); padding-top: var(--space-4); }
+        .lb-tip a { color: var(--text-accent); }
+
+        /* === Library === */
+        .lb-toolbar { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; margin-bottom: var(--space-5); }
+        .lb-toolbar .lb-input { width: auto; flex: 1 1 14rem; }
+        .lb-toolbar select.lb-input { flex: 0 1 12rem; appearance: auto; }
+        .lb-toolbar__spacer { flex: 1; }
+        .lb-list { display: flex; flex-direction: column; gap: var(--space-3); }
+        .lb-item {
+            background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+            padding: var(--space-4) var(--space-5); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-2) var(--space-4);
+        }
+        .lb-item__title { font-weight: var(--weight-semibold); color: var(--text-strong); word-break: break-word; }
+        .lb-item__meta { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+        .lb-tag { font-size: var(--text-xs); padding: 2px 8px; border-radius: 999px; background: var(--surface-page); color: var(--text-body); border: 1px solid var(--border-subtle); }
+        .lb-tag--campaign { background: var(--tp-teal-xlight); border-color: var(--tp-teal-light); color: var(--tp-teal); font-weight: 600; }
+        .lb-item__url { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--text-xs); color: var(--text-muted); word-break: break-all; margin-top: var(--space-2); }
+        .lb-item__notes { font-size: var(--text-sm); color: var(--text-body); margin-top: var(--space-2); }
+        .lb-item__side { text-align: right; font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; }
+        .lb-item__clicks { font-family: var(--font-display); font-size: var(--text-xl); color: var(--text-strong); line-height: 1; }
+        .lb-item__actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--space-2); border-top: 1px solid var(--border-subtle); padding-top: var(--space-3); margin-top: var(--space-1); }
+        .lb-link-btn {
+            font-family: var(--font-body); font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--text-accent);
+            background: none; border: 0; padding: 4px 6px; border-radius: var(--radius-sm); cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .lb-link-btn:hover { background: var(--tp-teal-xlight); }
+        .lb-link-btn:focus-visible { outline: 2px solid var(--focus-ring); }
+        .lb-link-btn--danger { color: var(--tp-oxblood); margin-left: auto; }
+        .lb-link-btn--danger:hover { background: var(--tp-oxblood-light); }
+        .lb-empty { text-align: center; padding: var(--space-12) var(--space-6); color: var(--text-muted); }
+        .lb-empty i { font-size: 2rem; color: var(--tp-teal); display: block; margin-bottom: var(--space-3); }
+
+        /* === Campaigns === */
+        .lb-table-wrap { overflow-x: auto; }
+        .lb-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+        .lb-table th { text-align: left; font-weight: var(--weight-semibold); color: var(--text-muted); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; padding: var(--space-2) var(--space-3); border-bottom: 1.5px solid var(--border-subtle); }
+        .lb-table td { padding: var(--space-3); border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+        .lb-table td.num { font-variant-numeric: tabular-nums; }
+
+        /* === No workspace notice === */
+        .lb-notice {
+            display: flex; gap: var(--space-4); align-items: flex-start;
+            padding: var(--space-4) var(--space-5); margin-bottom: var(--space-6);
+            border-radius: var(--radius-lg); background: var(--surface-band); font-size: var(--text-sm);
+        }
+        .lb-notice i { font-size: 1.4rem; color: var(--tp-teal); }
+        .lb-notice a { color: var(--text-accent); }
+        .lb-notice--error { background: var(--tp-oxblood-light); }
+        .lb-notice--error i { color: var(--tp-oxblood); }
+
+        /* === Toast === */
+        .lb-toast {
+            position: fixed; left: 50%; bottom: var(--space-6); transform: translateX(-50%) translateY(20px);
+            background: var(--surface-dark); color: var(--text-on-dark); font-size: var(--text-sm);
+            padding: var(--space-3) var(--space-5); border-radius: var(--radius-md); opacity: 0; pointer-events: none;
+            transition: opacity var(--duration-base), transform var(--duration-base); z-index: 200;
+        }
+        .lb-toast--show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 860px) {
+            .lb-grid { grid-template-columns: 1fr; }
+            .lb-sticky { position: static; }
+        }
+        @media (max-width: 560px) {
+            .lb-header, .lb-main, .lb-intro__inner, .lb-tabs { padding-inline: var(--space-4); }
+            .lb-row { grid-template-columns: 1fr; }
+            .lb-card { padding: var(--space-5) var(--space-4); }
+            .lb-header__link span { display: none; }
+            .lb-item { grid-template-columns: 1fr; }
+            .lb-item__side { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TC8JHQX2"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<a href="#lb-main" class="tp-skip-link">Skip to content</a>
+
+<header class="lb-header">
+    <div class="lb-header__inner">
+        <a href="/" class="tp-wordmark" style="text-decoration: none;">Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup></a>
+        <div class="lb-header__right">
+            <a href="/links/why/" class="lb-header__link"><i class="ph ph-question" aria-hidden="true"></i><span>Why tag links?</span></a>
+            <a href="/links/ga4/" class="lb-header__link"><i class="ph ph-chart-bar" aria-hidden="true"></i><span>See results in GA4</span></a>
+        </div>
+    </div>
+</header>
+
+<section class="lb-intro tp-grain">
+    <div class="lb-intro__inner">
+        <span class="tp-eyebrow lb-intro__eyebrow" id="lb-ws-name">Campaign link builder</span>
+        <h1 class="lb-intro__headline">Tag it before you share it.</h1>
+        <p class="lb-intro__lead">Every link you put in a post, email, ad or flyer gets a tag, so Google Analytics can tell you which one brought the visitor. Build it here, copy it, paste it. <a href="/links/why/">Why it matters</a></p>
+    </div>
+    <div class="lb-tabs" role="tablist" aria-label="Link builder sections">
+        <button class="lb-tab" role="tab" id="tab-build" aria-controls="panel-build" aria-selected="true">Build a link</button>
+        <button class="lb-tab" role="tab" id="tab-library" aria-controls="panel-library" aria-selected="false" tabindex="-1">My links <span class="lb-tab__count" id="lb-count-links"></span></button>
+        <button class="lb-tab" role="tab" id="tab-campaigns" aria-controls="panel-campaigns" aria-selected="false" tabindex="-1">Campaigns <span class="lb-tab__count" id="lb-count-campaigns"></span></button>
+    </div>
+</section>
+
+<main class="lb-main" id="lb-main">
+    <div class="lb-notice" id="lb-notice-guest" hidden>
+        <i class="ph ph-info" aria-hidden="true"></i>
+        <div>You're using the builder without a workspace, so links won't be saved. Toolproof clients get a private workspace link that keeps every link in one library. <a href="/#contact">Ask Toolproof for yours</a>.</div>
+    </div>
+    <div class="lb-notice lb-notice--error" id="lb-notice-error" hidden>
+        <i class="ph ph-warning-circle" aria-hidden="true"></i>
+        <div id="lb-notice-error-text"></div>
+    </div>
+
+    <!-- ===== Build ===== -->
+    <section id="panel-build" role="tabpanel" aria-labelledby="tab-build">
+        <div class="lb-grid">
+            <div class="lb-card">
+                <h2 class="lb-card__title">1. Describe the link</h2>
+                <p class="lb-card__sub">Start with a shortcut, or fill in the fields yourself.</p>
+                <form class="lb-form" id="lb-form" novalidate>
+                    <div class="lb-field">
+                        <span class="lb-field__label" style="font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--text-strong);" id="lb-recipes-label">Where will this link go?</span>
+                        <div class="lb-recipes" id="lb-recipes" role="group" aria-labelledby="lb-recipes-label"></div>
+                    </div>
+
+                    <div class="lb-field">
+                        <label for="f-url">Page on your website</label>
+                        <input id="f-url" type="url" inputmode="url" autocomplete="off" placeholder="https://yourbusiness.com.au/page" list="dl-urls" required>
+                        <datalist id="dl-urls"></datalist>
+                        <span class="lb-hint">The exact page you want people to land on.</span>
+                    </div>
+
+                    <div class="lb-field">
+                        <label for="f-campaign">Campaign</label>
+                        <input id="f-campaign" type="text" autocomplete="off" placeholder="e.g. spring_sale_oct_26" list="dl-campaigns" required>
+                        <datalist id="dl-campaigns"></datalist>
+                        <span class="lb-hint" id="h-campaign">Name the promotion, offer or event, then add the month and year. Reuse an existing name for links in the same campaign.</span>
+                    </div>
+
+                    <div class="lb-row">
+                        <div class="lb-field">
+                            <label for="f-source">Source</label>
+                            <select id="f-source" required></select>
+                            <input id="f-source-other" type="text" autocomplete="off" placeholder="e.g. pilbara_news" hidden aria-label="Other source">
+                            <span class="lb-hint">The site, platform or publication.</span>
+                        </div>
+                        <div class="lb-field">
+                            <label for="f-medium">Medium</label>
+                            <select id="f-medium" required></select>
+                            <span class="lb-hint">The type of channel.</span>
+                        </div>
+                    </div>
+
+                    <div class="lb-field">
+                        <label for="f-content">Content <span class="lb-optional">(optional)</span></label>
+                        <input id="f-content" type="text" autocomplete="off" placeholder="e.g. carousel_card_2, header_button">
+                        <span class="lb-hint">Tells two links in the same campaign apart, such as a reel and a carousel, or the top and bottom button in an email.</span>
+                    </div>
+
+                    <details class="lb-more">
+                        <summary>More options</summary>
+                        <div class="lb-form">
+                            <div class="lb-field">
+                                <label for="f-term">Term <span class="lb-optional">(optional, mostly for paid search)</span></label>
+                                <input id="f-term" type="text" autocomplete="off" placeholder="e.g. business_advice_karratha">
+                            </div>
+                            <div class="lb-field">
+                                <label for="f-notes">Notes for your team <span class="lb-optional">(optional, not part of the link)</span></label>
+                                <textarea id="f-notes" placeholder="Where it was posted, who made it, anything useful later"></textarea>
+                            </div>
+                        </div>
+                    </details>
+
+                    <div>
+                        <button type="reset" class="lb-link-btn" id="lb-reset"><i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>Start again</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="lb-card lb-sticky" aria-live="polite">
+                <h2 class="lb-card__title">2. Your tagged link</h2>
+                <p class="lb-card__sub">Updates as you type. Tags are tidied automatically: lowercase, with underscores instead of spaces.</p>
+                <div class="lb-preview__url" id="lb-preview"><span class="lb-preview__empty">Add a page, campaign, source and medium to see your link.</span></div>
+                <div class="lb-channel" id="lb-channel" hidden></div>
+                <div class="lb-messages" id="lb-messages"></div>
+                <div class="lb-actions">
+                    <button type="button" class="tp-btn tp-btn--emphasis" id="lb-save" disabled><i class="ph ph-floppy-disk tp-btn__icon" aria-hidden="true"></i>Save &amp; copy</button>
+                    <button type="button" class="lb-btn-quiet" id="lb-save-short" disabled><i class="ph ph-link-simple" aria-hidden="true"></i>Save with short link</button>
+                    <button type="button" class="lb-btn-quiet" id="lb-copy" disabled><i class="ph ph-copy" aria-hidden="true"></i>Copy only</button>
+                </div>
+                <div class="lb-saved" id="lb-saved" hidden></div>
+                <p class="lb-tip"><i class="ph ph-lightbulb" aria-hidden="true"></i> Use short links for print, QR codes, SMS and anywhere a long address looks messy. They still carry every tag. <a href="/links/why/">How tagging works</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Library ===== -->
+    <section id="panel-library" role="tabpanel" aria-labelledby="tab-library" hidden>
+        <div class="lb-toolbar">
+            <input class="lb-input" type="search" id="lib-search" placeholder="Search links, notes, pages…" aria-label="Search links">
+            <select class="lb-input" id="lib-campaign" aria-label="Filter by campaign"><option value="">All campaigns</option></select>
+            <select class="lb-input" id="lib-medium" aria-label="Filter by medium"><option value="">All mediums</option></select>
+            <button type="button" class="lb-btn-quiet" id="lib-export"><i class="ph ph-download-simple" aria-hidden="true"></i>Export CSV</button>
+        </div>
+        <div class="lb-list" id="lib-list"></div>
+    </section>
+
+    <!-- ===== Campaigns ===== -->
+    <section id="panel-campaigns" role="tabpanel" aria-labelledby="tab-campaigns" hidden>
+        <div class="lb-grid">
+            <div class="lb-card">
+                <h2 class="lb-card__title">Your campaigns</h2>
+                <p class="lb-card__sub">These names are what you'll see in Google Analytics under <strong>Session campaign</strong>.</p>
+                <div class="lb-table-wrap">
+                    <table class="lb-table">
+                        <thead><tr><th>Campaign</th><th>Dates</th><th>Links</th><th>Notes</th></tr></thead>
+                        <tbody id="camp-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="lb-card">
+                <h2 class="lb-card__title">Plan a campaign</h2>
+                <p class="lb-card__sub">Set the name up before you start, so everyone on the team uses exactly the same one.</p>
+                <form class="lb-form" id="camp-form" novalidate>
+                    <div class="lb-field">
+                        <label for="c-name">Campaign name</label>
+                        <input id="c-name" type="text" autocomplete="off" placeholder="e.g. christmas_trading_dec_26" required>
+                        <span class="lb-hint" id="c-name-hint">Will be saved as: <code id="c-name-clean">…</code></span>
+                    </div>
+                    <div class="lb-row">
+                        <div class="lb-field"><label for="c-start">Starts <span class="lb-optional">(optional)</span></label><input id="c-start" type="date"></div>
+                        <div class="lb-field"><label for="c-end">Ends <span class="lb-optional">(optional)</span></label><input id="c-end" type="date"></div>
+                    </div>
+                    <div class="lb-field">
+                        <label for="c-notes">Goal or notes <span class="lb-optional">(optional)</span></label>
+                        <textarea id="c-notes" placeholder="e.g. 40 workshop bookings"></textarea>
+                    </div>
+                    <div><button type="submit" class="tp-btn tp-btn--emphasis" id="c-save">Save campaign</button></div>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div class="lb-toast" id="lb-toast" role="status"></div>
+
+<script type="module">
+import { MEDIUMS, SOURCES, RECIPES, buildUrl, cleanValue, cleanSource, channelFor, nearMiss } from './utm.js';
+
+const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
+    ? 'http://localhost:8787'
+    : 'https://links-api.toolproof.workers.dev';
+const KEY_STORE = 'tp_links_ws';
+const OTHER = '__other__';
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+const state = { token: '', workspace: null, sources: [], campaigns: [], links: [], recipe: null, lastSaved: null };
+
+// ---------- Workspace token ----------
+// The secret lives in the URL fragment (#id.secret), which browsers never send to servers or analytics.
+function readToken() {
+    const fromHash = decodeURIComponent(location.hash.slice(1));
+    if (/^[a-z0-9]{6}\.[a-z0-9]{24}$/.test(fromHash)) {
+        try { localStorage.setItem(KEY_STORE, fromHash); } catch (e) {}
+        return fromHash;
+    }
+    try { return localStorage.getItem(KEY_STORE) || ''; } catch (e) { return ''; }
+}
+
+async function api(path, options = {}) {
+    const res = await fetch(API_BASE + path, {
+        ...options,
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + state.token },
+        body: options.body ? JSON.stringify(options.body) : undefined,
+    });
+    const data = await res.json().catch(() => ({ success: false, error: 'Unexpected response' }));
+    if (!res.ok || !data.success) throw Object.assign(new Error(data.error || 'Something went wrong'), { status: res.status });
+    return data;
+}
+
+function showError(msg) {
+    $('lb-notice-error-text').textContent = msg;
+    $('lb-notice-error').hidden = !msg;
+}
+
+let toastTimer;
+function toast(msg) {
+    const t = $('lb-toast');
+    t.textContent = msg;
+    t.classList.add('lb-toast--show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('lb-toast--show'), 2200);
+}
+
+async function copy(text, msg = 'Copied to clipboard') {
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch (e) {
+        const ta = Object.assign(document.createElement('textarea'), { value: text });
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+    }
+    toast(msg);
+}
+
+// ---------- Tabs ----------
+const tabs = ['build', 'library', 'campaigns'];
+function selectTab(name) {
+    tabs.forEach(t => {
+        const on = t === name;
+        $('tab-' + t).setAttribute('aria-selected', on);
+        $('tab-' + t).tabIndex = on ? 0 : -1;
+        $('panel-' + t).hidden = !on;
+    });
+}
+tabs.forEach((t, i) => {
+    $('tab-' + t).addEventListener('click', () => selectTab(t));
+    $('tab-' + t).addEventListener('keydown', e => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+        selectTab(next); $('tab-' + next).focus();
+    });
+});
+
+// ---------- Builder ----------
+function renderRecipes() {
+    $('lb-recipes').innerHTML = RECIPES.map(r =>
+        `<button type="button" class="lb-chip" data-recipe="${r.id}" aria-pressed="${state.recipe === r.id}">${esc(r.label)}</button>`).join('');
+}
+
+function renderSourceOptions() {
+    const sel = $('f-source');
+    const current = sel.value;
+    const preset = new Set(SOURCES.flatMap(g => g.values));
+    const own = state.sources.filter(s => !preset.has(s));
+    sel.innerHTML = '<option value="">Choose a source…</option>'
+        + (own.length ? `<optgroup label="Your sources">${own.map(s => `<option>${esc(s)}</option>`).join('')}</optgroup>` : '')
+        + SOURCES.map(g => `<optgroup label="${esc(g.group)}">${g.values.map(v => `<option>${esc(v)}</option>`).join('')}</optgroup>`).join('')
+        + `<option value="${OTHER}">Other (type your own)…</option>`;
+    if (current) sel.value = current;
+}
+
+function renderMediumOptions() {
+    $('f-medium').innerHTML = '<option value="">Choose a medium…</option>'
+        + MEDIUMS.map(m => `<option value="${m.value}">${esc(m.value)} · ${esc(m.label)}</option>`).join('');
+}
+
+function setSource(value) {
+    const sel = $('f-source');
+    const v = cleanSource(value);
+    if (!v) { sel.value = ''; $('f-source-other').hidden = true; return; }
+    if ([...sel.options].some(o => o.value === v)) {
+        sel.value = v; $('f-source-other').hidden = true;
+    } else {
+        sel.value = OTHER; $('f-source-other').hidden = false; $('f-source-other').value = v;
+    }
+}
+
+function currentSource() {
+    return $('f-source').value === OTHER ? $('f-source-other').value : $('f-source').value;
+}
+
+function formValues() {
+    return {
+        base_url: $('f-url').value,
+        campaign: $('f-campaign').value,
+        source: currentSource(),
+        medium: $('f-medium').value,
+        content: $('f-content').value,
+        term: $('f-term').value,
+        notes: $('f-notes').value,
+    };
+}
+
+function highlightUrl(url) {
+    const u = new URL(url);
+    const params = [...u.searchParams.entries()].map(([k, v]) => {
+        const isUtm = k.startsWith('utm_');
+        return `<span class="k">${esc(k)}=</span>${isUtm ? `<span class="v">${esc(v)}</span>` : esc(v)}`;
+    }).join('<span class="k">&amp;</span>');
+    return esc(u.origin + u.pathname) + (params ? '<span class="k">?</span>' + params : '') + esc(u.hash);
+}
+
+let current = { ok: false };
+function updatePreview() {
+    const v = formValues();
+    const anything = v.base_url || v.campaign || v.source || v.medium;
+    current = buildUrl(v.base_url, v);
+    const preview = $('lb-preview');
+    const msgs = [];
+
+    if (current.ok) {
+        preview.innerHTML = highlightUrl(current.url);
+    } else {
+        preview.innerHTML = '<span class="lb-preview__empty">Add a page, campaign, source and medium to see your link.</span>';
+        if (anything) current.errors.forEach(e => msgs.push(`<p class="err"><i class="ph ph-x-circle" aria-hidden="true"></i>${esc(e)}</p>`));
+    }
+    current.warnings.forEach(w => msgs.push(`<p class="warn"><i class="ph ph-warning" aria-hidden="true"></i>${esc(w)}</p>`));
+
+    if (current.ok && state.workspace?.domains) {
+        const host = new URL(current.url).hostname.replace(/^www\./, '');
+        const domains = state.workspace.domains.split(',').map(d => d.trim().replace(/^www\./, '')).filter(Boolean);
+        if (domains.length && !domains.some(d => host === d || host.endsWith('.' + d))) {
+            msgs.push(`<p class="warn"><i class="ph ph-warning" aria-hidden="true"></i>This isn't your website (${esc(domains.join(', '))}). Visits will only show in your analytics if that site uses your Google Analytics.</p>`);
+        }
+    }
+    $('lb-messages').innerHTML = msgs.join('');
+
+    const channel = $('lb-channel');
+    const medium = cleanValue(v.medium);
+    if (medium) {
+        const ch = channelFor(medium, cleanSource(v.source));
+        channel.hidden = false;
+        channel.classList.toggle('lb-channel--bad', ch === 'Unassigned');
+        channel.innerHTML = `<i class="ph ph-chart-bar" aria-hidden="true"></i><span>In Google Analytics this will appear under <strong>${esc(ch)}</strong>${ch.endsWith('*') ? ' (once Toolproof sets up your custom channel group)' : ''}.</span>`;
+    } else {
+        channel.hidden = true;
+    }
+
+    // Campaign typo check. Only re-render when the hint changes, so the
+    // "Use that name" button survives the campaign field's blur-clean.
+    const near = nearMiss(v.campaign, state.campaigns.map(c => c.name));
+    const hint = $('h-campaign');
+    const cleaned = cleanValue(v.campaign);
+    const hintHtml = near
+        ? `You already have <code>${esc(near)}</code>. Same campaign? <button type="button" data-use-campaign="${esc(near)}">Use that name</button>`
+        : cleaned && cleaned !== v.campaign
+            ? `Will be saved as <code>${esc(cleaned)}</code>.`
+            : 'Name the promotion, offer or event, then add the month and year. Reuse an existing name for links in the same campaign.';
+    if (hint.dataset.html !== hintHtml) {
+        hint.dataset.html = hintHtml;
+        hint.innerHTML = hintHtml;
+        hint.className = near ? 'lb-hint lb-hint--warn' : 'lb-hint';
+    }
+
+    $('lb-copy').disabled = !current.ok;
+    $('lb-save').disabled = !current.ok;
+    $('lb-save-short').disabled = !current.ok || !state.token;
+    if (!state.token) $('lb-save').innerHTML = '<i class="ph ph-copy tp-btn__icon" aria-hidden="true"></i>Copy link';
+}
+
+function applyRecipe(id) {
+    const r = RECIPES.find(x => x.id === id);
+    state.recipe = state.recipe === id ? null : id;
+    renderRecipes();
+    if (!state.recipe) return;
+    setSource(r.source);
+    $('f-medium').value = r.medium;
+    $('f-content').value = r.content;
+    updatePreview();
+    (r.source ? $('f-url') : $('f-source')).focus();
+}
+
+function fillForm(link) {
+    $('f-url').value = link.base_url;
+    $('f-campaign').value = link.campaign;
+    setSource(link.source);
+    $('f-medium').value = link.medium;
+    $('f-content').value = link.content;
+    $('f-term').value = link.term;
+    $('f-notes').value = '';
+    if (link.term) $('f-term').closest('details').open = true;
+    state.recipe = null; renderRecipes();
+    $('lb-saved').hidden = true;
+    selectTab('build');
+    updatePreview();
+    $('f-content').focus();
+    $('f-content').select();
+}
+
+function renderSaved(link, duplicate) {
+    const box = $('lb-saved');
+    box.hidden = false;
+    box.innerHTML = `<strong>${duplicate ? 'You already saved this exact link, so the existing one has been copied.' : 'Saved to your library and copied.'}</strong>`
+        + (link.short_url ? `<div class="lb-saved__short">Short link: <a href="${esc(link.short_url)}" target="_blank" rel="noopener">${esc(link.short_url.replace(/^https?:\/\//, ''))}</a>
+            <button type="button" class="lb-link-btn" data-copy="${esc(link.short_url)}"><i class="ph ph-copy" aria-hidden="true"></i>Copy short link</button></div>` : '');
+}
+
+async function save(shorten) {
+    if (!current.ok) return;
+    if (!state.token) { copy(current.url); return; }
+    const btns = [$('lb-save'), $('lb-save-short')];
+    btns.forEach(b => b.disabled = true);
+    try {
+        const data = await api('/api/links', { method: 'POST', body: { ...formValues(), shorten } });
+        let link = data.link;
+        if (data.duplicate && shorten && !link.short_code) {
+            link = (await api('/api/links/' + link.id, { method: 'PATCH', body: { shorten: true } })).link;
+        }
+        await copy(shorten && link.short_url ? link.short_url : link.final_url,
+            shorten ? 'Short link copied' : 'Link copied');
+        renderSaved(link, data.duplicate);
+        dataLayer.push({ event: 'utm_link_saved', link_medium: link.medium, link_shortened: Boolean(link.short_code) });
+        await load();
+    } catch (e) {
+        showError(e.message);
+    } finally {
+        updatePreview();
+    }
+}
+
+// ---------- Library ----------
+function filteredLinks() {
+    const q = $('lib-search').value.trim().toLowerCase();
+    const camp = $('lib-campaign').value;
+    const med = $('lib-medium').value;
+    return state.links.filter(l =>
+        (!camp || l.campaign === camp) && (!med || l.medium === med)
+        && (!q || [l.final_url, l.notes, l.campaign, l.source, l.content].join(' ').toLowerCase().includes(q)));
+}
+
+function formatDate(s) {
+    const d = new Date(s.replace(' ', 'T') + 'Z');
+    return isNaN(d) ? s : d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function renderLibrary() {
+    const list = $('lib-list');
+    if (!state.token) {
+        list.innerHTML = `<div class="lb-empty"><i class="ph ph-lock-simple" aria-hidden="true"></i>Your saved links appear here once you open the builder from your private workspace link.</div>`;
+        return;
+    }
+    const links = filteredLinks();
+    if (!state.links.length) {
+        list.innerHTML = `<div class="lb-empty"><i class="ph ph-link" aria-hidden="true"></i>No links yet. Build your first one and it'll be saved here.</div>`;
+        return;
+    }
+    if (!links.length) {
+        list.innerHTML = `<div class="lb-empty"><i class="ph ph-magnifying-glass" aria-hidden="true"></i>No links match those filters.</div>`;
+        return;
+    }
+    list.innerHTML = links.map(l => {
+        const path = (() => { try { const u = new URL(l.base_url); return u.hostname.replace(/^www\./, '') + u.pathname; } catch (e) { return l.base_url; } })();
+        return `<article class="lb-item">
+            <div>
+                <div class="lb-item__title">${esc(path)}</div>
+                <div class="lb-item__meta">
+                    <span class="lb-tag lb-tag--campaign">${esc(l.campaign)}</span>
+                    <span class="lb-tag">${esc(l.source)} / ${esc(l.medium)}</span>
+                    ${l.content ? `<span class="lb-tag">${esc(l.content)}</span>` : ''}
+                    ${l.term ? `<span class="lb-tag">term: ${esc(l.term)}</span>` : ''}
+                </div>
+                ${l.notes ? `<div class="lb-item__notes">${esc(l.notes)}</div>` : ''}
+                <div class="lb-item__url">${esc(l.short_url || l.final_url)}</div>
+            </div>
+            <div class="lb-item__side">
+                ${l.short_code ? `<div class="lb-item__clicks">${l.clicks}</div>short-link clicks<br>` : ''}
+                ${esc(formatDate(l.created_at))}
+            </div>
+            <div class="lb-item__actions">
+                <button type="button" class="lb-link-btn" data-copy="${esc(l.final_url)}"><i class="ph ph-copy" aria-hidden="true"></i>Copy link</button>
+                ${l.short_url
+                    ? `<button type="button" class="lb-link-btn" data-copy="${esc(l.short_url)}"><i class="ph ph-link-simple" aria-hidden="true"></i>Copy short link</button>`
+                    : `<button type="button" class="lb-link-btn" data-shorten="${l.id}"><i class="ph ph-link-simple" aria-hidden="true"></i>Make short link</button>`}
+                <button type="button" class="lb-link-btn" data-duplicate="${l.id}"><i class="ph ph-copy-simple" aria-hidden="true"></i>Reuse for another post</button>
+                <button type="button" class="lb-link-btn" data-notes="${l.id}"><i class="ph ph-note-pencil" aria-hidden="true"></i>${l.notes ? 'Edit note' : 'Add note'}</button>
+                <button type="button" class="lb-link-btn lb-link-btn--danger" data-delete="${l.id}"><i class="ph ph-trash" aria-hidden="true"></i>Delete</button>
+            </div>
+        </article>`;
+    }).join('');
+}
+
+function renderFilters() {
+    const camp = $('lib-campaign'), med = $('lib-medium');
+    const cv = camp.value, mv = med.value;
+    const campaigns = [...new Set(state.links.map(l => l.campaign))].sort();
+    const mediums = [...new Set(state.links.map(l => l.medium))].sort();
+    camp.innerHTML = '<option value="">All campaigns</option>' + campaigns.map(c => `<option>${esc(c)}</option>`).join('');
+    med.innerHTML = '<option value="">All mediums</option>' + mediums.map(m => `<option>${esc(m)}</option>`).join('');
+    camp.value = campaigns.includes(cv) ? cv : '';
+    med.value = mediums.includes(mv) ? mv : '';
+}
+
+function exportCsv() {
+    const cols = ['created_at', 'base_url', 'source', 'medium', 'campaign', 'term', 'content', 'final_url', 'short_url', 'clicks', 'notes'];
+    const head = ['Date', 'Website URL', 'Source', 'Medium', 'Campaign', 'Term', 'Content', 'Final Linking URL', 'Short Link', 'Short-link Clicks', 'Notes'];
+    const cell = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const rows = filteredLinks().map(l => cols.map(c => cell(l[c])).join(','));
+    const blob = new Blob(['﻿' + [head.map(cell).join(','), ...rows].join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = Object.assign(document.createElement('a'), {
+        href: URL.createObjectURL(blob),
+        download: `${cleanValue(state.workspace?.name || 'utm')}_links_${new Date().toISOString().slice(0, 10)}.csv`,
+    });
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ---------- Campaigns ----------
+function renderCampaigns() {
+    const body = $('camp-body');
+    if (!state.campaigns.length) {
+        body.innerHTML = `<tr><td colspan="4" class="lb-hint">${state.token ? 'No campaigns yet. They are added automatically when you save a link, or you can plan one here.' : 'Open your workspace link to see your campaigns.'}</td></tr>`;
+        return;
+    }
+    body.innerHTML = state.campaigns.map(c => `<tr>
+        <td><span class="lb-code">${esc(c.name)}</span></td>
+        <td>${c.starts_on || c.ends_on ? esc([c.starts_on, c.ends_on].filter(Boolean).join(' – ')) : '<span class="lb-hint">—</span>'}</td>
+        <td class="num">${c.link_count}</td>
+        <td>${esc(c.notes)}</td>
+    </tr>`).join('');
+}
+
+// ---------- Data ----------
+function renderAll() {
+    renderSourceOptions();
+    $('dl-campaigns').innerHTML = state.campaigns.map(c => `<option value="${esc(c.name)}">`).join('');
+    const pages = [...new Set(state.links.map(l => l.base_url))].slice(0, 30);
+    $('dl-urls').innerHTML = pages.map(u => `<option value="${esc(u)}">`).join('');
+    $('lb-count-links').textContent = state.token ? `(${state.links.length})` : '';
+    $('lb-count-campaigns').textContent = state.token ? `(${state.campaigns.length})` : '';
+    renderFilters();
+    renderLibrary();
+    renderCampaigns();
+    updatePreview();
+}
+
+async function load() {
+    if (!state.token) return;
+    try {
+        const data = await api('/api/workspace');
+        Object.assign(state, { workspace: data.workspace, sources: data.sources, campaigns: data.campaigns, links: data.links });
+        $('lb-ws-name').textContent = data.workspace.name + ' · Link builder';
+        document.title = `${data.workspace.name} links | Toolproof`;
+        if (!$('f-url').value && data.workspace.domains) {
+            $('f-url').placeholder = 'https://' + data.workspace.domains.split(',')[0].trim() + '/page';
+        }
+        showError('');
+    } catch (e) {
+        if (e.status === 401) {
+            try { localStorage.removeItem(KEY_STORE); } catch (err) {}
+            state.token = '';
+            $('lb-notice-guest').hidden = false;
+        }
+        showError(e.status === 401
+            ? 'This workspace link no longer works. It may have been reset. Ask Toolproof for your current link.'
+            : 'Couldn\'t load your links. Check your connection and refresh the page.');
+    }
+    renderAll();
+}
+
+// ---------- Events ----------
+$('lb-recipes').addEventListener('click', e => {
+    const b = e.target.closest('[data-recipe]');
+    if (b) applyRecipe(b.dataset.recipe);
+});
+$('lb-form').addEventListener('input', updatePreview);
+$('f-source').addEventListener('change', () => {
+    const other = $('f-source').value === OTHER;
+    $('f-source-other').hidden = !other;
+    if (other) $('f-source-other').focus();
+    updatePreview();
+});
+$('f-campaign').addEventListener('blur', () => { $('f-campaign').value = cleanValue($('f-campaign').value); updatePreview(); });
+['f-content', 'f-term'].forEach(id => $(id).addEventListener('blur', () => { $(id).value = cleanValue($(id).value); updatePreview(); }));
+$('f-source-other').addEventListener('blur', () => { $('f-source-other').value = cleanSource($('f-source-other').value); updatePreview(); });
+$('lb-form').addEventListener('reset', () => setTimeout(() => {
+    state.recipe = null; renderRecipes(); $('f-source-other').hidden = true; $('lb-saved').hidden = true; updatePreview();
+}));
+$('lb-form').addEventListener('submit', e => e.preventDefault());
+
+$('lb-save').addEventListener('click', () => save(false));
+$('lb-save-short').addEventListener('click', () => save(true));
+$('lb-copy').addEventListener('click', () => current.ok && copy(current.url));
+
+document.addEventListener('click', async e => {
+    const t = e.target.closest('button');
+    if (!t) return;
+    if (t.dataset.useCampaign) { $('f-campaign').value = t.dataset.useCampaign; updatePreview(); return; }
+    if (t.dataset.copy) { copy(t.dataset.copy); return; }
+    const id = t.dataset.duplicate || t.dataset.shorten || t.dataset.notes || t.dataset.delete;
+    if (!id) return;
+    const link = state.links.find(l => String(l.id) === id);
+    if (!link) return;
+    try {
+        if (t.dataset.duplicate) {
+            fillForm(link);
+            toast('Change the content (or anything else) and save');
+        } else if (t.dataset.shorten) {
+            const { link: updated } = await api('/api/links/' + id, { method: 'PATCH', body: { shorten: true } });
+            await copy(updated.short_url, 'Short link created and copied');
+            await load();
+        } else if (t.dataset.notes) {
+            const notes = prompt('Note for this link (only your team sees this):', link.notes);
+            if (notes === null) return;
+            await api('/api/links/' + id, { method: 'PATCH', body: { notes } });
+            await load();
+        } else if (t.dataset.delete) {
+            if (!confirm('Delete this link from your library?' + (link.short_code ? ' Its short link will stop working.' : ''))) return;
+            await api('/api/links/' + id, { method: 'DELETE' });
+            toast('Link deleted');
+            await load();
+        }
+    } catch (err) {
+        showError(err.message);
+    }
+});
+
+['lib-search', 'lib-campaign', 'lib-medium'].forEach(id => $(id).addEventListener('input', renderLibrary));
+$('lib-export').addEventListener('click', exportCsv);
+
+$('c-name').addEventListener('input', () => { $('c-name-clean').textContent = cleanValue($('c-name').value) || '…'; });
+$('camp-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!state.token) { showError('Open your workspace link to save campaigns.'); return; }
+    const name = cleanValue($('c-name').value);
+    if (!name) { $('c-name').focus(); return; }
+    try {
+        await api('/api/campaigns', { method: 'POST', body: { name, starts_on: $('c-start').value, ends_on: $('c-end').value, notes: $('c-notes').value } });
+        e.target.reset();
+        $('c-name-clean').textContent = '…';
+        toast('Campaign saved');
+        await load();
+    } catch (err) {
+        showError(err.message);
+    }
+});
+
+// ---------- Init ----------
+state.token = readToken();
+if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+$('lb-notice-guest').hidden = Boolean(state.token);
+$('lb-copy').hidden = !state.token;
+renderRecipes();
+renderMediumOptions();
+renderAll();
+load();
+</script>
+</body>
+</html>
