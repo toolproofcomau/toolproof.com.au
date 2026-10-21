@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Your Meta Pixel Matters | Toolproof</title>
+    <meta name="description" content="What the Meta Pixel and Conversions API are, why your Facebook and Instagram ads need them, and how to tell if yours is missing or set up wrong.">
+    <link rel="canonical" href="https://www.toolproof.com.au/guides/meta-pixel/">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Toolproof">
+    <meta property="og:title" content="Why Your Meta Pixel Matters | Toolproof">
+    <meta property="og:description" content="What the Meta Pixel and Conversions API are, why your Facebook and Instagram ads need them, and how to tell if yours is missing or set up wrong.">
+    <meta property="og:url" content="https://www.toolproof.com.au/guides/meta-pixel/">
+    <meta property="og:image" content="https://www.toolproof.com.au/assets/hero-14x9.webp">
+    <meta property="og:locale" content="en_AU">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+    <link rel="stylesheet" href="/styles.css">
+
+    <!-- Consent Mode v2: default deny, then immediately update if previously granted -->
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500
+    });
+    if (localStorage.getItem('tp_consent') === 'granted') {
+        gtag('consent', 'update', {
+            analytics_storage: 'granted',
+            ad_storage: 'granted',
+            ad_user_data: 'granted',
+            ad_personalization: 'granted'
+        });
+    }
+</script>
+
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TC8JHQX2');</script>
+<!-- End Google Tag Manager -->
+
+    <style>
+        .ut-section { padding-block: var(--space-16); }
+        .ut-section--band { background: var(--surface-band); }
+        .ut-section--card { background: var(--surface-card); }
+        .ut-container { max-width: 56rem; margin-inline: auto; padding-inline: var(--space-6); }
+        .ut-eyebrow { color: var(--text-accent); margin-bottom: var(--space-3); }
+        .ut-h2 {
+            font-family: var(--font-display); font-weight: var(--weight-regular);
+            font-size: clamp(var(--text-xl), 3vw, var(--text-2xl));
+            letter-spacing: var(--tracking-heading); line-height: var(--leading-heading);
+            color: var(--text-strong); margin-bottom: var(--space-4);
+        }
+        .ut-lead { font-size: var(--text-md); color: var(--text-body); max-width: 44rem; line-height: var(--leading-body); }
+        .ut-lead + .ut-lead { margin-top: var(--space-4); }
+        .ut-hero__lead { color: var(--text-on-dark-muted); font-size: var(--text-md); max-width: 40rem; margin-top: var(--space-4); }
+        .ut-hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
+
+        /* Without vs with tags */
+        .ut-compare { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-8); }
+        .ut-panel { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: var(--shadow-card); }
+        .ut-panel__label { font-family: var(--font-display); font-size: var(--text-xs); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; margin-bottom: var(--space-4); display: flex; gap: var(--space-2); align-items: center; }
+        .ut-panel--before .ut-panel__label { color: var(--tp-oxblood); }
+        .ut-panel--after .ut-panel__label { color: var(--tp-teal); }
+        .ut-mini { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+        .ut-mini th { text-align: left; font-size: var(--text-xs); color: var(--text-muted); font-weight: var(--weight-semibold); padding: 0 0 var(--space-2); border-bottom: 1.5px solid var(--border-subtle); }
+        .ut-mini th:last-child, .ut-mini td:last-child { text-align: right; }
+        .ut-mini td { padding: var(--space-2) 0; border-bottom: 1px solid var(--border-subtle); font-variant-numeric: tabular-nums; }
+        .ut-mini tr.is-murky td { color: var(--tp-oxblood); font-weight: var(--weight-semibold); }
+        .ut-panel__note { margin-top: var(--space-4); font-size: var(--text-sm); color: var(--text-muted); }
+
+        /* Benefits */
+        .ut-benefits { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); margin-top: var(--space-8); }
+        .ut-benefit { background: var(--surface-card); border-radius: var(--radius-lg); padding: var(--space-6); border: 1px solid var(--border-subtle); }
+        .ut-benefit i { font-size: 1.5rem; color: var(--tp-teal); background: var(--tp-teal-xlight); border-radius: var(--radius-md); padding: 8px; display: inline-block; margin-bottom: var(--space-4); }
+        .ut-benefit h3 { font-family: var(--font-display); font-weight: var(--weight-regular); font-size: var(--text-lg); color: var(--text-strong); margin-bottom: var(--space-2); line-height: var(--leading-snug); }
+        .ut-benefit p { font-size: var(--text-sm); color: var(--text-body); }
+
+        /* Anatomy */
+        .ut-anatomy {
+            margin-top: var(--space-8); padding: var(--space-5); border-radius: var(--radius-lg);
+            background: var(--surface-dark); color: var(--text-on-dark);
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--text-sm); line-height: 2; word-break: break-all;
+        }
+        .ut-anatomy .base { color: var(--text-on-dark-muted); }
+        .ut-anatomy .p { border-bottom: 2px solid var(--tp-oxblood-light); padding-bottom: 2px; }
+        .ut-anatomy sup { font-family: var(--font-display); font-size: 10px; background: var(--tp-oxblood-light); color: var(--tp-oxblood); border-radius: 999px; padding: 1px 6px; margin-left: 2px; vertical-align: super; }
+        .ut-parts { list-style: none; margin-top: var(--space-6); display: grid; gap: var(--space-4); counter-reset: part; }
+        .ut-parts li { display: grid; grid-template-columns: 2rem minmax(7.5rem, auto) 1fr; gap: var(--space-3); align-items: baseline; counter-increment: part; font-size: var(--text-sm); }
+        .ut-parts li::before { content: counter(part); font-family: var(--font-display); font-size: 11px; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--tp-oxblood-light); color: var(--tp-oxblood); display: inline-flex; align-items: center; justify-content: center; }
+        .ut-parts code, .ut-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em; color: var(--tp-teal); background: var(--tp-teal-xlight); padding: 1px 5px; border-radius: 3px; }
+        .ut-parts strong { color: var(--text-strong); }
+        .ut-parts .ut-req { font-size: var(--text-xs); color: var(--text-muted); display: block; }
+
+        /* Habit */
+        .ut-steps { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-5); margin-top: var(--space-8); counter-reset: step; }
+        .ut-steps li { counter-increment: step; border-top: 3px solid var(--tp-oxblood); padding-top: var(--space-4); }
+        .ut-steps li::before { content: "Step " counter(step); font-family: var(--font-display); font-size: var(--text-xs); letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; color: var(--tp-oxblood); display: block; margin-bottom: var(--space-2); }
+        .ut-steps h3 { font-family: var(--font-display); font-weight: var(--weight-regular); font-size: var(--text-xl); color: var(--text-strong); margin-bottom: var(--space-2); }
+        .ut-steps p { font-size: var(--text-sm); }
+
+        /* Rules + cheat sheet */
+        .ut-rules { list-style: none; margin-top: var(--space-6); display: grid; gap: var(--space-3); }
+        .ut-rules li { display: flex; gap: var(--space-3); align-items: baseline; font-size: var(--text-base); }
+        .ut-rules i { color: var(--tp-teal); flex-shrink: 0; position: relative; top: 2px; }
+        .ut-table-wrap { overflow-x: auto; margin-top: var(--space-6); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); background: var(--surface-card); }
+        .ut-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); min-width: 34rem; }
+        .ut-table th { text-align: left; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: var(--weight-semibold); padding: var(--space-3) var(--space-4); background: var(--surface-page); border-bottom: 1.5px solid var(--border-subtle); }
+        .ut-table td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+        .ut-table tr:last-child td { border-bottom: 0; }
+        .ut-table td:first-child { font-weight: var(--weight-semibold); color: var(--text-strong); }
+
+        .ut-fix { display: grid; grid-template-columns: 1fr auto 1fr; gap: var(--space-3) var(--space-4); align-items: center; margin-top: var(--space-6); font-size: var(--text-sm); }
+        .ut-fix__bad { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--tp-oxblood); background: var(--tp-oxblood-light); padding: 4px 8px; border-radius: var(--radius-sm); text-decoration: line-through; text-decoration-color: rgba(107,31,42,0.4); }
+        .ut-fix__good { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--tp-teal); background: var(--tp-teal-xlight); padding: 4px 8px; border-radius: var(--radius-sm); }
+        .ut-fix i { color: var(--text-muted); }
+        .ut-fix__why { grid-column: 1 / -1; color: var(--text-muted); font-size: var(--text-xs); margin: calc(var(--space-2) * -1) 0 var(--space-2); }
+
+        /* CTA */
+        .ut-cta { background: var(--surface-dark); color: var(--text-on-dark); --grain-color: 255, 255, 255; }
+        .ut-cta .ut-h2 { color: var(--text-on-dark); }
+        .ut-cta p { color: var(--text-on-dark-muted); max-width: 40rem; }
+        .ut-cta .ut-hero__actions { margin-top: var(--space-6); }
+        .ut-print-btn { background: transparent; color: var(--text-on-dark); border-color: rgba(255,255,255,0.4); }
+
+        /* Meta Pixel guide additions */
+        .ut-compare--three { grid-template-columns: repeat(3, 1fr); }
+        .ut-compare--three + .ut-panel__note { margin-top: var(--space-5); }
+        .ut-panel p { font-size: var(--text-sm); color: var(--text-body); }
+        .ut-section--card .ut-compare + .ut-rules { margin-top: var(--space-8); }
+        .ut-signs { padding-left: var(--space-5); display: grid; gap: var(--space-2); font-size: var(--text-sm); }
+        .ut-flow { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); margin-top: var(--space-8); counter-reset: flow; }
+        .ut-flow li { counter-increment: flow; position: relative; background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--space-5); font-size: var(--text-sm); display: flex; flex-direction: column; gap: var(--space-1); }
+        .ut-flow li::before { content: counter(flow); position: absolute; top: var(--space-4); right: var(--space-4); font-family: var(--font-display); font-size: 11px; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--tp-oxblood-light); color: var(--tp-oxblood); display: inline-flex; align-items: center; justify-content: center; }
+        .ut-flow i { font-size: 1.5rem; color: var(--tp-teal); margin-bottom: var(--space-2); }
+        .ut-flow strong { color: var(--text-strong); font-family: var(--font-display); font-weight: var(--weight-regular); font-size: var(--text-md); line-height: var(--leading-snug); }
+        .ut-flow span { color: var(--text-muted); }
+        .ut-fix__bad, .ut-fix__good { font-family: inherit; }
+
+        @media (max-width: 960px) {
+            .ut-flow { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 760px) {
+            .ut-flow { grid-template-columns: 1fr; }
+            .ut-section { padding-block: var(--space-12); }
+            .ut-compare, .ut-compare--three, .ut-benefits, .ut-steps { grid-template-columns: 1fr; }
+            .ut-parts li { grid-template-columns: 2rem 1fr; }
+            .ut-parts li > span:last-child { grid-column: 2; }
+            .ut-fix { grid-template-columns: 1fr; }
+            .ut-fix i { transform: rotate(90deg); justify-self: start; }
+        }
+        @media (max-width: 560px) { .ut-container { padding-inline: var(--space-4); } }
+
+        /* One-page handout */
+        @media print {
+            .tp-site-nav, .tp-footer, .tp-consent, .tp-consent-backdrop, .ut-hero__actions, .ut-noprint { display: none !important; }
+            body { background: #fff; font-size: 11px; }
+            .ut-section { padding-block: 14px; break-inside: avoid; background: #fff !important; }
+            .tp-privacy-hero { padding-block: 14px !important; }
+            .ut-anatomy { background: #fff; color: #000; border: 1px solid #999; }
+            .ut-anatomy .base { color: #555; }
+            .tp-grain::before { display: none; }
+            .ut-compare, .ut-benefits, .ut-steps, .ut-flow { gap: 10px; margin-top: 10px; }
+        }
+    </style>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TC8JHQX2"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <header class="tp-site-nav">
+        <div class="tp-nav-progress" aria-hidden="true"></div>
+        <div class="tp-site-nav__container">
+            <a href="/" class="tp-wordmark" aria-label="Toolproof home">Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup></a>
+            <nav class="tp-nav" id="tp-nav" aria-label="Site navigation">
+                <ul class="tp-nav__list">
+                    <li><a class="tp-nav__link" href="/#the-problem">The problem</a></li>
+                    <li><a class="tp-nav__link" href="/#the-fix">The fix</a></li>
+                    <li><a class="tp-nav__link" href="/#why-toolproof">Why Toolproof</a></li>
+                    <li><a class="tp-nav__link" href="/#about">About</a></li>
+                </ul>
+                <a class="tp-btn tp-btn--emphasis tp-nav__cta" href="tel:+61439612398">Book an Inspection</a>
+            </nav>
+            <button class="tp-nav__hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="tp-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+    <section class="tp-privacy-hero tp-grain">
+        <div class="ut-container">
+            <span class="tp-eyebrow" style="color: var(--tp-teal-light);">Facebook ads, explained</span>
+            <h1 class="tp-privacy-hero__headline">Your ads can't learn from customers they never see.</h1>
+            <p class="ut-hero__lead">When you run a Facebook or Instagram ad, Meta tries to find more people who'll enquire, book or buy. It can only do that if your website tells it who actually did. That's the job of the Meta Pixel. Without one, or with one that's set up wrong, Meta is guessing with your money.</p>
+            <div class="ut-hero__actions">
+                <a class="tp-btn tp-btn--emphasis" href="tel:+61439612398">Book a Pixel check</a>
+                <button class="tp-btn ut-print-btn" type="button" onclick="window.print()"><i class="ph ph-printer" aria-hidden="true"></i>Print this page</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- What is a Pixel -->
+    <section class="ut-section">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">The basics</span>
+            <h2 class="ut-h2">What is a Pixel?</h2>
+            <p class="ut-lead">A Pixel is a small piece of code on your website. It lets Facebook know when someone who saw your ad goes on to do something that matters, like sending an enquiry, making a booking or buying something.</p>
+            <p class="ut-lead">Think of it as asking every customer "how did you hear about us?", automatically, and passing the answer straight back to whoever runs your ads. It's free, and it comes with every Meta ad account.</p>
+            <ol class="ut-flow">
+                <li><i class="ph ph-device-mobile" aria-hidden="true"></i><strong>Someone sees your ad</strong><span>Scrolling Facebook or Instagram.</span></li>
+                <li><i class="ph ph-cursor-click" aria-hidden="true"></i><strong>They visit your website</strong><span>The Pixel notes the visit.</span></li>
+                <li><i class="ph ph-calendar-check" aria-hidden="true"></i><strong>They enquire, book or buy</strong><span>The Pixel notes that too.</span></li>
+                <li><i class="ph ph-arrows-clockwise" aria-hidden="true"></i><strong>Meta finds more like them</strong><span>Your next ads go to people who look like real customers.</span></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Where does your business sit -->
+    <section class="ut-section ut-section--band">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">Where you stand</span>
+            <h2 class="ut-h2">Which of these sounds like your business?</h2>
+            <div class="ut-compare ut-compare--three">
+                <div class="ut-panel ut-panel--before">
+                    <div class="ut-panel__label"><i class="ph ph-prohibit" aria-hidden="true"></i>No Pixel</div>
+                    <p>Meta can only aim for likes, clicks and views, because that's all it can see. You get "reach", not results, and you can't show ads to people who have already visited your website.</p>
+                </div>
+                <div class="ut-panel ut-panel--before">
+                    <div class="ut-panel__label"><i class="ph ph-warning" aria-hidden="true"></i>Pixel, set up wrong</div>
+                    <p>Meta <em>thinks</em> it's finding customers, but it's learning from bad information, like counting a "lead" every time someone opens the contact page. The numbers look great. The phone doesn't ring.</p>
+                </div>
+                <div class="ut-panel ut-panel--after">
+                    <div class="ut-panel__label"><i class="ph ph-check-circle" aria-hidden="true"></i>Set up properly</div>
+                    <p>Pixel plus Conversions API, tracking real enquiries and sales. Meta learns from actual customers, the numbers in Ads Manager match your inbox, and your ads get better over time.</p>
+                </div>
+            </div>
+            <p class="ut-panel__note">Most businesses we look at sit in one of the first two columns. Both are easy to fix.</p>
+        </div>
+    </section>
+
+    <!-- Without vs with -->
+    <section class="ut-section">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">The difference</span>
+            <h2 class="ut-h2">Same budget, very different month</h2>
+            <p class="ut-lead">Here's an example of $300 spent two ways. Boosting a post tells Meta to find people who'll like it. A campaign with a working Pixel tells Meta to find people who'll enquire.</p>
+            <div class="ut-compare">
+                <div class="ut-panel ut-panel--before">
+                    <div class="ut-panel__label"><i class="ph ph-thumbs-up" aria-hidden="true"></i>Boosted post, no Pixel</div>
+                    <table class="ut-mini">
+                        <thead><tr><th>Result</th><th>Number</th></tr></thead>
+                        <tbody>
+                            <tr><td>People reached</td><td>4,800</td></tr>
+                            <tr><td>Likes</td><td>212</td></tr>
+                            <tr><td>Link clicks</td><td>61</td></tr>
+                            <tr class="is-murky"><td>Enquiries</td><td>No idea</td></tr>
+                        </tbody>
+                    </table>
+                    <p class="ut-panel__note">Lots of activity. Was any of it a customer? Nobody can say.</p>
+                </div>
+                <div class="ut-panel ut-panel--after">
+                    <div class="ut-panel__label"><i class="ph ph-target" aria-hidden="true"></i>Campaign with a working Pixel</div>
+                    <table class="ut-mini">
+                        <thead><tr><th>Result</th><th>Number</th></tr></thead>
+                        <tbody>
+                            <tr><td>People reached</td><td>2,100</td></tr>
+                            <tr><td>Link clicks</td><td>74</td></tr>
+                            <tr><td>Enquiries tracked</td><td>11</td></tr>
+                            <tr><td>Cost per enquiry</td><td>$27</td></tr>
+                        </tbody>
+                    </table>
+                    <p class="ut-panel__note">Fewer likes, more customers. Meta stopped chasing people who like things and started chasing people who enquire.</p>
+                </div>
+            </div>
+            <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: var(--space-3);">Example figures for illustration. Your results will depend on your business, offer and audience.</p>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section class="ut-section ut-section--band">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">What you get</span>
+            <h2 class="ut-h2">What a working Pixel does for your business</h2>
+            <div class="ut-benefits ut-benefits--six">
+                <div class="ut-benefit">
+                    <i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>
+                    <h3>Reach people who nearly booked</h3>
+                    <p>Someone looked at your function room page last week. Tonight they see your ad while scrolling. That's called retargeting, and it needs a Pixel.</p>
+                </div>
+                <div class="ut-benefit">
+                    <i class="ph ph-users-three" aria-hidden="true"></i>
+                    <h3>Find more people like your customers</h3>
+                    <p>Meta builds an audience that looks like the people who already enquired or bought, so your ads reach strangers who are likely to care. These are called lookalike audiences.</p>
+                </div>
+                <div class="ut-benefit">
+                    <i class="ph ph-hand-coins" aria-hidden="true"></i>
+                    <h3>Pay for enquiries, not likes</h3>
+                    <p>Tell Meta to aim for bookings, enquiries or sales, instead of whoever is most likely to tap a thumbs-up.</p>
+                </div>
+                <div class="ut-benefit">
+                    <i class="ph ph-receipt" aria-hidden="true"></i>
+                    <h3>Know what each customer costs</h3>
+                    <p>"We spent $300 and got 11 enquiries" is something you can make decisions with. "We got 212 likes" isn't.</p>
+                </div>
+                <div class="ut-benefit">
+                    <i class="ph ph-trend-down" aria-hidden="true"></i>
+                    <h3>Ads that get cheaper over time</h3>
+                    <p>The more real results Meta sees, the better it gets at finding the next one. A month of good information beats a year of guessing.</p>
+                </div>
+                <div class="ut-benefit">
+                    <i class="ph ph-user-minus" aria-hidden="true"></i>
+                    <h3>Stop paying to reach people who already bought</h3>
+                    <p>Leave out people who've just booked or bought, so your budget goes on new customers instead.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CAPI -->
+    <section class="ut-section ut-section--card">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">The other half</span>
+            <h2 class="ut-h2">The Conversions API, in plain English</h2>
+            <p class="ut-lead">The Pixel reports from your visitor's web browser. More and more of those reports never arrive, thanks to iPhone privacy settings, ad blockers and browsers that block tracking. When that happens, Meta never hears about the enquiry, and your ad looks like it isn't working.</p>
+            <div class="ut-compare">
+                <div class="ut-panel">
+                    <div class="ut-panel__label" style="color: var(--tp-teal);"><i class="ph ph-browser" aria-hidden="true"></i>The Pixel</div>
+                    <p>Reports from the visitor's phone or computer. Quick to set up, and it powers retargeting. But it misses people whose phone or browser blocks it.</p>
+                </div>
+                <div class="ut-panel">
+                    <div class="ut-panel__label" style="color: var(--tp-teal);"><i class="ph ph-plugs-connected" aria-hidden="true"></i>The Conversions API</div>
+                    <p>A second, direct line from your website or booking system to Meta. It gets through when the browser doesn't. People often shorten it to "CAPI".</p>
+                </div>
+            </div>
+            <ul class="ut-rules">
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>Use both.</strong> Meta matches the two reports, so nothing gets counted twice.</span></li>
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>More of your real results get counted,</strong> so Meta has more to learn from and your reports are closer to the truth.</span></li>
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>It can include the ones that finish offline.</strong> An enquiry that started on your website and became a sale over the phone can be passed back too.</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Other platforms -->
+    <section class="ut-section">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">Not just Facebook</span>
+            <h2 class="ut-h2">Every big ad platform works the same way</h2>
+            <p class="ut-lead">TikTok, LinkedIn, Google and Pinterest all have their own version: a tag on your website plus a direct connection, tracking the same kinds of results for the same reasons. Up here, most local businesses advertise on Facebook and Instagram, so that's what this page focuses on. Get it right there and the rest follow the same pattern.</p>
+            <div class="ut-table-wrap">
+                <table class="ut-table">
+                    <thead><tr><th>Platform</th><th>Website tag</th><th>Direct connection</th></tr></thead>
+                    <tbody>
+                        <tr><td>Facebook &amp; Instagram</td><td>Meta Pixel</td><td>Conversions API</td></tr>
+                        <tr><td>TikTok</td><td>TikTok Pixel</td><td>Events API</td></tr>
+                        <tr><td>LinkedIn</td><td>Insight Tag</td><td>Conversions API</td></tr>
+                        <tr><td>Google Ads</td><td>Google tag</td><td>Enhanced conversions</td></tr>
+                        <tr><td>Pinterest</td><td>Pinterest Tag</td><td>Conversions API</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Set up properly -->
+    <section class="ut-section ut-section--band">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">What good looks like</span>
+            <h2 class="ut-h2">A Pixel that's set up properly</h2>
+            <ul class="ut-rules">
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>Installed once,</strong> with one Pixel that your business owns, not one belonging to an old agency.</span></li>
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>Tracks the moments that matter:</strong> enquiries, bookings, calls and purchases, counted when they actually happen.</span></li>
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>Sales carry their dollar value</strong> in Australian dollars, so Meta can aim for your best customers, not just the most.</span></li>
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>Conversions API connected</strong> alongside it.</span></li>
+                <li><i class="ph ph-check" aria-hidden="true"></i><span><strong>Your website is verified</strong> in Meta Business, and the Pixel respects your cookie banner.</span></li>
+            </ul>
+
+            <h3 class="ut-h2" style="font-size: var(--text-lg); margin-top: var(--space-10);">Real examples, tidied up</h3>
+            <div class="ut-fix">
+                <span class="ut-fix__bad">"Lead" when the contact page opens</span><i class="ph ph-arrow-right" aria-hidden="true"></i><span class="ut-fix__good">"Lead" when the form is sent</span>
+                <span class="ut-fix__why">Meta was learning from people who looked, not people who enquired.</span>
+                <span class="ut-fix__bad">Installed twice (theme + Tag Manager)</span><i class="ph ph-arrow-right" aria-hidden="true"></i><span class="ut-fix__good">Installed once</span>
+                <span class="ut-fix__why">Every result was being counted twice.</span>
+                <span class="ut-fix__bad">Pixel only</span><i class="ph ph-arrow-right" aria-hidden="true"></i><span class="ut-fix__good">Pixel + Conversions API</span>
+                <span class="ut-fix__why">Now counting the iPhone users it was missing.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Warning signs -->
+    <section class="ut-section">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">Time for a check?</span>
+            <h2 class="ut-h2">Signs your Pixel needs a look</h2>
+            <div class="ut-compare">
+                <div class="ut-panel">
+                    <div class="ut-panel__label" style="color: var(--tp-oxblood);"><i class="ph ph-prohibit" aria-hidden="true"></i>If you don't have one yet</div>
+                    <ul class="ut-signs">
+                        <li>You boost posts and judge them by likes.</li>
+                        <li>You can't show ads to people who've visited your website.</li>
+                        <li>Ads Manager only shows reach and clicks, never enquiries.</li>
+                    </ul>
+                </div>
+                <div class="ut-panel">
+                    <div class="ut-panel__label" style="color: var(--tp-oxblood);"><i class="ph ph-warning" aria-hidden="true"></i>If you already have one</div>
+                    <ul class="ut-signs">
+                        <li>The leads in Ads Manager don't match your real enquiries.</li>
+                        <li>Nobody's sure who installed it, or who owns it.</li>
+                        <li>Meta's Events Manager is showing warnings.</li>
+                        <li>Your ads were switched to "landing page views" because conversions "weren't working".</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cheat sheet -->
+    <section class="ut-section ut-section--band">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">Cheat sheet</span>
+            <h2 class="ut-h2">What to track, and when</h2>
+            <p class="ut-lead">Meta calls each result an "event". These are the standard ones most small businesses need.</p>
+            <div class="ut-table-wrap">
+                <table class="ut-table">
+                    <thead><tr><th>What the customer did</th><th>Meta event</th><th>Counted when</th><th>Include value?</th></tr></thead>
+                    <tbody>
+                        <tr><td>Sent an enquiry</td><td><code class="ut-code">Lead</code></td><td>The form is successfully sent</td><td>Optional</td></tr>
+                        <tr><td>Tapped to call or email</td><td><code class="ut-code">Contact</code></td><td>The phone or email link is tapped</td><td>No</td></tr>
+                        <tr><td>Made a booking</td><td><code class="ut-code">Schedule</code></td><td>The booking is confirmed</td><td>Optional</td></tr>
+                        <tr><td>Signed up</td><td><code class="ut-code">CompleteRegistration</code></td><td>The sign-up is complete</td><td>No</td></tr>
+                        <tr><td>Viewed a service or product</td><td><code class="ut-code">ViewContent</code></td><td>The page loads</td><td>Optional</td></tr>
+                        <tr><td>Started checkout</td><td><code class="ut-code">InitiateCheckout</code></td><td>Checkout opens</td><td>Yes</td></tr>
+                        <tr><td>Paid</td><td><code class="ut-code">Purchase</code></td><td>The order confirmation shows</td><td>Yes, in AUD</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pixel check -->
+    <section class="ut-section">
+        <div class="ut-container">
+            <span class="tp-eyebrow ut-eyebrow">How we help</span>
+            <h2 class="ut-h2">What a Toolproof Pixel check covers</h2>
+            <ol class="ut-steps">
+                <li>
+                    <h3>Inspect</h3>
+                    <p>Do you have a Pixel? Is it yours? What is it actually counting? We'll check your website, Ads Manager and Events Manager.</p>
+                </li>
+                <li>
+                    <h3>Set up or fix</h3>
+                    <p>Install it from scratch, or fix the events and duplicates. Then connect the Conversions API and make it respect your cookie banner.</p>
+                </li>
+                <li>
+                    <h3>Prove</h3>
+                    <p>For the next month, we compare Meta's numbers with your real enquiries and sales, so you know you can trust them.</p>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="ut-section ut-cta tp-grain">
+        <div class="ut-container">
+            <h2 class="ut-h2">No Pixel, or not sure about yours?</h2>
+            <p>Either way, one visit tells you where you stand and what it'll take to get your ads learning from real customers.</p>
+            <div class="ut-hero__actions">
+                <a class="tp-btn tp-btn--emphasis" href="tel:+61439612398">Book a Pixel check</a>
+                <a class="tp-btn ut-print-btn" href="/links/why/">Why tag your links <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+            </div>
+        </div>
+    </section>
+    </main>
+
+    <footer class="tp-footer">
+        <span class="tp-wordmark tp-wordmark--light">
+            Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup>
+        </span>
+        <small>&copy; 2026 Toolproof. ABN: 18 878 662 154</small>
+        <div class="tp-footer__legal">
+            <button class="tp-footer__cookie-btn" id="tp-cookie-prefs-footer" type="button">Cookie preferences</button>
+            <span aria-hidden="true">|</span>
+            <a class="tp-footer__legal-link" href="/privacy">Privacy policy</a>
+        </div>
+        <p class="tp-footer__acknowledgement">We acknowledge the Ngarluma people as the Traditional Custodians of the Country on which we live and work, and pay our respects to their Elders past, present and emerging.</p>
+    </footer>
+
+    <div class="tp-consent-backdrop" id="tp-consent-backdrop" hidden></div>
+
+    <div class="tp-consent" id="tp-consent" role="dialog" aria-label="Cookie consent" aria-modal="true" hidden>
+        <div class="tp-consent__inner">
+            <div class="tp-consent__header">
+                <span class="tp-wordmark" aria-hidden="true">Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup></span>
+                <h2 class="tp-consent__title">Your cookie preferences</h2>
+                <p class="tp-consent__text">We use cookies for analytics and marketing to understand how our site is used. You can accept all cookies or continue with necessary cookies only. <a class="tp-consent__link" href="/privacy">Privacy policy</a></p>
+            </div>
+            <div class="tp-consent__actions">
+                <button class="tp-btn tp-consent__decline" type="button">Necessary only</button>
+                <button class="tp-btn tp-btn--emphasis tp-consent__accept" type="button">Accept all</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var header = document.querySelector('.tp-site-nav');
+            var btn = document.querySelector('.tp-nav__hamburger');
+            btn.addEventListener('click', function () {
+                var open = header.classList.toggle('tp-site-nav--open');
+                btn.setAttribute('aria-expanded', open);
+                btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+            });
+            document.querySelectorAll('.tp-nav__link').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    header.classList.remove('tp-site-nav--open');
+                    btn.setAttribute('aria-expanded', 'false');
+                    btn.setAttribute('aria-label', 'Open menu');
+                });
+            });
+
+            var progressBar = document.querySelector('.tp-nav-progress');
+            if (progressBar) {
+                window.addEventListener('scroll', function () {
+                    var scrolled = window.scrollY || document.documentElement.scrollTop;
+                    var total = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    progressBar.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
+                }, { passive: true });
+            }
+
+            // Cookie consent
+            var consentBanner = document.getElementById('tp-consent');
+            var consentBackdrop = document.getElementById('tp-consent-backdrop');
+            var CONSENT_KEY = 'tp_consent';
+
+            function grantConsent() {
+                gtag('consent', 'update', {
+                    analytics_storage: 'granted',
+                    ad_storage: 'granted',
+                    ad_user_data: 'granted',
+                    ad_personalization: 'granted'
+                });
+            }
+
+            function hideBanner() {
+                consentBanner.classList.remove('tp-consent--visible');
+                consentBackdrop.classList.remove('tp-consent-backdrop--visible');
+                setTimeout(function() {
+                    consentBanner.hidden = true;
+                    consentBackdrop.hidden = true;
+                }, 300);
+            }
+
+            function showBanner() {
+                consentBanner.hidden = false;
+                consentBackdrop.hidden = false;
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        consentBanner.classList.add('tp-consent--visible');
+                        consentBackdrop.classList.add('tp-consent-backdrop--visible');
+                    });
+                });
+            }
+
+            var stored = localStorage.getItem(CONSENT_KEY);
+            if (stored === 'granted') {
+                grantConsent();
+            } else if (!stored) {
+                setTimeout(showBanner, 800);
+            }
+
+            consentBanner.querySelector('.tp-consent__accept').addEventListener('click', function() {
+                localStorage.setItem(CONSENT_KEY, 'granted');
+                grantConsent();
+                location.reload();
+            });
+
+            consentBanner.querySelector('.tp-consent__decline').addEventListener('click', function() {
+                localStorage.setItem(CONSENT_KEY, 'denied');
+                location.reload();
+            });
+
+            function openCookiePrefs() {
+                localStorage.removeItem(CONSENT_KEY);
+                showBanner();
+            }
+
+            var footerBtn = document.getElementById('tp-cookie-prefs-footer');
+            if (footerBtn) footerBtn.addEventListener('click', openCookiePrefs);
+        })();
+    </script>
+</body>
+</html>

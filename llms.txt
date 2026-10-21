@@ -12,6 +12,7 @@
 
 - [Home](https://www.toolproof.com.au/): Overview of Toolproof's services and approach
 - [Proof Score](https://www.toolproof.com.au/proof-score/): Free tool to assess your marketing measurement maturity
+- [Why Your Meta Pixel Matters](https://www.toolproof.com.au/guides/meta-pixel/): Plain-English guide to the Meta Pixel and Conversions API for small businesses advertising on Facebook and Instagram
 - [Privacy Policy](https://www.toolproof.com.au/privacy.html): How we handle personal data
 
 ## Contact
