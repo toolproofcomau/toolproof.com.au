@@ -268,6 +268,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <span class="ga-chips"><span>Sessions</span><span>Engaged sessions</span><span>Engagement rate</span><span>Key events</span><span>Session key event rate</span><span>Total revenue</span></span>
                             Leave out revenue if the client doesn't sell online.</li>
                         <li><strong>Filter:</strong> add a filter on <em>Session campaign</em>, set the match type to <strong>does not match regex</strong>, and enter <code class="ut-code">^\((not set|organic|direct|referral)\)$</code>. That hides GA4's untagged buckets <code class="ut-code">(not set)</code>, <code class="ut-code">(organic)</code>, <code class="ut-code">(direct)</code> and <code class="ut-code">(referral)</code>, so only tagged campaigns are listed.</li>
+                        <li>Above the table, click the <strong>+</strong> next to the <em>Session campaign</em> column heading and add <strong>Session source / medium</strong> as a second column, so each campaign is split by where it ran.</li>
                         <li>Under <strong>Report data</strong>, rename the report <strong>Campaign Performance</strong>. Click <strong>Save <i class="ph ph-caret-right"></i> Save as a new report</strong>.</li>
                     </ol>
                 </div>
@@ -293,7 +294,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <p>To compare versions within a campaign (reel vs carousel, flyer vs newspaper), go to <strong>Explore <i class="ph ph-caret-right"></i> Free form</strong>.</p>
                     <ol class="ga-steps">
                         <li>Import the dimensions <em>Session campaign</em>, <em>Session manual ad content</em> and <em>Session source / medium</em>, and the metrics <em>Sessions</em>, <em>Engagement rate</em> and <em>Key events</em>. <em>Session manual ad content</em> is where GA4 stores <code class="ut-code">utm_content</code>; type <em>manual</em> in the dimension search to find it.</li>
-                        <li>Rows: <em>Session campaign</em>, then <em>Session manual ad content</em>. Values: the three metrics.</li>
+                        <li>Rows: <em>Session campaign</em>, then <em>Session source / medium</em>, then <em>Session manual ad content</em>. Values: the three metrics.</li>
                         <li>Filter: <em>Session campaign</em> does not exactly match <code class="ut-code">(not set)</code>.</li>
                         <li>Name it <strong>Campaign × Content</strong> and share it (top right) so the rest of the team can open it.</li>
                     </ol>
