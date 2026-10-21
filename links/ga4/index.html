@@ -261,9 +261,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <h3>Create the report</h3>
                     <ol class="ga-steps">
                         <li>Go to <span class="ga-path">Reports <i class="ph ph-caret-right"></i> Library</span> (at the bottom of the reports menu). Click <strong>Create new report <i class="ph ph-caret-right"></i> Create detail report <i class="ph ph-caret-right"></i> Traffic acquisition</strong> to start from that template.</li>
-                        <li><strong>Dimensions:</strong> remove the others and keep or add, in this order:
-                            <span class="ga-chips"><span>Session campaign</span><span>Session source / medium</span><span>Session manual ad content</span><span>Session primary channel group</span></span>
-                            Set <em>Session campaign</em> as the default.</li>
+                        <li><strong>Dimensions:</strong> remove the others (including any marked <em>(archived dimension)</em>) and keep or add, in this order:
+                            <span class="ga-chips"><span>Session campaign</span><span>Session source / medium</span><span>Session source</span><span>Session primary channel group</span></span>
+                            Set <em>Session campaign</em> as the default. The report editor doesn't offer the <code class="ut-code">utm_content</code> dimension, so compare posts and creatives in the exploration in step 5 instead.</li>
                         <li><strong>Metrics:</strong>
                             <span class="ga-chips"><span>Sessions</span><span>Engaged sessions</span><span>Engagement rate</span><span>Key events</span><span>Session key event rate</span><span>Total revenue</span></span>
                             Leave out revenue if the client doesn't sell online.</li>
@@ -292,7 +292,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <h3>Optional: compare creatives with an exploration</h3>
                     <p>To compare versions within a campaign (reel vs carousel, flyer vs newspaper), go to <strong>Explore <i class="ph ph-caret-right"></i> Free form</strong>.</p>
                     <ol class="ga-steps">
-                        <li>Import the dimensions <em>Session campaign</em>, <em>Session manual ad content</em> and <em>Session source / medium</em>, and the metrics <em>Sessions</em>, <em>Engagement rate</em> and <em>Key events</em>.</li>
+                        <li>Import the dimensions <em>Session campaign</em>, <em>Session manual ad content</em> and <em>Session source / medium</em>, and the metrics <em>Sessions</em>, <em>Engagement rate</em> and <em>Key events</em>. <em>Session manual ad content</em> is where GA4 stores <code class="ut-code">utm_content</code>; type <em>manual</em> in the dimension search to find it.</li>
                         <li>Rows: <em>Session campaign</em>, then <em>Session manual ad content</em>. Values: the three metrics.</li>
                         <li>Filter: <em>Session campaign</em> does not exactly match <code class="ut-code">(not set)</code>.</li>
                         <li>Name it <strong>Campaign × Content</strong> and share it (top right) so the rest of the team can open it.</li>
