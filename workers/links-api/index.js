@@ -85,7 +85,8 @@ async function handleAdmin(request, env, parts) {
         const { results } = await env.DB.prepare(`
             SELECT w.id, w.name, w.domains, w.created_at,
                    (SELECT COUNT(*) FROM links l WHERE l.workspace_id = w.id) AS link_count,
-                   (SELECT MAX(created_at) FROM links l WHERE l.workspace_id = w.id) AS last_link_at
+                   (SELECT MAX(created_at) FROM links l WHERE l.workspace_id = w.id) AS last_link_at,
+                   (SELECT COUNT(*) FROM clicks k JOIN links l ON l.short_code = k.short_code WHERE l.workspace_id = w.id) AS click_count
             FROM workspaces w ORDER BY w.created_at DESC`).all();
         return json({ success: true, workspaces: results });
     }
@@ -99,6 +100,30 @@ async function handleAdmin(request, env, parts) {
         await env.DB.prepare('INSERT INTO workspaces (id, name, domains, key_hash) VALUES (?, ?, ?, ?)')
             .bind(id, name, String(body.domains || '').trim().slice(0, 300), await sha256(secret)).run();
         return json({ success: true, id, link: `${APP_URL}#${id}.${secret}` }, 201);
+    }
+
+    if (request.method === 'PATCH' && parts.length === 2) {
+        const body = await request.json().catch(() => ({}));
+        const name = String(body.name || '').trim().slice(0, 120);
+        if (!name) return json({ success: false, error: 'Name is required' }, 400);
+        const row = await env.DB.prepare('UPDATE workspaces SET name = ?, domains = ? WHERE id = ? RETURNING id, name, domains')
+            .bind(name, String(body.domains || '').trim().slice(0, 300), parts[1]).first();
+        if (!row) return json({ success: false, error: 'Not found' }, 404);
+        return json({ success: true, workspace: row });
+    }
+
+    // Removes the workspace and everything in it; its short links stop working.
+    if (request.method === 'DELETE' && parts.length === 2) {
+        const id = parts[1];
+        const results = await env.DB.batch([
+            env.DB.prepare('DELETE FROM clicks WHERE short_code IN (SELECT short_code FROM links WHERE workspace_id = ? AND short_code IS NOT NULL)').bind(id),
+            env.DB.prepare('DELETE FROM links WHERE workspace_id = ?').bind(id),
+            env.DB.prepare('DELETE FROM campaigns WHERE workspace_id = ?').bind(id),
+            env.DB.prepare('DELETE FROM sources WHERE workspace_id = ?').bind(id),
+            env.DB.prepare('DELETE FROM workspaces WHERE id = ?').bind(id),
+        ]);
+        if (!results[4].meta.changes) return json({ success: false, error: 'Not found' }, 404);
+        return json({ success: true });
     }
 
     if (request.method === 'POST' && parts.length === 3 && parts[2] === 'reset-key') {

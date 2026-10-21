@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Builder Admin | Toolproof</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="referrer" content="no-referrer">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+    <link rel="stylesheet" href="../../styles.css">
+
+    <style>
+        body { min-height: 100svh; display: flex; flex-direction: column; background: var(--surface-page); }
+        [hidden] { display: none !important; }
+
+        /* === Header === */
+        .ad-header {
+            position: sticky; top: 0; z-index: 100;
+            height: var(--nav-height);
+            background-color: var(--surface-page);
+            border-bottom: 1px solid var(--border-subtle);
+            box-shadow: 0 1px 8px rgba(13,31,37,0.06);
+            display: flex; align-items: center;
+            padding-inline: var(--space-6);
+        }
+        .ad-header__inner {
+            max-width: var(--container-max); width: 100%; margin-inline: auto;
+            display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+        }
+        .ad-header__left { display: flex; align-items: center; gap: var(--space-3); }
+        .ad-badge {
+            font-family: var(--font-display); font-size: var(--text-xs); letter-spacing: var(--eyebrow-tracking);
+            text-transform: uppercase; color: var(--tp-oxblood); background: var(--tp-oxblood-light);
+            padding: 3px 8px; border-radius: var(--radius-sm);
+        }
+        .ad-header__right { display: flex; align-items: center; gap: var(--space-5); }
+        .ad-header__link {
+            font-family: var(--font-body); font-size: var(--text-sm); color: var(--text-muted); text-decoration: none;
+            display: flex; align-items: center; gap: var(--space-2); background: none; border: 0; cursor: pointer; padding: 0;
+        }
+        .ad-header__link:hover { color: var(--text-body); }
+
+        /* === Layout === */
+        .ad-main { flex: 1; width: 100%; max-width: var(--container-max); margin: 0 auto; padding: var(--space-10) var(--space-6) var(--space-16); }
+        .ad-title {
+            font-family: var(--font-display); font-weight: var(--weight-regular);
+            font-size: clamp(var(--text-xl), 3vw, var(--text-2xl)); letter-spacing: var(--tracking-heading);
+            color: var(--text-strong); margin-bottom: var(--space-2);
+        }
+        .ad-sub { color: var(--text-muted); margin-bottom: var(--space-8); max-width: 44rem; }
+        .ad-grid { display: grid; grid-template-columns: minmax(0, 22rem) minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+        .ad-card {
+            background: var(--surface-card); border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: var(--space-6);
+        }
+        .ad-card__title {
+            font-family: var(--font-display); font-weight: var(--weight-regular); font-size: var(--text-lg);
+            color: var(--text-strong); margin-bottom: var(--space-1);
+        }
+        .ad-card__sub { font-size: var(--text-sm); color: var(--text-muted); margin-bottom: var(--space-5); }
+        .ad-signin { max-width: 26rem; margin: var(--space-12) auto 0; }
+
+        /* === Form === */
+        .ad-form { display: flex; flex-direction: column; gap: var(--space-4); }
+        .ad-field { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+        .ad-field label { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--text-strong); }
+        .ad-field .ad-optional { font-weight: var(--weight-regular); color: var(--text-muted); }
+        .ad-input {
+            font-family: var(--font-body); font-size: var(--text-base); color: var(--text-body);
+            background: var(--surface-card); border: 1.5px solid var(--border-subtle);
+            border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); width: 100%;
+            transition: border-color var(--duration-base) var(--ease-standard);
+        }
+        .ad-input:focus { outline: none; border-color: var(--tp-teal); }
+        .ad-input::placeholder { color: var(--tp-saltflat-deep); }
+        .ad-input--sm { font-size: var(--text-sm); padding: var(--space-2) var(--space-3); }
+        .ad-hint { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-snug); }
+        .ad-error { font-size: var(--text-sm); color: #B42318; }
+        .ad-form .tp-btn, .ad-result .tp-btn { font-size: 14px; padding: 10px 18px; }
+        button:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+        /* === New link result === */
+        .ad-result {
+            margin-bottom: var(--space-6); padding: var(--space-5); border-radius: var(--radius-lg);
+            border: 1.5px solid var(--tp-teal); background: var(--tp-teal-xlight);
+        }
+        .ad-result__head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); }
+        .ad-result__title { font-weight: var(--weight-bold); color: var(--text-strong); }
+        .ad-result__link {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--text-sm);
+            word-break: break-all; background: var(--surface-card); border: 1px solid var(--tp-teal-light);
+            border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); margin: var(--space-3) 0;
+        }
+        .ad-result__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+        .ad-result__warn { font-size: var(--text-xs); color: var(--tp-oxblood); margin-top: var(--space-3); display: flex; gap: var(--space-2); }
+        .ad-close { background: none; border: 0; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; padding: 2px; }
+        .ad-close:hover { color: var(--text-strong); }
+
+        .ad-btn-quiet {
+            display: inline-flex; align-items: center; gap: var(--space-2);
+            font-family: var(--font-display); font-size: 14px; letter-spacing: var(--tracking-button); text-transform: uppercase;
+            color: var(--text-strong); background: var(--surface-card); text-decoration: none;
+            border: 1.5px solid var(--border-strong); border-radius: var(--radius-sm);
+            padding: 10px 18px; cursor: pointer;
+        }
+        .ad-btn-quiet:hover { background: var(--surface-page); }
+        .ad-btn-quiet:focus-visible, .ad-link-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+        /* === Workspaces table === */
+        .ad-toolbar { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; justify-content: space-between; margin-bottom: var(--space-4); }
+        .ad-toolbar .ad-input { max-width: 18rem; }
+        .ad-stats { font-size: var(--text-sm); color: var(--text-muted); }
+        .ad-table-wrap { overflow-x: auto; }
+        .ad-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+        .ad-table th {
+            text-align: left; font-weight: var(--weight-semibold); color: var(--text-muted); font-size: var(--text-xs);
+            text-transform: uppercase; letter-spacing: 0.06em; padding: var(--space-2) var(--space-3);
+            border-bottom: 1.5px solid var(--border-subtle); white-space: nowrap;
+        }
+        .ad-table td { padding: var(--space-3); border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+        .ad-table td.num { font-variant-numeric: tabular-nums; text-align: right; }
+        .ad-table th.num { text-align: right; }
+        .ad-table tr.is-editing td { background: var(--tp-teal-xlight); }
+        .ad-client { font-weight: var(--weight-semibold); color: var(--text-strong); }
+        .ad-id { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--text-xs); color: var(--text-muted); }
+        .ad-domains { color: var(--text-body); word-break: break-word; }
+        .ad-muted { color: var(--text-muted); }
+        .ad-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+        .ad-dot--active { background: #2E7D5B; }
+        .ad-dot--quiet { background: #C9A227; }
+        .ad-dot--none { background: var(--tp-saltflat-deep); }
+        .ad-actions { display: flex; flex-wrap: wrap; gap: var(--space-1); justify-content: flex-end; }
+        .ad-link-btn {
+            font-family: var(--font-body); font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--text-accent);
+            background: none; border: 0; padding: 4px 6px; border-radius: var(--radius-sm); cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+        }
+        .ad-link-btn:hover { background: var(--tp-teal-xlight); }
+        .ad-link-btn--danger { color: var(--tp-oxblood); }
+        .ad-link-btn--danger:hover { background: var(--tp-oxblood-light); }
+        .ad-edit { display: grid; gap: var(--space-2); }
+        .ad-empty { text-align: center; padding: var(--space-10) var(--space-6); color: var(--text-muted); }
+
+        /* === Toast === */
+        .ad-toast {
+            position: fixed; left: 50%; bottom: var(--space-6); transform: translateX(-50%) translateY(20px);
+            background: var(--surface-dark); color: var(--text-on-dark); font-size: var(--text-sm);
+            padding: var(--space-3) var(--space-5); border-radius: var(--radius-md); opacity: 0; pointer-events: none;
+            transition: opacity var(--duration-base), transform var(--duration-base); z-index: 200;
+        }
+        .ad-toast--show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 1100px) {
+            .ad-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 560px) {
+            .ad-header, .ad-main { padding-inline: var(--space-4); }
+            .ad-card { padding: var(--space-5) var(--space-4); }
+            .ad-header__link span { display: none; }
+            .ad-table thead { display: none; }
+            .ad-table, .ad-table tbody, .ad-table tr, .ad-table td { display: block; width: 100%; }
+            .ad-table tr { border-bottom: 1px solid var(--border-subtle); padding: var(--space-3) 0; }
+            .ad-table td { border: 0; padding: var(--space-1) 0; }
+            .ad-table td.num { text-align: left; }
+            .ad-table td[data-label]::before { content: attr(data-label) ": "; color: var(--text-muted); }
+            .ad-actions { justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+<a href="#ad-main" class="tp-skip-link">Skip to content</a>
+
+<header class="ad-header">
+    <div class="ad-header__inner">
+        <div class="ad-header__left">
+            <a href="/" class="tp-wordmark" style="text-decoration: none;">Tool<span class="tp-wordmark__proof">proof</span><sup class="tp-wordmark__reg">&trade;</sup></a>
+            <span class="ad-badge">Admin</span>
+        </div>
+        <div class="ad-header__right">
+            <a href="/links/" class="ad-header__link"><i class="ph ph-link" aria-hidden="true"></i><span>Link builder</span></a>
+            <button type="button" class="ad-header__link" id="ad-signout" hidden><i class="ph ph-sign-out" aria-hidden="true"></i><span>Sign out</span></button>
+        </div>
+    </div>
+</header>
+
+<main class="ad-main" id="ad-main">
+    <!-- ===== Sign in ===== -->
+    <section id="ad-signin" class="ad-card ad-signin">
+        <h1 class="ad-card__title">Link builder admin</h1>
+        <p class="ad-card__sub">Create and manage client workspaces. Enter the admin password you set with <code>wrangler secret put ADMIN_TOKEN</code>.</p>
+        <form class="ad-form" id="signin-form">
+            <div class="ad-field">
+                <label for="signin-password">Admin password</label>
+                <input class="ad-input" id="signin-password" type="password" autocomplete="current-password" required>
+                <span class="ad-hint">Kept only in this browser tab, and forgotten when you close it.</span>
+            </div>
+            <p class="ad-error" id="signin-error" role="alert" hidden></p>
+            <div><button type="submit" class="tp-btn tp-btn--emphasis" id="signin-btn">Sign in</button></div>
+        </form>
+    </section>
+
+    <!-- ===== Dashboard ===== -->
+    <section id="ad-dashboard" hidden>
+        <h1 class="ad-title">Client workspaces</h1>
+        <p class="ad-sub">Each client gets a private link to their own link library. Links are only shown once, when you create or reset them, so send them straight away.</p>
+
+        <div class="ad-result" id="ad-result" role="status" hidden>
+            <div class="ad-result__head">
+                <div class="ad-result__title" id="ad-result-title"></div>
+                <button type="button" class="ad-close" id="ad-result-close" aria-label="Dismiss"><i class="ph ph-x" aria-hidden="true"></i></button>
+            </div>
+            <div class="ad-result__link" id="ad-result-link"></div>
+            <div class="ad-result__actions">
+                <button type="button" class="tp-btn tp-btn--emphasis" id="ad-result-copy"><i class="ph ph-copy" aria-hidden="true"></i>Copy link</button>
+                <a class="ad-btn-quiet" id="ad-result-email" href="#"><i class="ph ph-envelope-simple" aria-hidden="true"></i>Draft email</a>
+            </div>
+            <p class="ad-result__warn"><i class="ph ph-warning" aria-hidden="true"></i><span>This link won't be shown again. Anyone with it can use the workspace, so only send it to the client.</span></p>
+        </div>
+
+        <div class="ad-grid">
+            <div class="ad-card">
+                <h2 class="ad-card__title">New client</h2>
+                <p class="ad-card__sub">Creates a workspace and gives you its private link.</p>
+                <form class="ad-form" id="create-form">
+                    <div class="ad-field">
+                        <label for="create-name">Business name</label>
+                        <input class="ad-input" id="create-name" type="text" autocomplete="off" placeholder="e.g. IPS Business Advisory" required>
+                    </div>
+                    <div class="ad-field">
+                        <label for="create-domains">Website(s) <span class="ad-optional">(optional)</span></label>
+                        <input class="ad-input" id="create-domains" type="text" autocomplete="off" placeholder="e.g. clientsite.com.au, shop.clientsite.com.au">
+                        <span class="ad-hint">Separate with commas. The builder warns the client if they tag a page somewhere else.</span>
+                    </div>
+                    <p class="ad-error" id="create-error" role="alert" hidden></p>
+                    <div><button type="submit" class="tp-btn tp-btn--emphasis" id="create-btn"><i class="ph ph-plus" aria-hidden="true"></i>Create workspace</button></div>
+                </form>
+            </div>
+
+            <div class="ad-card">
+                <div class="ad-toolbar">
+                    <input class="ad-input ad-input--sm" type="search" id="ws-search" placeholder="Search clients…" aria-label="Search clients">
+                    <span class="ad-stats" id="ws-stats"></span>
+                </div>
+                <div class="ad-table-wrap">
+                    <table class="ad-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Website(s)</th>
+                                <th class="num">Links</th>
+                                <th class="num">Clicks</th>
+                                <th>Last link</th>
+                                <th><span class="visually-hidden" style="position:absolute;left:-9999px;">Actions</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="ws-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div class="ad-toast" id="ad-toast" role="status"></div>
+
+<script type="module">
+const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
+    ? 'http://localhost:8787'
+    : 'https://links-api.toolproof.workers.dev';
+const TOKEN_STORE = 'tp_links_admin';
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+const state = { token: '', workspaces: [], editing: null };
+
+function storeToken(token) {
+    try {
+        if (token) sessionStorage.setItem(TOKEN_STORE, token);
+        else sessionStorage.removeItem(TOKEN_STORE);
+    } catch (e) {}
+}
+
+async function api(path, options = {}) {
+    const res = await fetch(API_BASE + path, {
+        ...options,
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + state.token },
+        body: options.body ? JSON.stringify(options.body) : undefined,
+    });
+    const data = await res.json().catch(() => ({ success: false, error: 'Unexpected response' }));
+    if (res.status === 401 && state.token) { signOut('Your session has ended. Sign in again.'); }
+    if (!res.ok || !data.success) throw Object.assign(new Error(data.error || 'Something went wrong'), { status: res.status });
+    return data;
+}
+
+let toastTimer;
+function toast(msg) {
+    const t = $('ad-toast');
+    t.textContent = msg;
+    t.classList.add('ad-toast--show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('ad-toast--show'), 2200);
+}
+
+async function copy(text, msg = 'Copied to clipboard') {
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch (e) {
+        const ta = Object.assign(document.createElement('textarea'), { value: text });
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+    }
+    toast(msg);
+}
+
+function showError(id, msg) {
+    $(id).textContent = msg || '';
+    $(id).hidden = !msg;
+}
+
+// ---------- Sign in / out ----------
+function showDashboard(on) {
+    $('ad-signin').hidden = on;
+    $('ad-dashboard').hidden = !on;
+    $('ad-signout').hidden = !on;
+}
+
+function signOut(message) {
+    state.token = '';
+    state.workspaces = [];
+    storeToken('');
+    $('ad-result').hidden = true;
+    showDashboard(false);
+    showError('signin-error', message);
+    $('signin-password').value = '';
+    $('signin-password').focus();
+}
+
+async function signIn(token) {
+    state.token = token;
+    try {
+        await load();
+        storeToken(token);
+        showDashboard(true);
+        showError('signin-error', '');
+        $('create-name').focus();
+    } catch (e) {
+        state.token = '';
+        storeToken('');
+        showDashboard(false);
+        showError('signin-error', e.status === 401 ? 'That password is not right.' : 'Couldn\'t reach the link builder service. Check your connection and try again.');
+    }
+}
+
+$('signin-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const token = $('signin-password').value.trim();
+    if (!token) return;
+    $('signin-btn').disabled = true;
+    await signIn(token);
+    $('signin-btn').disabled = false;
+});
+$('ad-signout').addEventListener('click', () => signOut(''));
+
+// ---------- Workspaces ----------
+async function load() {
+    const data = await api('/admin/workspaces');
+    state.workspaces = data.workspaces;
+    render();
+}
+
+function parseDate(s) {
+    return s ? new Date(s.replace(' ', 'T') + 'Z') : null;
+}
+
+function formatDate(s) {
+    const d = parseDate(s);
+    return d && !isNaN(d) ? d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+}
+
+// Green: a link in the last 30 days. Amber: older. Grey: never.
+function activity(ws) {
+    const d = parseDate(ws.last_link_at);
+    if (!d) return '<span class="ad-dot ad-dot--none" aria-hidden="true"></span><span class="ad-muted">No links yet</span>';
+    const recent = Date.now() - d.getTime() < 30 * 86400000;
+    return `<span class="ad-dot ${recent ? 'ad-dot--active' : 'ad-dot--quiet'}" aria-hidden="true"></span>${esc(formatDate(ws.last_link_at))}`;
+}
+
+function render() {
+    const q = $('ws-search').value.trim().toLowerCase();
+    const list = state.workspaces.filter(w => !q || [w.name, w.domains, w.id].join(' ').toLowerCase().includes(q));
+    const totalLinks = state.workspaces.reduce((n, w) => n + w.link_count, 0);
+    $('ws-stats').textContent = `${state.workspaces.length} client${state.workspaces.length === 1 ? '' : 's'} · ${totalLinks} link${totalLinks === 1 ? '' : 's'}`;
+
+    const body = $('ws-body');
+    if (!state.workspaces.length) {
+        body.innerHTML = '<tr><td colspan="6" class="ad-empty">No client workspaces yet. Create the first one on the left.</td></tr>';
+        return;
+    }
+    if (!list.length) {
+        body.innerHTML = '<tr><td colspan="6" class="ad-empty">No clients match that search.</td></tr>';
+        return;
+    }
+    body.innerHTML = list.map(w => {
+        if (state.editing === w.id) {
+            return `<tr class="is-editing" data-id="${esc(w.id)}">
+                <td colspan="5">
+                    <form class="ad-edit" data-edit-form="${esc(w.id)}">
+                        <label class="ad-hint" for="edit-name-${esc(w.id)}">Business name</label>
+                        <input class="ad-input ad-input--sm" id="edit-name-${esc(w.id)}" name="name" value="${esc(w.name)}" required>
+                        <label class="ad-hint" for="edit-domains-${esc(w.id)}">Website(s)</label>
+                        <input class="ad-input ad-input--sm" id="edit-domains-${esc(w.id)}" name="domains" value="${esc(w.domains)}" placeholder="clientsite.com.au">
+                    </form>
+                </td>
+                <td><div class="ad-actions">
+                    <button type="button" class="ad-link-btn" data-save="${esc(w.id)}"><i class="ph ph-check" aria-hidden="true"></i>Save</button>
+                    <button type="button" class="ad-link-btn" data-cancel="${esc(w.id)}">Cancel</button>
+                </div></td>
+            </tr>`;
+        }
+        return `<tr data-id="${esc(w.id)}">
+            <td><div class="ad-client">${esc(w.name)}</div><div class="ad-id">${esc(w.id)} · since ${esc(formatDate(w.created_at))}</div></td>
+            <td data-label="Website(s)" class="ad-domains">${w.domains ? esc(w.domains) : '<span class="ad-muted">—</span>'}</td>
+            <td data-label="Links" class="num">${w.link_count}</td>
+            <td data-label="Clicks" class="num">${w.click_count}</td>
+            <td data-label="Last link">${activity(w)}</td>
+            <td><div class="ad-actions">
+                <button type="button" class="ad-link-btn" data-edit="${esc(w.id)}"><i class="ph ph-pencil-simple" aria-hidden="true"></i>Edit</button>
+                <button type="button" class="ad-link-btn" data-reset="${esc(w.id)}"><i class="ph ph-key" aria-hidden="true"></i>New link</button>
+                <button type="button" class="ad-link-btn ad-link-btn--danger" data-delete="${esc(w.id)}"><i class="ph ph-trash" aria-hidden="true"></i>Delete</button>
+            </div></td>
+        </tr>`;
+    }).join('');
+
+    if (state.editing) {
+        const input = document.getElementById('edit-name-' + state.editing);
+        if (input) input.focus();
+    }
+}
+
+function showResult(title, link, clientName) {
+    $('ad-result-title').textContent = title;
+    $('ad-result-link').textContent = link;
+    const subject = 'Your campaign link builder';
+    const body = `Hi,\n\nHere is your private link to the Toolproof campaign link builder for ${clientName}:\n\n${link}\n\nBookmark it, and keep it within your team. Anyone with the link can use your workspace.\n\nNew to tagging links? This short guide explains why it matters: https://www.toolproof.com.au/links/why/\n\nThanks,\nRob`;
+    $('ad-result-email').href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    $('ad-result').hidden = false;
+    $('ad-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $('ad-result-copy').focus();
+}
+
+$('ad-result-copy').addEventListener('click', () => copy($('ad-result-link').textContent, 'Link copied'));
+$('ad-result-close').addEventListener('click', () => { $('ad-result').hidden = true; });
+
+$('create-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = $('create-name').value.trim();
+    if (!name) { $('create-name').focus(); return; }
+    const domains = $('create-domains').value.split(',').map(d => d.trim().toLowerCase()
+        .replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '')).filter(Boolean).join(', ');
+    $('create-btn').disabled = true;
+    try {
+        const data = await api('/admin/workspaces', { method: 'POST', body: { name, domains } });
+        e.target.reset();
+        showError('create-error', '');
+        showResult(`Workspace created for ${name}`, data.link, name);
+        await load();
+    } catch (err) {
+        showError('create-error', err.message);
+    } finally {
+        $('create-btn').disabled = false;
+    }
+});
+
+$('ws-search').addEventListener('input', render);
+
+async function saveEdit(id) {
+    const form = document.querySelector(`[data-edit-form="${CSS.escape(id)}"]`);
+    const name = form.elements.name.value.trim();
+    if (!name) { form.elements.name.focus(); return; }
+    const domains = form.elements.domains.value.split(',').map(d => d.trim().toLowerCase()
+        .replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '')).filter(Boolean).join(', ');
+    await api('/admin/workspaces/' + encodeURIComponent(id), { method: 'PATCH', body: { name, domains } });
+    state.editing = null;
+    toast('Saved');
+    await load();
+}
+
+$('ws-body').addEventListener('keydown', e => {
+    const form = e.target.closest('[data-edit-form]');
+    if (!form) return;
+    if (e.key === 'Enter') { e.preventDefault(); saveEdit(form.dataset.editForm).catch(err => toast(err.message)); }
+    if (e.key === 'Escape') { state.editing = null; render(); }
+});
+
+$('ws-body').addEventListener('click', async e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    const id = b.dataset.edit || b.dataset.save || b.dataset.cancel || b.dataset.reset || b.dataset.delete;
+    const ws = state.workspaces.find(w => w.id === id);
+    if (!ws) return;
+    try {
+        if (b.dataset.edit) {
+            state.editing = id; render();
+        } else if (b.dataset.cancel) {
+            state.editing = null; render();
+        } else if (b.dataset.save) {
+            await saveEdit(id);
+        } else if (b.dataset.reset) {
+            if (!confirm(`Make a new private link for ${ws.name}?\n\nTheir current link will stop working straight away. Their saved links and short links are not affected.`)) return;
+            const data = await api(`/admin/workspaces/${encodeURIComponent(id)}/reset-key`, { method: 'POST' });
+            showResult(`New link for ${ws.name}`, data.link, ws.name);
+        } else if (b.dataset.delete) {
+            const typed = prompt(`Delete ${ws.name}'s workspace?\n\nThis permanently removes all ${ws.link_count} saved link(s) and campaigns, and every short link stops working. It can't be undone.\n\nType the business name to confirm:`);
+            if (typed === null) return;
+            if (typed.trim() !== ws.name) { toast('Name didn\'t match, so nothing was deleted'); return; }
+            await api('/admin/workspaces/' + encodeURIComponent(id), { method: 'DELETE' });
+            toast(`${ws.name} deleted`);
+            await load();
+        }
+    } catch (err) {
+        if (err.status !== 401) toast(err.message);
+    }
+});
+
+// ---------- Init ----------
+let saved = '';
+try { saved = sessionStorage.getItem(TOKEN_STORE) || ''; } catch (e) {}
+if (saved) signIn(saved);
+else $('signin-password').focus();
+</script>
+</body>
+</html>
