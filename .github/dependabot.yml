@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories:
+      - /workers/contact-api
+      - /workers/in-the-loop-api
+      - /workers/links-api
+      - /workers/proof-score-api
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

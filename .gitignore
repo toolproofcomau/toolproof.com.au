@@ -4,3 +4,6 @@ tina/__generated__
 .env
 .wrangler
 .dev.vars
+
+.DS_Store
+.claude/settings.local.json
