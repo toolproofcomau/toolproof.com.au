@@ -7,7 +7,12 @@ updates:
       - /workers/links-api
       - /workers/proof-score-api
     schedule:
-      interval: weekly
+      interval: monthly
+    # One PR per package across all four workers, instead of one per worker
+    groups:
+      workers:
+        patterns: ["*"]
+        group-by: dependency-name
   - package-ecosystem: github-actions
     directory: /
     schedule:
