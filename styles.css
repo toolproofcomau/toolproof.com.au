@@ -1046,20 +1046,25 @@ a.tp-wordmark:focus-visible { outline: 2px solid var(--focus-ring); outline-offs
     flex: 1 1 30rem;
     max-width: 34rem;
 }
+/* Fixed grid, not a wrapping flex row: the button sits on its own row, so
+   shorter "Verifying…" / "Sending…" labels can't pull it up beside the fields. */
 .tp-loop__form {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
     gap: var(--space-3);
 }
-.tp-loop__field { flex: 1 1 10rem; }
+/* Invisible Turnstile widget: keep it out of the grid so it doesn't take a cell */
+.tp-loop__form #loop-turnstile-widget { position: absolute; }
 .tp-loop__field label {
     font-size: var(--eyebrow-size);
     font-weight: var(--eyebrow-weight);
     color: var(--text-strong);
 }
 .tp-loop__submit {
-    flex-shrink: 0;
+    grid-column: 1 / -1;
+    justify-self: start;
     background: transparent;
     color: var(--text-strong);
     border-color: var(--tp-saltflat-deep);
@@ -1375,11 +1380,10 @@ html { scroll-behavior: smooth; }
         flex: none;
     }
     .tp-loop__form {
-        flex-direction: column;
-        align-items: stretch;
+        grid-template-columns: 1fr;
     }
-    .tp-loop__field {
-        flex: none;
+    .tp-loop__submit {
+        justify-self: stretch;
     }
 }
 

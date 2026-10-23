@@ -739,6 +739,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             var btn = document.getElementById(prefix + '-submit-btn');
             if (!btn.dataset.defaultLabel) btn.dataset.defaultLabel = btn.textContent;
+            // Hold the button's width so the shorter loading labels don't shrink it
+            btn.style.minWidth = btn.offsetWidth + 'px';
             btn.classList.add('tp-btn--loading');
             btn.textContent = 'Verifying…';
 
